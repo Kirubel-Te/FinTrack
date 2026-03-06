@@ -24,7 +24,7 @@ export default function LoginPage() {
         <div 
           className="absolute inset-0 z-0 opacity-20 grayscale mix-blend-overlay"
           style={{ 
-            backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBmUtfGRU7eBcwCgdkeBZS_990EmRrd0ahgNuZRmO9ImJw9RZd9MUDvexzzJL4Dv0JkvGTa0FtmSyJHbmuVb97tDLvaNUzV7KiqJ_u_mbHKVwFeNolLA0TNUmxHb4L9kfbcBp-wlcv7fembI8nM7h4csx4z_rdXT-A8yWzTmIy3rvjEA8HbcARlBTczAsxef9VgcHeprfMIKYFy31gSmO0ByC_wAX2pgyqeX3a5aZ9FiyqPmbvVWtWpbEX5WEih6Az8IDIoYwvwK7I')",
+            backgroundImage: "url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=80')",
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
