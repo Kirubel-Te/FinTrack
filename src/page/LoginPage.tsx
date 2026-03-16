@@ -1,13 +1,62 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Wallet, Eye, EyeOff } from 'lucide-react';
+import {
+  AUTH_STORAGE_KEY,
+  AUTH_TOKEN_STORAGE_KEY,
+  login,
+} from '../api/auth';
 
 type LoginPageProps = {
   onCreateAccount: () => void;
+  notice?: string | null;
 };
 
-export default function LoginPage({ onCreateAccount }: LoginPageProps) {
+export default function LoginPage({ onCreateAccount, notice }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(notice ?? null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    setSuccessMessage(notice ?? null);
+  }, [notice]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    setFormData((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    setIsSubmitting(true);
+
+    try {
+      const response = await login({
+        email: formData.email.trim(),
+        password: formData.password,
+      });
+
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(response));
+
+      if (typeof response.token === 'string' && response.token) {
+        localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, response.token);
+      }
+
+      setSuccessMessage(response.message ?? 'Login successful.');
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Unable to log in.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col lg:flex-row font-sans">
@@ -100,7 +149,19 @@ export default function LoginPage({ onCreateAccount }: LoginPageProps) {
           </div>
 
           <div className="mt-10">
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {errorMessage && (
+                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                  {errorMessage}
+                </div>
+              )}
+
+              {successMessage && (
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700" role="status">
+                  {successMessage}
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-100" htmlFor="email">
                   Email address
@@ -113,6 +174,9 @@ export default function LoginPage({ onCreateAccount }: LoginPageProps) {
                     autoComplete="email"
                     required
                     placeholder="name@company.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={isSubmitting}
                     className="block w-full rounded-lg border-0 py-3 px-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-primary/40 bg-white dark:bg-primary/10 placeholder:text-slate-400 dark:placeholder:text-emerald-100/30 focus:ring-2 focus:ring-inset focus:ring-emerald-500 sm:text-sm sm:leading-6 outline-none transition-all"
                   />
                 </div>
@@ -137,11 +201,15 @@ export default function LoginPage({ onCreateAccount }: LoginPageProps) {
                     autoComplete="current-password"
                     required
                     placeholder="••••••••"
+                    value={formData.password}
+                    onChange={handleChange}
+                    disabled={isSubmitting}
                     className="block w-full rounded-lg border-0 py-3 px-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-primary/40 bg-white dark:bg-primary/10 placeholder:text-slate-400 dark:placeholder:text-emerald-100/30 focus:ring-2 focus:ring-inset focus:ring-emerald-500 sm:text-sm sm:leading-6 outline-none transition-all"
                   />
                   <button 
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={isSubmitting}
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 dark:text-emerald-100/40 hover:text-emerald-500 transition-colors"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -152,9 +220,10 @@ export default function LoginPage({ onCreateAccount }: LoginPageProps) {
               <div>
                 <button 
                   type="submit"
+                  disabled={isSubmitting}
                   className="flex w-full justify-center rounded-lg bg-primary px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all active:scale-[0.98]"
                 >
-                  Log In
+                  {isSubmitting ? 'Logging in...' : 'Log In'}
                 </button>
               </div>
             </form>

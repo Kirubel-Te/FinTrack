@@ -1,16 +1,32 @@
-import { useState } from "react"
-import LoginPage from "./page/LoginPage"
-import RegisterPage from "./page/Register"
+import { useState } from 'react'
+import LoginPage from './page/LoginPage'
+import RegisterPage from './page/Register'
 
 
 const App = () => {
-  const [authView, setAuthView] = useState<"login" | "register">("login")
+  const [authView, setAuthView] = useState<'login' | 'register'>('login')
+  const [authNotice, setAuthNotice] = useState<string | null>(null)
 
-  if (authView === "register") {
-    return <RegisterPage onSignIn={() => setAuthView("login")} />
+  if (authView === 'register') {
+    return (
+      <RegisterPage
+        onSignIn={(notice) => {
+          setAuthNotice(notice ?? null)
+          setAuthView('login')
+        }}
+      />
+    )
   }
 
-  return <LoginPage onCreateAccount={() => setAuthView("register")} />
+  return (
+    <LoginPage
+      notice={authNotice}
+      onCreateAccount={() => {
+        setAuthNotice(null)
+        setAuthView('register')
+      }}
+    />
+  )
 }
 
 export default App

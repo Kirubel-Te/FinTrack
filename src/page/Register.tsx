@@ -1,14 +1,71 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Wallet, Eye, EyeOff } from 'lucide-react';
+import { register } from '../api/auth';
 
 type RegisterPageProps = {
-  onSignIn: () => void;
+  onSignIn: (notice?: string) => void;
 };
 
 export default function RegisterPage({ onSignIn }: RegisterPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    setFormData((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setErrorMessage(null);
+
+    const normalizedFullName = formData.fullName.trim().replace(/\s+/g, ' ');
+    const [firstName, ...lastNameParts] = normalizedFullName.split(' ');
+
+    if (!firstName || lastNameParts.length === 0) {
+      setErrorMessage('Please enter both first and last name.');
+      return;
+    }
+
+    const lastName = lastNameParts.join(' ');
+
+    if (formData.password !== formData.confirmPassword) {
+      setErrorMessage('Passwords do not match.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await register({
+        firstName,
+        lastName,
+        email: formData.email.trim(),
+        password: formData.password,
+      });
+
+      onSignIn(response.message ?? 'Account created successfully. Log in to continue.');
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Unable to create your account.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(false);
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col lg:flex-row font-sans">
@@ -103,7 +160,13 @@ export default function RegisterPage({ onSignIn }: RegisterPageProps) {
           </div>
 
           <div className="mt-10">
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {errorMessage && (
+                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                  {errorMessage}
+                </div>
+              )}
+
               <div>
                 <label
                   className="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-100"
@@ -114,11 +177,14 @@ export default function RegisterPage({ onSignIn }: RegisterPageProps) {
                 <div className="mt-2">
                   <input
                     id="full-name"
-                    name="full-name"
+                    name="fullName"
                     type="text"
                     autoComplete="name"
                     required
                     placeholder="John Carter"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    disabled={isSubmitting}
                     className="block w-full rounded-lg border-0 py-3 px-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-primary/40 bg-white dark:bg-primary/10 placeholder:text-slate-400 dark:placeholder:text-emerald-100/30 focus:ring-2 focus:ring-inset focus:ring-emerald-500 sm:text-sm sm:leading-6 outline-none transition-all"
                   />
                 </div>
@@ -139,6 +205,9 @@ export default function RegisterPage({ onSignIn }: RegisterPageProps) {
                     autoComplete="email"
                     required
                     placeholder="name@company.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={isSubmitting}
                     className="block w-full rounded-lg border-0 py-3 px-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-primary/40 bg-white dark:bg-primary/10 placeholder:text-slate-400 dark:placeholder:text-emerald-100/30 focus:ring-2 focus:ring-inset focus:ring-emerald-500 sm:text-sm sm:leading-6 outline-none transition-all"
                   />
                 </div>
@@ -159,11 +228,15 @@ export default function RegisterPage({ onSignIn }: RegisterPageProps) {
                     autoComplete="new-password"
                     required
                     placeholder="••••••••"
+                    value={formData.password}
+                    onChange={handleChange}
+                    disabled={isSubmitting}
                     className="block w-full rounded-lg border-0 py-3 px-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-primary/40 bg-white dark:bg-primary/10 placeholder:text-slate-400 dark:placeholder:text-emerald-100/30 focus:ring-2 focus:ring-inset focus:ring-emerald-500 sm:text-sm sm:leading-6 outline-none transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={isSubmitting}
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 dark:text-emerald-100/40 hover:text-emerald-500 transition-colors"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -181,16 +254,20 @@ export default function RegisterPage({ onSignIn }: RegisterPageProps) {
                 <div className="mt-2 relative">
                   <input
                     id="confirm-password"
-                    name="confirm-password"
+                    name="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     autoComplete="new-password"
                     required
                     placeholder="••••••••"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    disabled={isSubmitting}
                     className="block w-full rounded-lg border-0 py-3 px-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-primary/40 bg-white dark:bg-primary/10 placeholder:text-slate-400 dark:placeholder:text-emerald-100/30 focus:ring-2 focus:ring-inset focus:ring-emerald-500 sm:text-sm sm:leading-6 outline-none transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    disabled={isSubmitting}
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 dark:text-emerald-100/40 hover:text-emerald-500 transition-colors"
                   >
                     {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -201,9 +278,10 @@ export default function RegisterPage({ onSignIn }: RegisterPageProps) {
               <div>
                 <button
                   type="submit"
+                  disabled={isSubmitting}
                   className="flex w-full justify-center rounded-lg bg-primary px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all active:scale-[0.98]"
                 >
-                  Create Account
+                  {isSubmitting ? 'Creating account...' : 'Create Account'}
                 </button>
               </div>
             </form>
@@ -212,7 +290,7 @@ export default function RegisterPage({ onSignIn }: RegisterPageProps) {
               Already have an account?{' '}
               <button
                 type="button"
-                onClick={onSignIn}
+                onClick={() => onSignIn()}
                 className="font-semibold leading-6 text-emerald-600 dark:text-emerald-400 hover:text-emerald-500"
               >
                 Sign in
