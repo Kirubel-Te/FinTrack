@@ -9,10 +9,11 @@ import {
 
 type LoginPageProps = {
   onCreateAccount: () => void;
+  onLoginSuccess?: (notice?: string) => void;
   notice?: string | null;
 };
 
-export default function LoginPage({ onCreateAccount, notice }: LoginPageProps) {
+export default function LoginPage({ onCreateAccount, onLoginSuccess, notice }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -50,7 +51,18 @@ export default function LoginPage({ onCreateAccount, notice }: LoginPageProps) {
         localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, response.token);
       }
 
-      setSuccessMessage(response.message ?? 'Login successful.');
+      const successNotice = response.message ?? 'Login successful.';
+      setSuccessMessage(successNotice);
+
+      if (typeof onLoginSuccess === 'function') {
+        onLoginSuccess(successNotice);
+      } else {
+        window.dispatchEvent(
+          new CustomEvent('fintrack:auth-success', {
+            detail: { notice: successNotice },
+          }),
+        );
+      }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unable to log in.');
     } finally {

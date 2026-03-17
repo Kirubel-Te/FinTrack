@@ -4,10 +4,11 @@ import { Wallet, Eye, EyeOff } from 'lucide-react';
 import { register } from '../api/auth';
 
 type RegisterPageProps = {
-  onSignIn: (notice?: string) => void;
+  onRegisterSuccess: (notice?: string) => void;
+  onSignIn: () => void;
 };
 
-export default function RegisterPage({ onSignIn }: RegisterPageProps) {
+export default function RegisterPage({ onRegisterSuccess, onSignIn }: RegisterPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -57,7 +58,7 @@ export default function RegisterPage({ onSignIn }: RegisterPageProps) {
         password: formData.password,
       });
 
-      onSignIn(response.message ?? 'Account created successfully. Log in to continue.');
+      onRegisterSuccess(response.message ?? 'Account created successfully.');
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unable to create your account.');
       setIsSubmitting(false);
