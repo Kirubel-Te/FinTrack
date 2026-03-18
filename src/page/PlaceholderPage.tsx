@@ -1,12 +1,15 @@
 import { Wallet } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useNavigate } from 'react-router';
 
 type PlaceholderPageProps = {
   notice?: string | null;
-  onBackToLogin: () => void;
+  onBackToLogin?: () => void;
 };
 
 export default function PlaceholderPage({ notice, onBackToLogin }: PlaceholderPageProps) {
+  const navigate = useNavigate();
+
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background-light px-6 py-12 dark:bg-background-dark">
       <div className="absolute inset-0 opacity-20 pointer-events-none">
@@ -35,7 +38,14 @@ export default function PlaceholderPage({ notice, onBackToLogin }: PlaceholderPa
 
         <button
           type="button"
-          onClick={onBackToLogin}
+          onClick={() => {
+            if (typeof onBackToLogin === 'function') {
+              onBackToLogin();
+              return;
+            }
+
+            navigate('/login');
+          }}
           className="mt-8 inline-flex w-full items-center justify-center rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-primary/90"
         >
           Back to Login

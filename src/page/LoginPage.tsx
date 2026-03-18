@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Wallet, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router';
 import {
   AUTH_STORAGE_KEY,
   AUTH_TOKEN_STORAGE_KEY,
@@ -8,12 +9,13 @@ import {
 } from '../api/auth';
 
 type LoginPageProps = {
-  onCreateAccount: () => void;
+  onCreateAccount?: () => void;
   onLoginSuccess?: (notice?: string) => void;
   notice?: string | null;
 };
 
 export default function LoginPage({ onCreateAccount, onLoginSuccess, notice }: LoginPageProps) {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -57,11 +59,7 @@ export default function LoginPage({ onCreateAccount, onLoginSuccess, notice }: L
       if (typeof onLoginSuccess === 'function') {
         onLoginSuccess(successNotice);
       } else {
-        window.dispatchEvent(
-          new CustomEvent('fintrack:auth-success', {
-            detail: { notice: successNotice },
-          }),
-        );
+        navigate('/', { state: { notice: successNotice } });
       }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unable to log in.');
@@ -276,7 +274,14 @@ export default function LoginPage({ onCreateAccount, onLoginSuccess, notice }: L
             New to FinTrack?{' '}
             <button
               type="button"
-              onClick={onCreateAccount}
+              onClick={() => {
+                if (typeof onCreateAccount === 'function') {
+                  onCreateAccount();
+                  return;
+                }
+
+                navigate('/register');
+              }}
               className="font-semibold leading-6 text-emerald-600 dark:text-emerald-400 hover:text-emerald-500"
             >
               Create an account

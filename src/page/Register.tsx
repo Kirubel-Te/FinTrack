@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Wallet, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router';
 import { register } from '../api/auth';
 
 type RegisterPageProps = {
-  onRegisterSuccess: (notice?: string) => void;
-  onSignIn: () => void;
+  onRegisterSuccess?: (notice?: string) => void;
+  onSignIn?: () => void;
 };
 
 export default function RegisterPage({ onRegisterSuccess, onSignIn }: RegisterPageProps) {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -58,7 +60,13 @@ export default function RegisterPage({ onRegisterSuccess, onSignIn }: RegisterPa
         password: formData.password,
       });
 
-      onRegisterSuccess(response.message ?? 'Account created successfully.');
+      const successNotice = response.message ?? 'Account created successfully.';
+
+      if (typeof onRegisterSuccess === 'function') {
+        onRegisterSuccess(successNotice);
+      } else {
+        navigate('/', { state: { notice: successNotice } });
+      }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unable to create your account.');
       setIsSubmitting(false);
@@ -291,7 +299,14 @@ export default function RegisterPage({ onRegisterSuccess, onSignIn }: RegisterPa
               Already have an account?{' '}
               <button
                 type="button"
-                onClick={() => onSignIn()}
+                onClick={() => {
+                  if (typeof onSignIn === 'function') {
+                    onSignIn();
+                    return;
+                  }
+
+                  navigate('/login');
+                }}
                 className="font-semibold leading-6 text-emerald-600 dark:text-emerald-400 hover:text-emerald-500"
               >
                 Sign in
