@@ -3,13 +3,34 @@
 
 @theme {
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Shared app tokens */
   --color-primary: #043427;
   --color-background-dark: #10221d;
   --color-background-light: #f6f8f7;
+
+  /* Dashboard palette (keep background value stable) */
+  --color-emerald-zenith-bg: #10221d;
+  --color-emerald-zenith-surface: #163329;
+  --color-emerald-zenith-surface-high: #204338;
+  --color-emerald-zenith-text: #f2faf6;
+  --color-emerald-zenith-text-muted: #9eb7ae;
+  --color-emerald-zenith-primary: #34d399;
+  --color-emerald-zenith-accent: #05281f;
+  --color-emerald-zenith-error: #f38b82;
 }
 
 @layer base {
   body {
-    @apply font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100;
+    @apply font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased;
+    background-image:
+      radial-gradient(circle at 12% 10%, rgba(52, 211, 153, 0.14) 0, rgba(52, 211, 153, 0) 36%),
+      radial-gradient(circle at 90% 86%, rgba(47, 184, 223, 0.08) 0, rgba(47, 184, 223, 0) 42%);
+    background-attachment: fixed;
+  }
+
+  *:focus-visible {
+    outline: 2px solid rgba(52, 211, 153, 0.8);
+    outline-offset: 2px;
   }
 }
