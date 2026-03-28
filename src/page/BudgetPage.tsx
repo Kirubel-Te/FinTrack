@@ -214,14 +214,14 @@ export function BudgetsPage() {
             </button>
           </div>
           
-          <div className="lg:col-span-2 bg-emerald-zenith-surface-high rounded-[2.5rem] p-1 relative overflow-hidden h-[360px] group">
+          <div className="lg:col-span-2 bg-emerald-zenith-surface-high rounded-[2.5rem] p-1 relative overflow-hidden h-90 group">
             <img 
               className="w-full h-full object-cover rounded-[2.4rem] opacity-40 mix-blend-luminosity group-hover:scale-105 transition-transform duration-700" 
               src="https://picsum.photos/seed/architecture/1200/600"
               alt="Analysis"
               referrerPolicy="no-referrer"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-emerald-zenith-surface-high via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-emerald-zenith-surface-high via-transparent to-transparent" />
             
             <div className="absolute bottom-10 left-10 right-10 flex justify-between items-end">
               <div>

@@ -1,5 +1,6 @@
 
 import { Smartphone, Briefcase, ShoppingBasket } from 'lucide-react';
+import { Link } from 'react-router';
 import { cn } from '../lib/utils';
 
 const transactions = [
@@ -43,9 +44,12 @@ export function TransactionTable() {
           <h4 className="text-lg md:text-xl font-bold">Recent Transactions</h4>
           <p className="text-xs md:text-sm text-emerald-zenith-text-muted">Your latest financial activity</p>
         </div>
-        <button className="text-emerald-zenith-primary text-xs md:text-sm font-bold hover:underline transition-all whitespace-nowrap">
+        <Link
+          to="/transactions"
+          className="text-emerald-zenith-primary text-xs md:text-sm font-bold hover:underline transition-all whitespace-nowrap"
+        >
           View All History
-        </button>
+        </Link>
       </div>
 
       <div className="overflow-x-auto no-scrollbar">

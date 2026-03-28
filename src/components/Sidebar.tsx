@@ -10,9 +10,9 @@ import { cn } from '../lib/utils';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-  { icon: ReceiptText, label: 'Transactions', path: '/placeholder' },
+  { icon: ReceiptText, label: 'Transactions', path: '/transactions' },
   { icon: Wallet, label: 'Budgets', path: '/budgets' },
-  { icon: Settings, label: 'Settings', path: '/placeholder' },
+  { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
 export function Sidebar() {
