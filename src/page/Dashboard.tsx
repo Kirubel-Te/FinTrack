@@ -6,16 +6,25 @@ import { ComparisonChart } from '../components/ComparisionChart';
 import { TransactionTable } from '../components/Transaction';
 import { Landmark, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { Outlet } from 'react-router';
+import { useState } from 'react';
+import { AddExpenseModal } from './AddExpense';
 
 export function DashboardLayout() {
+  const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
+
   return (
     <div className="min-h-screen flex bg-emerald-zenith-bg text-emerald-zenith-text">
       <Sidebar />
       
       <main className="flex-1 ml-64 flex flex-col">
-        <TopBar />
+        <TopBar onAddExpenseClick={() => setIsAddExpenseOpen(true)} />
         <Outlet />
       </main>
+
+      <AddExpenseModal
+        isOpen={isAddExpenseOpen}
+        onClose={() => setIsAddExpenseOpen(false)}
+      />
     </div>
   );
 }
