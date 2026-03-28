@@ -2,10 +2,11 @@
 import { Search, Bell, HelpCircle } from 'lucide-react';
 
 type TopBarProps = {
+  onAddIncomeClick?: () => void;
   onAddExpenseClick?: () => void;
 };
 
-export function TopBar({ onAddExpenseClick }: TopBarProps) {
+export function TopBar({ onAddIncomeClick, onAddExpenseClick }: TopBarProps) {
   return (
     <header className="sticky top-0 z-40 flex justify-between items-center h-16 px-4 md:px-6 lg:px-8 bg-emerald-zenith-bg/80 backdrop-blur-xl border-b border-emerald-900/20">
       <div className="flex items-center flex-1 max-w-sm md:max-w-md lg:max-w-lg">
@@ -21,7 +22,10 @@ export function TopBar({ onAddExpenseClick }: TopBarProps) {
 
       <div className="flex items-center gap-4 md:gap-6 lg:gap-8">
         <div className="flex items-center gap-2.5 md:gap-3">
-          <button className="bg-emerald-zenith-surface-high/50 text-emerald-zenith-primary px-4 md:px-4.5 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-zenith-surface-high transition-colors active:scale-95 whitespace-nowrap">
+          <button
+            onClick={onAddIncomeClick}
+            className="bg-emerald-zenith-surface-high/50 text-emerald-zenith-primary px-4 md:px-4.5 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-zenith-surface-high transition-colors active:scale-95 whitespace-nowrap"
+          >
             Add Income
           </button>
           <button

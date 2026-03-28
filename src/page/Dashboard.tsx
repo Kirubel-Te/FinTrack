@@ -8,8 +8,10 @@ import { Landmark, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { Outlet } from 'react-router';
 import { useState } from 'react';
 import { AddExpenseModal } from './AddExpense';
+import { AddIncomeModal } from './AddIncome';
 
 export function DashboardLayout() {
+  const [isAddIncomeOpen, setIsAddIncomeOpen] = useState(false);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
 
   return (
@@ -17,9 +19,17 @@ export function DashboardLayout() {
       <Sidebar />
       
       <main className="flex-1 ml-64 flex flex-col">
-        <TopBar onAddExpenseClick={() => setIsAddExpenseOpen(true)} />
+        <TopBar
+          onAddIncomeClick={() => setIsAddIncomeOpen(true)}
+          onAddExpenseClick={() => setIsAddExpenseOpen(true)}
+        />
         <Outlet />
       </main>
+
+      <AddIncomeModal
+        isOpen={isAddIncomeOpen}
+        onClose={() => setIsAddIncomeOpen(false)}
+      />
 
       <AddExpenseModal
         isOpen={isAddExpenseOpen}
