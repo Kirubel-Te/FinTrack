@@ -61,14 +61,14 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
                   {/* Big Amount Input (Scale Asymmetry) */}
                   <div className="text-center space-y-3">
                     <label className="block text-[10px] uppercase tracking-[0.3em] text-emerald-zenith-text-muted font-black">Transaction Amount</label>
-                    <div className="relative inline-flex items-center justify-center w-full">
-                      <span className="text-4xl font-light text-emerald-zenith-primary mr-3">$</span>
+                    <div className="relative inline-flex items-center justify-center w-full max-w-md mx-auto px-4 py-3 bg-emerald-zenith-surface-high/40 border border-emerald-zenith-text-muted/20 rounded-xl focus-within:rounded-3xl focus-within:border-emerald-zenith-primary/60 transition-all duration-200">
+                      <span className="text-3xl md:text-4xl font-light text-emerald-zenith-primary mr-2">$</span>
                       <input 
                         type="number" 
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                         placeholder="0.00"
-                        className="bg-transparent border-none text-6xl md:text-7xl font-black text-emerald-zenith-text placeholder:text-emerald-zenith-text-muted/30 focus:ring-0 p-0 w-full max-w-85 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="bg-transparent border-none text-3xl md:text-5xl font-black text-emerald-zenith-text placeholder:text-emerald-zenith-text-muted/30 focus:ring-0 focus:outline-none p-0 w-full text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                   </div>
