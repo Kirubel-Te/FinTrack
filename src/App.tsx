@@ -13,7 +13,16 @@ const App = () => {
         <Route index element={<Dashboard />} />
         <Route path="transactions" element={<TransactionsPage />} />
         <Route path="budgets" element={<BudgetsPage />} />
-        <Route path="settings" element={<PlaceholderPage notice="Settings page is coming soon." />} />
+        <Route
+          path="settings"
+          element={
+            <PlaceholderPage
+              notice="Settings page will be available soon."
+              backToPath="/"
+              backToLabel="Back to Dashboard"
+            />
+          }
+        />
       </Route>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />

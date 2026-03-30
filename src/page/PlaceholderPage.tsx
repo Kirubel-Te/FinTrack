@@ -4,10 +4,17 @@ import { useNavigate } from 'react-router';
 
 type PlaceholderPageProps = {
   notice?: string | null;
+  backToPath?: string;
+  backToLabel?: string;
   onBackToLogin?: () => void;
 };
 
-export default function PlaceholderPage({ notice, onBackToLogin }: PlaceholderPageProps) {
+export default function PlaceholderPage({
+  notice,
+  backToPath = '/login',
+  backToLabel = 'Back to Login',
+  onBackToLogin,
+}: PlaceholderPageProps) {
   const navigate = useNavigate();
 
   return (
@@ -44,11 +51,11 @@ export default function PlaceholderPage({ notice, onBackToLogin }: PlaceholderPa
               return;
             }
 
-            navigate('/login');
+            navigate(backToPath);
           }}
           className="mt-8 inline-flex w-full items-center justify-center rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-primary/90"
         >
-          Back to Login
+          {backToLabel}
         </button>
       </motion.div>
     </div>
