@@ -12,6 +12,7 @@ import {
   Car
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Reveal } from '../components/Reveal';
 
 const transactions = [
   {
@@ -96,7 +97,8 @@ export function TransactionsPage() {
       </div>
 
       {/* Filter Bar */}
-      <section className="bg-emerald-zenith-surface rounded-xl p-3.5 md:p-4 flex flex-wrap items-stretch md:items-center justify-between gap-4 border border-emerald-zenith-text-muted/15 shadow-sm">
+      <Reveal delay={0.04}>
+        <section className="bg-emerald-zenith-surface rounded-xl p-3.5 md:p-4 flex flex-wrap items-stretch md:items-center justify-between gap-4 border border-emerald-zenith-text-muted/15 shadow-sm">
         <div className="flex w-full lg:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <div className="flex flex-col gap-1.5">
             <span className="text-[10px] uppercase tracking-[0.2em] text-emerald-zenith-text-muted font-black px-1">Category</span>
@@ -127,10 +129,12 @@ export function TransactionsPage() {
             <span>Export CSV</span>
           </button>
         </div>
-      </section>
+        </section>
+      </Reveal>
 
       {/* Transactions Table */}
-      <div className="bg-emerald-zenith-surface rounded-2xl overflow-hidden border border-emerald-zenith-text-muted/15 shadow-2xl relative">
+      <Reveal delay={0.1}>
+        <div className="bg-emerald-zenith-surface rounded-2xl overflow-hidden border border-emerald-zenith-text-muted/15 shadow-2xl relative">
         {/* Decorative atmospheric glow */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-zenith-primary/5 blur-[100px] -z-10" />
 
@@ -209,17 +213,18 @@ export function TransactionsPage() {
             </button>
           </div>
         </div>
-      </div>
+        </div>
+      </Reveal>
 
       {/* Footer Section */}
       <footer className="mt-10 pt-8 border-t border-emerald-zenith-text-muted/15 flex flex-col md:flex-row justify-between items-start gap-10 opacity-60">
-        <div className="max-w-sm space-y-3">
+        <Reveal className="max-w-sm space-y-3" delay={0.05}>
           <h4 className="text-sm font-black text-emerald-zenith-text uppercase tracking-widest">FinTrack Systems</h4>
           <p className="text-xs text-emerald-zenith-text-muted leading-relaxed font-medium">
             Your financial data is encrypted with state-of-the-art cryptographic protocols, ensuring your sanctuary remains private and impenetrable.
           </p>
-        </div>
-        <div className="flex gap-16">
+        </Reveal>
+        <Reveal className="flex gap-16" delay={0.12}>
           <div className="flex flex-col gap-3">
             <span className="text-[10px] uppercase tracking-[0.2em] font-black text-emerald-zenith-text-muted">Resources</span>
             <a href="#" className="text-xs font-bold hover:text-emerald-zenith-primary transition-colors">API Documentation</a>
@@ -230,7 +235,7 @@ export function TransactionsPage() {
             <a href="#" className="text-xs font-bold hover:text-emerald-zenith-primary transition-colors">Concierge Service</a>
             <a href="#" className="text-xs font-bold hover:text-emerald-zenith-primary transition-colors">Contact Support</a>
           </div>
-        </div>
+        </Reveal>
       </footer>
     </div>
   );

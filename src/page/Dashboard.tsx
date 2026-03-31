@@ -9,6 +9,7 @@ import { Outlet } from 'react-router';
 import { useState } from 'react';
 import { AddExpenseModal } from './AddExpense';
 import { AddIncomeModal } from './AddIncome';
+import { Reveal } from '../components/Reveal';
 
 export function DashboardLayout() {
   const [isAddIncomeOpen, setIsAddIncomeOpen] = useState(false);
@@ -54,43 +55,51 @@ export default function Dashboard() {
 
       {/* Stats Grid */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4 xl:gap-5">
-        <StatCard 
-          label="Total Balance"
-          value="$124,592.00"
-          trend="+12.5% vs last month"
-          trendUp={true}
-          icon={Landmark}
-          variant="primary"
-        />
-        <StatCard 
-          label="Total Income"
-          value="$18,240.50"
-          trend="5% increase"
-          trendUp={true}
-          icon={ArrowDownLeft}
-        />
-        <StatCard 
-          label="Total Expenses"
-          value="$6,450.20"
-          trend="2% decrease"
-          trendUp={false}
-          icon={ArrowUpRight}
-        />
+        <Reveal delay={0.05}>
+          <StatCard 
+            label="Total Balance"
+            value="$124,592.00"
+            trend="+12.5% vs last month"
+            trendUp={true}
+            icon={Landmark}
+            variant="primary"
+          />
+        </Reveal>
+        <Reveal delay={0.12}>
+          <StatCard 
+            label="Total Income"
+            value="$18,240.50"
+            trend="5% increase"
+            trendUp={true}
+            icon={ArrowDownLeft}
+          />
+        </Reveal>
+        <Reveal delay={0.2}>
+          <StatCard 
+            label="Total Expenses"
+            value="$6,450.20"
+            trend="2% decrease"
+            trendUp={false}
+            icon={ArrowUpRight}
+          />
+        </Reveal>
       </section>
 
       {/* Charts Section */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-4 xl:gap-5">
-        <div className="lg:col-span-5">
+        <Reveal className="lg:col-span-5" delay={0.08}>
           <ExpenseChart />
-        </div>
-        <div className="lg:col-span-7">
+        </Reveal>
+        <Reveal className="lg:col-span-7" delay={0.14}>
           <ComparisonChart />
-        </div>
+        </Reveal>
       </section>
 
       {/* Transactions Section */}
       <section className="pb-6 lg:pb-8">
-        <TransactionTable />
+        <Reveal delay={0.1}>
+          <TransactionTable />
+        </Reveal>
       </section>
     </div>
   );

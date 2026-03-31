@@ -11,6 +11,7 @@ import {
   Plus
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Reveal } from '../components/Reveal';
 
 interface BudgetCardProps {
   title: string;
@@ -155,50 +156,60 @@ export function BudgetsPage() {
 
       {/* Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <BudgetCard 
-          title="Housing & Living"
-          icon={Home}
-          status="within_budget"
-          spent={1850.40}
-          total={3200.00}
-          large
-        />
-        <BudgetCard 
-          title="Dining & Drinks"
-          icon={Utensils}
-          status="warning"
-          spent={740.00}
-          total={850.00}
-        />
-        <BudgetCard 
-          title="Personal Luxury"
-          icon={ShoppingBag}
-          status="overspent"
-          spent={1250.00}
-          total={1000.00}
-        />
-        <BudgetCard 
-          title="Transportation"
-          icon={Car}
-          status="within_budget"
-          spent={240.00}
-          total={600.00}
-        />
+        <Reveal className="md:col-span-2 lg:col-span-2" delay={0.03}>
+          <BudgetCard 
+            title="Housing & Living"
+            icon={Home}
+            status="within_budget"
+            spent={1850.40}
+            total={3200.00}
+            large
+          />
+        </Reveal>
+        <Reveal delay={0.1}>
+          <BudgetCard 
+            title="Dining & Drinks"
+            icon={Utensils}
+            status="warning"
+            spent={740.00}
+            total={850.00}
+          />
+        </Reveal>
+        <Reveal delay={0.15}>
+          <BudgetCard 
+            title="Personal Luxury"
+            icon={ShoppingBag}
+            status="overspent"
+            spent={1250.00}
+            total={1000.00}
+          />
+        </Reveal>
+        <Reveal delay={0.2}>
+          <BudgetCard 
+            title="Transportation"
+            icon={Car}
+            status="within_budget"
+            spent={240.00}
+            total={600.00}
+          />
+        </Reveal>
         
         {/* New Category Card */}
-        <div className="bg-black/25 border-2 border-dashed border-emerald-zenith-text-muted/30 rounded-2xl p-5 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-black/35 transition-all duration-300">
-          <div className="w-12 h-12 rounded-full bg-emerald-zenith-surface-high flex items-center justify-center text-emerald-zenith-text-muted group-hover:text-emerald-zenith-primary group-hover:scale-110 transition-all duration-300 mb-3">
-            <Plus className="w-6 h-6" />
+        <Reveal delay={0.24}>
+          <div className="bg-black/25 border-2 border-dashed border-emerald-zenith-text-muted/30 rounded-2xl p-5 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-black/35 transition-all duration-300">
+            <div className="w-12 h-12 rounded-full bg-emerald-zenith-surface-high flex items-center justify-center text-emerald-zenith-text-muted group-hover:text-emerald-zenith-primary group-hover:scale-110 transition-all duration-300 mb-3">
+              <Plus className="w-6 h-6" />
+            </div>
+            <h4 className="text-base font-bold text-emerald-zenith-text">New Category</h4>
+            <p className="text-xs font-medium text-emerald-zenith-text-muted mt-1">Plan for your next major milestone</p>
           </div>
-          <h4 className="text-base font-bold text-emerald-zenith-text">New Category</h4>
-          <p className="text-xs font-medium text-emerald-zenith-text-muted mt-1">Plan for your next major milestone</p>
-        </div>
+        </Reveal>
       </div>
 
       {/* Analysis Section */}
       <section className="mt-12 md:mt-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
-          <div className="lg:col-span-1 space-y-6">
+          <Reveal className="lg:col-span-1 space-y-6" delay={0.05}>
             <h4 className="text-2xl md:text-3xl font-black text-emerald-zenith-text tracking-tight">
               Monthly Allocation Analysis
             </h4>
@@ -212,9 +223,10 @@ export function BudgetsPage() {
               <span>View detailed forecast</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
             </button>
-          </div>
+          </Reveal>
           
-          <div className="lg:col-span-2 bg-emerald-zenith-surface-high rounded-3xl md:rounded-[2.5rem] p-1 relative overflow-hidden h-72 md:h-90 group">
+          <Reveal className="lg:col-span-2" delay={0.12}>
+            <div className="bg-emerald-zenith-surface-high rounded-3xl md:rounded-[2.5rem] p-1 relative overflow-hidden h-72 md:h-90 group">
             <img 
               className="w-full h-full object-cover rounded-[1.35rem] md:rounded-[2.4rem] opacity-40 mix-blend-luminosity group-hover:scale-105 transition-transform duration-700" 
               src="https://picsum.photos/seed/architecture/1200/600"
@@ -236,7 +248,8 @@ export function BudgetsPage() {
                 <div className="w-3 h-20 bg-emerald-zenith-primary/80 rounded-full" />
               </div>
             </div>
-          </div>
+            </div>
+          </Reveal>
         </div>
       </section>
     </div>
