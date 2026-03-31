@@ -73,7 +73,7 @@ function BudgetCard({ title, icon: Icon, status, spent, total, large }: BudgetCa
       </div>
 
       {large ? (
-        <div className="grid grid-cols-3 gap-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
           <div>
             <p className="text-[10px] font-black text-emerald-zenith-text-muted uppercase tracking-widest mb-2">Budget Amount</p>
             <p className="text-xl font-black text-emerald-zenith-text">${total.toLocaleString()}</p>
@@ -196,13 +196,13 @@ export function BudgetsPage() {
       </div>
 
       {/* Analysis Section */}
-      <section className="mt-20">
+      <section className="mt-12 md:mt-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
           <div className="lg:col-span-1 space-y-6">
-            <h4 className="text-3xl font-black text-emerald-zenith-text tracking-tight">
+            <h4 className="text-2xl md:text-3xl font-black text-emerald-zenith-text tracking-tight">
               Monthly Allocation Analysis
             </h4>
-            <p className="text-emerald-zenith-text-muted leading-relaxed text-lg">
+            <p className="text-emerald-zenith-text-muted leading-relaxed text-base md:text-lg">
               Your current spending velocity suggests a potential 12% surplus by month-end if trends in 
               <span className="text-emerald-zenith-primary font-bold mx-1">Transportation</span> 
               persist. Consider reallocating $200 to 
@@ -214,18 +214,18 @@ export function BudgetsPage() {
             </button>
           </div>
           
-          <div className="lg:col-span-2 bg-emerald-zenith-surface-high rounded-[2.5rem] p-1 relative overflow-hidden h-90 group">
+          <div className="lg:col-span-2 bg-emerald-zenith-surface-high rounded-3xl md:rounded-[2.5rem] p-1 relative overflow-hidden h-72 md:h-90 group">
             <img 
-              className="w-full h-full object-cover rounded-[2.4rem] opacity-40 mix-blend-luminosity group-hover:scale-105 transition-transform duration-700" 
+              className="w-full h-full object-cover rounded-[1.35rem] md:rounded-[2.4rem] opacity-40 mix-blend-luminosity group-hover:scale-105 transition-transform duration-700" 
               src="https://picsum.photos/seed/architecture/1200/600"
               alt="Analysis"
               referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-linear-to-t from-emerald-zenith-surface-high via-transparent to-transparent" />
             
-            <div className="absolute bottom-10 left-10 right-10 flex justify-between items-end">
+            <div className="absolute bottom-5 md:bottom-10 left-5 md:left-10 right-5 md:right-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 md:gap-0">
               <div>
-                <p className="text-[3rem] font-black text-emerald-zenith-text leading-none mb-2">$12,450.00</p>
+                <p className="text-3xl md:text-[3rem] font-black text-emerald-zenith-text leading-none mb-2">$12,450.00</p>
                 <p className="text-xs font-black text-emerald-zenith-primary uppercase tracking-[0.3em]">Total Monthly Capacity</p>
               </div>
               <div className="flex gap-2 items-end">

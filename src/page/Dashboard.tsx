@@ -18,7 +18,7 @@ export function DashboardLayout() {
     <div className="min-h-screen flex bg-emerald-zenith-bg text-emerald-zenith-text">
       <Sidebar />
       
-      <main className="flex-1 ml-64 flex flex-col">
+      <main className="ml-20 md:ml-64 flex min-w-0 flex-1 flex-col">
         <TopBar
           onAddIncomeClick={() => setIsAddIncomeOpen(true)}
           onAddExpenseClick={() => setIsAddExpenseOpen(true)}
