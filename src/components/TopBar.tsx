@@ -8,19 +8,19 @@ type TopBarProps = {
 
 export function TopBar({ onAddIncomeClick, onAddExpenseClick }: TopBarProps) {
   return (
-    <header className="sticky top-0 z-40 flex justify-between items-center h-14 md:h-16 px-3 md:px-6 lg:px-8 bg-emerald-zenith-bg/80 backdrop-blur-xl border-b border-emerald-900/20 gap-2 md:gap-4">
-      <div className="hidden md:flex items-center flex-1 max-w-sm md:max-w-md lg:max-w-lg">
+    <header className="sticky top-0 z-40 flex flex-col md:flex-row justify-between md:items-center h-auto md:h-16 px-3 md:px-6 lg:px-8 py-2 md:py-0 bg-emerald-zenith-bg/80 backdrop-blur-xl border-b border-emerald-900/20 gap-2 md:gap-4">
+      <div className="flex items-center w-full md:flex-1 md:max-w-sm lg:max-w-lg">
         <div className="relative w-full group">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-zenith-text-muted group-focus-within:text-emerald-zenith-primary transition-colors" />
           <input 
             type="text" 
             placeholder="Search analytics..."
-            className="w-full bg-emerald-zenith-surface-high/50 border-none rounded-lg pl-10 pr-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-zenith-primary/20 placeholder:text-emerald-zenith-text-muted/40 transition-all"
+            className="w-full bg-emerald-zenith-surface-high/50 border-none rounded-lg pl-10 pr-3.5 py-2 md:py-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-zenith-primary/20 placeholder:text-emerald-zenith-text-muted/40 transition-all"
           />
         </div>
       </div>
 
-      <div className="flex flex-1 md:flex-none items-center justify-end gap-2 md:gap-6 lg:gap-8">
+      <div className="flex w-full md:w-auto md:flex-none items-center justify-end gap-2 md:gap-6 lg:gap-8">
         <div className="flex items-center gap-2 md:gap-3">
           <button
             onClick={onAddIncomeClick}
