@@ -1,85 +1,95 @@
-# FinTrack Frontend - Progress Status
+# FinTrack Frontend - Project Status
 
-Last updated: 2026-03-07
+Last updated: 2026-04-01
 
-## Overview
-The project is currently a React + TypeScript + Vite frontend with an implemented authentication UI flow (login and register screens) and shared styling foundations.
+## Current Snapshot
+FinTrack is now a multi-page React + TypeScript + Vite app using React Router, with a complete dashboard shell and polished finance UI screens. Authentication forms are connected to API endpoints, while most portfolio/transaction/budget data is still static mock data rendered in the frontend.
 
-## What Is Done
+## What Is Implemented
 
-### Project Setup
-- Vite + React + TypeScript project initialized.
-- ESLint and TypeScript configs are present (`eslint.config.js`, `tsconfig*.json`).
-- Core scripts available in `package.json`:
-  - `npm run dev`
-  - `npm run build`
-  - `npm run lint`
-  - `npm run preview`
+### Foundation and Tooling
+- Vite + React + TypeScript project is configured and running.
+- ESLint + TypeScript configs are in place.
+- Scripts available:
+  - npm run dev
+  - npm run build
+  - npm run lint
+  - npm run preview
+- Core dependencies include:
+  - react, react-dom, react-router
+  - tailwindcss + @tailwindcss/vite
+  - motion
+  - lucide-react
+  - recharts
 
-### Installed UI Dependencies
-- `tailwindcss` and `@tailwindcss/vite`
-- `motion` (for animations)
-- `lucide-react` (icon set)
+### Routing and App Structure
+- BrowserRouter is configured in main entry.
+- Route tree is implemented with nested layout routing:
+  - / -> DashboardLayout + Dashboard
+  - /transactions -> TransactionsPage
+  - /budgets -> BudgetsPage
+  - /settings -> PlaceholderPage
+  - /login -> LoginPage
+  - /register -> RegisterPage
+  - * -> redirect to /
+- Dashboard shell is shared through DashboardLayout (Sidebar + TopBar + nested Outlet).
 
-### Global Styling Foundation
-- Tailwind is imported in `src/index.css`.
-- Brand/design tokens are defined with theme variables:
-  - `--color-primary`
-  - `--color-background-dark`
-  - `--color-background-light`
-  - `--font-sans` (`Manrope`)
-- Base body styles are configured for typography and dark/light backgrounds.
+### Dashboard Experience
+- Dashboard page includes:
+  - KPI stat cards
+  - Expense and comparison charts
+  - Recent transactions table section
+- Add Income and Add Expense modal UIs are wired from the TopBar and can be opened/closed from global dashboard layout state.
 
-### App-Level Navigation Flow
-- `src/App.tsx` has local state-based auth view switching:
-  - Login view (default)
-  - Register view
-- No routing library is used yet; view transitions are handled in component state.
+### Transactions and Budgets Pages
+- Transactions page is fully designed with:
+  - header and context copy
+  - filter/export controls (UI only)
+  - styled table with pagination controls (UI only)
+- Budgets page is fully designed with:
+  - budget cards and progress states
+  - create-budget CTA (UI only)
+  - analytics/insight section (static content)
 
-### Login Page (`src/page/LoginPage.tsx`)
-- Fully designed responsive login screen:
-  - Split layout on desktop (branding panel + form panel)
-  - Mobile-friendly single-column behavior
-- Motion animations added for entry and content reveals.
-- Form includes:
-  - Email field
-  - Password field with show/hide toggle
-  - "Forgot password" link placeholder
-  - Submit button (UI only)
-- Social sign-in UI buttons included (Google, Apple; UI-only placeholders).
-- CTA to switch to register screen is wired.
+### Authentication
+- Login page:
+  - controlled form state
+  - submit calls API helper login()
+  - success and error messaging in UI
+  - localStorage persistence for auth payload and token
+- Register page:
+  - controlled form state
+  - client-side checks for full name split and password confirmation
+  - submit calls API helper register()
+  - error handling and post-success navigation
+- API layer in src/api/auth.ts:
+  - central fetch helper for POST auth calls
+  - /api/auth/login and /api/auth/register endpoints
+  - JSON/text response parsing and normalized error extraction
+  - optional VITE_API_BASE_URL support
 
-### Register Page (`src/page/Register.tsx`)
-- Fully designed responsive registration screen matching login visual language.
-- Motion animations and branding section implemented.
-- Form includes:
-  - Full name
-  - Email
-  - Password with show/hide toggle
-  - Confirm password with show/hide toggle
-  - Submit button (UI only)
-- CTA to switch back to login is wired.
+### UI System and Styling
+- Tailwind-based design system with emerald palette tokens is being used consistently across dashboard surfaces.
+- Reusable shared components exist (Button, Input, Sidebar, TopBar, Reveal, StatCard, charts, transactions table pieces).
+- Motion/reveal animations are implemented across major pages.
 
-### Reusable Components
-- `src/components/Button.tsx`
-  - Supports `primary` and `outline` variants.
-  - Extends native button props.
-- `src/components/Input.tsx`
-  - Supports label and optional Lucide icon.
-  - Extends native input props.
-- Note: current login/register pages primarily use inline form elements and do not yet fully consume these shared components.
+## Current Gaps and Incomplete Areas
+- No authentication guard for protected routes yet.
+- No logout/session-expiry flow yet.
+- No API integration yet for:
+  - dashboard metrics
+  - transactions list/filter/export
+  - budgets CRUD and analytics
+- Add Income and Add Expense modals currently prevent default submit and do not persist data.
+- Settings is still a placeholder page.
+- Social login buttons are UI-only.
+- Several pages still rely on hardcoded sample content and sample media assets.
 
-## Current Gaps / Not Done Yet
-- No backend/API integration for authentication.
-- No form validation logic beyond basic HTML `required` attributes.
-- No user session handling or token storage.
-- No React Router or URL-based navigation.
-- No error/success feedback flows for auth actions.
-- README is still the default Vite template and does not yet describe this project status.
-
-## Suggested Next Steps
-1. Add real form state handling and validation (e.g., React state + schema validation).
-2. Connect login/register forms to backend auth endpoints.
-3. Add routing (`/login`, `/register`, `/dashboard`) with route guards.
-4. Refactor pages to use shared `Button` and `Input` components consistently.
-5. Update `README.md` with setup instructions and product context.
+## Suggested Next Steps (Priority Order)
+1. Add route protection and auth bootstrap check (redirect unauthenticated users to /login).
+2. Implement logout and token/session lifecycle handling.
+3. Connect dashboard, transactions, and budgets to real backend endpoints.
+4. Wire Add Income/Add Expense modal forms to create transaction APIs.
+5. Replace UI-only filters/pagination/export with real query-driven behavior.
+6. Build the settings page and account/profile preferences.
+7. Add test coverage for auth flows and core dashboard navigation.
