@@ -14,7 +14,7 @@ export function Reveal({
   className,
   delay = 0,
   y = 24,
-  duration = 0.55,
+  duration = 0.75,
 }: RevealProps) {
   const prefersReducedMotion = useReducedMotion();
 
