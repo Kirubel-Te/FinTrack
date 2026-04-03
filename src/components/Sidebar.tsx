@@ -2,11 +2,19 @@ import {
   LayoutDashboard, 
   ReceiptText, 
   Wallet, 
-  Settings, 
-  Plus
+  Settings
 } from 'lucide-react';
 import { NavLink } from 'react-router';
 import { cn } from '../lib/utils';
+
+const firstNames = ['Ava', 'Noah', 'Liam', 'Emma', 'Maya', 'Leo', 'Sofia', 'Ethan'];
+const lastNames = ['Johnson', 'Martinez', 'Patel', 'Bennett', 'Nguyen', 'Walker', 'Brooks', 'Morgan'];
+
+const profile = {
+  firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
+  lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
+  avatar: `https://api.dicebear.com/9.x/adventurer/svg?seed=${Math.random().toString(36).slice(2, 10)}`,
+};
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
@@ -50,10 +58,19 @@ export function Sidebar() {
       </nav>
 
       <div className="px-2 md:px-4 mt-auto">
-        <button className="w-full flex items-center justify-center gap-1.5 bg-emerald-zenith-primary text-emerald-zenith-accent py-2.5 rounded-xl text-sm font-semibold transition-all hover:brightness-110 active:scale-95 shadow-md shadow-emerald-500/20">
-          <Plus className="w-4 h-4" />
-          <span className="hidden md:inline">Add Transaction</span>
-        </button>
+        <div className="w-full flex items-center justify-center md:justify-start gap-0 md:gap-3 px-2 md:px-3 py-2 rounded-xl bg-white/5 border border-emerald-900/30">
+          <img
+            src={profile.avatar}
+            alt={`${profile.firstName} ${profile.lastName}`}
+            className="w-9 h-9 rounded-full border border-emerald-zenith-primary/50 bg-emerald-zenith-surface-high"
+          />
+          <div className="hidden md:block min-w-0">
+            <p className="text-sm font-semibold text-emerald-zenith-text leading-tight truncate">
+              {profile.firstName} {profile.lastName}
+            </p>
+            <p className="text-xs text-emerald-zenith-text-muted">Personal Account</p>
+          </div>
+        </div>
       </div>
     </aside>
   );
