@@ -25,7 +25,7 @@ const navItems = [
 
 export function Sidebar() {
   return (
-    <aside className="fixed left-0 top-0 h-full w-20 md:w-64 bg-emerald-zenith-accent border-r border-emerald-900/30 flex flex-col py-6 md:py-8 z-50">
+    <aside className="fixed left-0 top-0 h-full w-16 md:w-64 bg-emerald-zenith-accent border-r border-emerald-900/30 flex flex-col py-6 md:py-8 z-50">
       <div className="px-3 md:px-6 mb-6 md:mb-8 text-center md:text-left">
         <h1 className="hidden md:block text-xl font-black text-emerald-zenith-primary tracking-tight">FinTrack</h1>
         <h1 className="md:hidden text-lg font-black text-emerald-zenith-primary tracking-tight">FT</h1>
