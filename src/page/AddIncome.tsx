@@ -161,7 +161,7 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                 className="bg-emerald-zenith-primary/10 border border-emerald-zenith-primary/20 p-5 rounded-2xl space-y-3"
               >
                 <Lightbulb className="w-6 h-6 text-emerald-zenith-primary" />
-                <h4 className="text-base font-black text-emerald-zenith-text">Zen Tip</h4>
+                <h4 className="text-base font-black text-emerald-zenith-text">Fin Tip</h4>
                 <p className="text-xs leading-relaxed text-emerald-zenith-text-muted font-medium">
                   Log every income source promptly to keep your cash-flow forecasts accurate and reliable.
                 </p>
