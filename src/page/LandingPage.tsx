@@ -51,31 +51,31 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
 
       <main className="pt-16">
         {/* Hero Section */}
-        <section className="relative px-8 pt-24 pb-32 max-w-7xl mx-auto overflow-hidden">
+        <section className="relative px-8 pt-20 pb-24 max-w-7xl mx-auto overflow-hidden">
           {/* Atmospheric Depth Background */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.15)_0%,transparent_70%)] -z-10" />
           
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div 
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <span className="text-xs font-black tracking-[0.3em] uppercase text-emerald-zenith-primary mb-6 block">The Financial Sanctuary</span>
-              <h1 className="text-6xl md:text-7xl font-extrabold tracking-tighter mb-8 leading-[0.95] text-emerald-zenith-text">
+              <h1 className="text-5xl md:text-6xl font-extrabold tracking-tighter mb-6 leading-[0.98] text-emerald-zenith-text">
                 Master Your Money with <span className="text-emerald-400">Editorial Precision.</span>
               </h1>
-              <p className="text-xl text-emerald-zenith-text-muted max-w-xl mb-12 leading-relaxed font-medium">
+              <p className="text-lg text-emerald-zenith-text-muted max-w-xl mb-9 leading-relaxed font-medium">
                 The sanctuary for modern wealth tracking. Monitor income, manage budgets, and grow your stability with FinTrack.
               </p>
               <div className="flex flex-wrap gap-4">
                 <button 
                   onClick={onGetStarted}
-                  className="bg-emerald-zenith-primary text-emerald-zenith-accent px-10 py-4 rounded-xl font-black text-lg hover:brightness-110 active:scale-95 transition-all shadow-2xl shadow-emerald-500/30"
+                  className="bg-emerald-zenith-primary text-emerald-zenith-accent px-8 py-3.5 rounded-xl font-black text-base hover:brightness-110 active:scale-95 transition-all shadow-2xl shadow-emerald-500/30"
                 >
                   Get Started
                 </button>
-                <button className="border border-emerald-900/20 px-10 py-4 rounded-xl font-black text-lg hover:bg-emerald-zenith-surface-high transition-all text-emerald-zenith-text flex items-center gap-2">
+                <button className="border border-emerald-900/20 px-8 py-3.5 rounded-xl font-black text-base hover:bg-emerald-zenith-surface-high transition-all text-emerald-zenith-text flex items-center gap-2">
                   <Play className="w-5 h-5 fill-current" />
                   Watch Demo
                 </button>
@@ -88,36 +88,22 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
               transition={{ duration: 1, ease: "easeOut" }}
               className="relative group"
             >
-              {/* Abstract Modern Visual */}
-              <div className="relative aspect-square flex items-center justify-center">
-                <div className="absolute inset-0 bg-emerald-zenith-primary/20 blur-[100px] rounded-full animate-pulse" />
-                <div className="relative w-full h-full bg-emerald-zenith-surface/60 backdrop-blur-3xl rounded-[3rem] overflow-hidden shadow-2xl p-8 flex flex-col justify-between border border-emerald-900/30">
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-2">
-                      <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                      <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                      <div className="w-3 h-3 rounded-full bg-green-500/50" />
+              <div className="relative aspect-[1.05/1] flex items-center justify-center">
+                <div className="absolute inset-0 bg-emerald-zenith-primary/20 blur-[90px] rounded-full animate-pulse" />
+                <div className="relative w-full h-full bg-emerald-zenith-surface/65 backdrop-blur-3xl rounded-[2.2rem] overflow-hidden shadow-2xl p-5 flex flex-col justify-between border border-emerald-900/30">
+                  <img
+                    alt="Modern finance workspace with analytics dashboards"
+                    className="h-full w-full rounded-2xl object-cover"
+                    src="https://images.unsplash.com/photo-1551281044-8b2d7c99ff4f?auto=format&fit=crop&w=1400&q=80"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute left-8 right-8 bottom-7 rounded-xl border border-emerald-900/30 bg-emerald-zenith-bg/70 backdrop-blur-md px-4 py-3 flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-zenith-text-muted">Live balance</p>
+                      <p className="text-2xl font-black tracking-tight text-emerald-zenith-text">$124,592.00</p>
                     </div>
-                    <span className="text-xs font-bold text-emerald-400/50 tracking-widest uppercase">Sanctuary V1.0</span>
-                  </div>
-                  
-                  {/* Mockup Core */}
-                  <div className="flex-1 flex flex-col justify-center py-8">
-                    <div className="space-y-6">
-                      <div className="h-2 bg-emerald-400/10 rounded-full w-24" />
-                      <div className="h-16 bg-emerald-400/20 rounded-2xl w-full" />
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="h-32 bg-emerald-400/5 rounded-2xl" />
-                        <div className="h-32 bg-emerald-400/15 rounded-2xl" />
-                      </div>
-                      <div className="h-24 bg-emerald-400/10 rounded-2xl w-full" />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-end">
-                    <div className="text-4xl font-black text-emerald-400 tracking-tighter">$124,592.00</div>
-                    <div className="w-12 h-12 rounded-xl bg-emerald-zenith-primary flex items-center justify-center shadow-lg shadow-emerald-500/40">
-                      <TrendingUp className="text-emerald-zenith-accent w-6 h-6" />
+                    <div className="w-10 h-10 rounded-lg bg-emerald-zenith-primary flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                      <TrendingUp className="text-emerald-zenith-accent w-5 h-5" />
                     </div>
                   </div>
                 </div>
@@ -137,57 +123,71 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 auto-rows-[320px]">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[250px]">
               {/* Feature 1: Insightful Tracking */}
-              <div className="md:col-span-8 bg-emerald-zenith-surface-low rounded-3xl p-10 border border-emerald-900/10 flex flex-col justify-between group hover:border-emerald-zenith-primary/40 transition-all duration-500 overflow-hidden relative">
+              <div className="md:col-span-8 rounded-3xl p-7 border border-emerald-900/10 flex flex-col justify-between group hover:border-emerald-zenith-primary/40 transition-all duration-500 overflow-hidden relative bg-emerald-zenith-surface">
+                <div className="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_82%_25%,rgba(52,211,153,0.16),transparent_52%)]" />
                 <div className="max-w-md relative z-10">
-                  <div className="w-14 h-14 bg-emerald-400/10 rounded-xl flex items-center justify-center mb-8">
-                    <ReceiptText className="text-emerald-zenith-primary w-8 h-8" />
+                  <div className="w-12 h-12 bg-emerald-400/10 rounded-xl flex items-center justify-center mb-5">
+                    <ReceiptText className="text-emerald-zenith-primary w-6 h-6" />
                   </div>
-                  <h3 className="text-3xl font-bold tracking-tight mb-4 text-emerald-zenith-text">Insightful Tracking</h3>
-                  <p className="text-emerald-zenith-text-muted font-medium">Sophisticated income and expense tracking that categorizes your life automatically with precision.</p>
+                  <h3 className="text-2xl font-bold tracking-tight mb-3 text-emerald-zenith-text">Insightful Tracking</h3>
+                  <p className="text-sm text-emerald-zenith-text-muted font-medium leading-relaxed">Track spending by merchant, category, and account in one timeline so patterns are obvious at a glance.</p>
                 </div>
-                <div className="absolute bottom-0 right-0 w-2/3 h-1/2 opacity-20 group-hover:opacity-40 transition-opacity">
-                  <img 
-                    alt="Tracking Visual" 
-                    className="w-full h-full object-contain" 
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfLoHnC1DAi5g50gDu2KDg-U3n2oR5Qb52dPziXbel1dt3Rp1AJotuF6wEfJeIANc6uRafxr5jOVqXKW2koPOdCW--isGgQxd4R5zEw5Gjgcl_XX6evuEn4JJqjPO8dJBWfXwpyn9pdZQI_qpEFC_ZoQutzhqvLv1FV1ctb6uVIqlMLPZV0jzYQTfZ6xViOZJ6MIXoXDqoYLnUVwEzTHYs8sUTzqDAjQDdJ2XdlgBNT2U8sQOPthVxfmBaaFwZvvuhOUr83Ojbftw" 
-                    referrerPolicy="no-referrer"
-                  />
+                <div className="relative z-10 grid grid-cols-3 gap-3 max-w-md mt-4">
+                  <div className="rounded-xl border border-emerald-900/25 bg-emerald-zenith-surface-high/70 p-3">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-emerald-zenith-text-muted">Food</p>
+                    <p className="mt-1 text-sm font-bold text-emerald-zenith-text">$842</p>
+                  </div>
+                  <div className="rounded-xl border border-emerald-900/25 bg-emerald-zenith-surface-high/70 p-3">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-emerald-zenith-text-muted">Travel</p>
+                    <p className="mt-1 text-sm font-bold text-emerald-zenith-text">$290</p>
+                  </div>
+                  <div className="rounded-xl border border-emerald-900/25 bg-emerald-zenith-surface-high/70 p-3">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-emerald-zenith-text-muted">Bills</p>
+                    <p className="mt-1 text-sm font-bold text-emerald-zenith-text">$1,120</p>
+                  </div>
                 </div>
               </div>
 
               {/* Feature 2: Visual Wealth */}
-              <div className="md:col-span-4 bg-emerald-zenith-primary rounded-3xl p-10 flex flex-col justify-between text-emerald-zenith-accent group hover:brightness-110 transition-all duration-500 shadow-2xl shadow-emerald-500/10">
-                <div className="w-14 h-14 bg-emerald-zenith-accent/10 rounded-xl flex items-center justify-center">
-                  <TrendingUp className="text-emerald-zenith-accent w-8 h-8" />
+              <div className="md:col-span-4 bg-emerald-zenith-primary rounded-3xl p-7 flex flex-col justify-between text-emerald-zenith-accent group hover:brightness-110 transition-all duration-500 shadow-2xl shadow-emerald-500/10">
+                <div className="w-12 h-12 bg-emerald-zenith-accent/10 rounded-xl flex items-center justify-center">
+                  <TrendingUp className="text-emerald-zenith-accent w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-3xl font-bold tracking-tight mb-4 leading-none">Visual Wealth</h3>
+                  <h3 className="text-2xl font-bold tracking-tight mb-3 leading-none">Visual Wealth</h3>
                   <p className="text-emerald-zenith-accent/70 font-medium text-sm">Cinematic charts and graphs that make your progress undeniable and beautiful.</p>
                 </div>
               </div>
 
               {/* Feature 3: Strategic Budgets */}
-              <div className="md:col-span-5 bg-emerald-zenith-surface-high rounded-3xl p-10 border border-emerald-900/10 flex flex-col justify-center group hover:bg-emerald-zenith-surface-highest transition-all duration-300">
-                <div className="w-14 h-14 bg-emerald-400/10 rounded-xl flex items-center justify-center mb-8">
-                  <Wallet className="text-emerald-zenith-primary w-8 h-8" />
+              <div className="md:col-span-5 bg-emerald-zenith-surface-high rounded-3xl p-7 border border-emerald-900/10 flex flex-col justify-center group hover:bg-emerald-zenith-surface-highest transition-all duration-300">
+                <div className="w-12 h-12 bg-emerald-400/10 rounded-xl flex items-center justify-center mb-5">
+                  <Wallet className="text-emerald-zenith-primary w-6 h-6" />
                 </div>
-                <h3 className="text-3xl font-bold tracking-tight mb-4 text-emerald-zenith-text">Strategic Budgets</h3>
-                <p className="text-emerald-zenith-text-muted font-medium">Define your boundaries. Grow your sanctuary. Master your spending with granular control.</p>
+                <h3 className="text-2xl font-bold tracking-tight mb-3 text-emerald-zenith-text">Strategic Budgets</h3>
+                <p className="text-sm text-emerald-zenith-text-muted font-medium leading-relaxed">Define your boundaries. Grow your sanctuary. Master your spending with granular control.</p>
               </div>
 
               {/* Feature 4: Actionable Analytics */}
-              <div className="md:col-span-7 bg-emerald-zenith-surface/60 backdrop-blur-3xl rounded-3xl p-10 flex items-center gap-8 group border border-emerald-900/30">
+              <div className="md:col-span-7 rounded-3xl p-7 flex items-center gap-6 group border border-emerald-900/30 bg-emerald-zenith-surface/75 backdrop-blur-3xl overflow-hidden relative">
+                <div className="absolute inset-0 opacity-55 bg-[radial-gradient(circle_at_90%_18%,rgba(47,184,223,0.22),transparent_46%)]" />
                 <div className="flex-1">
-                  <div className="w-14 h-14 bg-emerald-400/10 rounded-xl flex items-center justify-center mb-8">
-                    <TrendingUp className="text-emerald-zenith-primary w-8 h-8" />
+                  <div className="w-12 h-12 bg-emerald-400/10 rounded-xl flex items-center justify-center mb-5">
+                    <TrendingUp className="text-emerald-zenith-primary w-6 h-6" />
                   </div>
-                  <h3 className="text-3xl font-bold tracking-tight mb-4 text-emerald-zenith-text">Actionable Analytics</h3>
-                  <p className="text-emerald-zenith-text-muted font-medium">AI-driven insights that predict trends before they impact your balance, giving you the edge.</p>
+                  <h3 className="text-2xl font-bold tracking-tight mb-3 text-emerald-zenith-text relative z-10">Actionable Analytics</h3>
+                  <p className="text-sm text-emerald-zenith-text-muted font-medium relative z-10 leading-relaxed">Get trend alerts and concrete actions like reduce category overspend, shift saving targets, and rebalance monthly budgets.</p>
                 </div>
-                <div className="hidden sm:block w-48 h-full bg-emerald-400/5 rounded-2xl border border-emerald-400/10 overflow-hidden relative">
-                  <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-emerald-zenith-primary/20" />
+                <div className="hidden sm:flex flex-col justify-center gap-2 w-44 rounded-2xl border border-emerald-400/15 bg-emerald-zenith-bg/45 p-3 relative z-10">
+                  <div className="h-2 rounded-full bg-emerald-zenith-primary/25 w-[72%]" />
+                  <div className="h-2 rounded-full bg-emerald-zenith-secondary/30 w-[54%]" />
+                  <div className="h-2 rounded-full bg-emerald-zenith-primary/20 w-[84%]" />
+                  <div className="mt-2 rounded-lg border border-emerald-900/25 bg-emerald-zenith-surface-high/70 p-2">
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-emerald-zenith-text-muted">Forecast</p>
+                    <p className="text-sm font-bold text-emerald-zenith-text">+8.2% cash flow</p>
+                  </div>
                 </div>
               </div>
             </div>
