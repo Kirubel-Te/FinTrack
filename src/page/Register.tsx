@@ -65,7 +65,7 @@ export default function RegisterPage({ onRegisterSuccess, onSignIn }: RegisterPa
       if (typeof onRegisterSuccess === 'function') {
         onRegisterSuccess(successNotice);
       } else {
-        navigate('/', { state: { notice: successNotice } });
+        navigate('/login', { state: { notice: successNotice } });
       }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unable to create your account.');

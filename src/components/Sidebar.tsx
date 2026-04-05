@@ -17,10 +17,10 @@ const profile = {
 };
 
 const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-  { icon: ReceiptText, label: 'Transactions', path: '/transactions' },
-  { icon: Wallet, label: 'Budgets', path: '/budgets' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/app' },
+  { icon: ReceiptText, label: 'Transactions', path: '/app/transactions' },
+  { icon: Wallet, label: 'Budgets', path: '/app/budgets' },
+  { icon: Settings, label: 'Settings', path: '/app/settings' },
 ];
 
 export function Sidebar() {
@@ -37,7 +37,7 @@ export function Sidebar() {
           <NavLink
             key={item.label}
             to={item.path}
-            end={item.path === '/'}
+            end={item.path === '/app'}
             className={({ isActive }) =>
               cn(
                 "flex items-center justify-center md:justify-start gap-0 md:gap-2.5 px-2 md:px-3.5 py-2.5 rounded-lg transition-all duration-200 group",

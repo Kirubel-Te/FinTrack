@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Wallet, Eye, EyeOff } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import {
   AUTH_STORAGE_KEY,
   AUTH_TOKEN_STORAGE_KEY,
@@ -14,17 +14,23 @@ type LoginPageProps = {
   notice?: string | null;
 };
 
+type LoginLocationState = {
+  notice?: string;
+};
+
 export default function LoginPage({ onCreateAccount, onLoginSuccess, notice }: LoginPageProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const routedNotice = (location.state as LoginLocationState | null)?.notice ?? null;
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(notice ?? null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(notice ?? routedNotice);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    setSuccessMessage(notice ?? null);
-  }, [notice]);
+    setSuccessMessage(notice ?? routedNotice ?? null);
+  }, [notice, routedNotice]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -59,7 +65,7 @@ export default function LoginPage({ onCreateAccount, onLoginSuccess, notice }: L
       if (typeof onLoginSuccess === 'function') {
         onLoginSuccess(successNotice);
       } else {
-        navigate('/', { state: { notice: successNotice } });
+        navigate('/app', { state: { notice: successNotice } });
       }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unable to log in.');

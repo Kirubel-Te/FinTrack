@@ -45,7 +45,7 @@ export function TransactionTable() {
           <p className="text-xs md:text-sm text-emerald-zenith-text-muted">Your latest financial activity</p>
         </div>
         <Link
-          to="/transactions"
+          to="/app/transactions"
           className="text-emerald-zenith-primary text-xs md:text-sm font-bold hover:underline transition-all whitespace-nowrap"
         >
           View All History
