@@ -94,7 +94,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                   <img
                     alt="Modern finance workspace with analytics dashboards"
                     className="h-full w-full rounded-2xl object-cover"
-                    src="https://images.unsplash.com/photo-1551281044-8b2d7c99ff4f?auto=format&fit=crop&w=1400&q=80"
+                    src="https://images.pexels.com/photos/6693655/pexels-photo-6693655.jpeg?auto=compress&cs=tinysrgb&w=1600"
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute left-8 right-8 bottom-7 rounded-xl border border-emerald-900/30 bg-emerald-zenith-bg/70 backdrop-blur-md px-4 py-3 flex items-center justify-between">
@@ -218,44 +218,44 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
         </section>
 
         {/* Dashboard Preview Section */}
-        <section className="px-8 py-32 bg-emerald-zenith-bg">
-          <div className="max-w-7xl mx-auto rounded-[3rem] border border-emerald-900/30 bg-emerald-zenith-surface p-8 md:p-16 shadow-2xl relative overflow-hidden group">
+        <section className="px-8 py-20 bg-emerald-zenith-bg">
+          <div className="max-w-7xl mx-auto rounded-[2.4rem] border border-emerald-900/30 bg-emerald-zenith-surface p-6 md:p-10 shadow-2xl relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-zenith-primary to-transparent" />
-            <div className="grid lg:grid-cols-12 gap-16 items-center">
-              <div className="lg:col-span-5 space-y-10">
-                <h2 className="text-5xl font-extrabold tracking-tighter text-emerald-zenith-text leading-none">The Dashboard Experience</h2>
-                <div className="p-10 bg-emerald-zenith-surface-high rounded-3xl border border-emerald-900/20 shadow-xl">
+            <div className="grid lg:grid-cols-12 gap-10 items-center">
+              <div className="lg:col-span-5 space-y-6">
+                <h2 className="text-4xl md:text-[2.65rem] font-extrabold tracking-tighter text-emerald-zenith-text leading-none">The Dashboard Experience</h2>
+                <div className="p-6 bg-emerald-zenith-surface-high rounded-2xl border border-emerald-900/20 shadow-xl">
                   <p className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2">Current Sanctuary Balance</p>
-                  <p className="text-5xl font-black tracking-tighter text-emerald-zenith-text">$142,850.42</p>
-                  <div className="mt-6 flex items-center gap-3 text-emerald-zenith-primary bg-emerald-zenith-primary/10 w-fit px-4 py-1.5 rounded-full">
-                    <TrendingUp className="w-5 h-5" />
-                    <span className="text-sm font-black">+12.4% this month</span>
+                  <p className="text-4xl md:text-[2.7rem] font-black tracking-tighter text-emerald-zenith-text">$142,850.42</p>
+                  <div className="mt-4 flex items-center gap-2.5 text-emerald-zenith-primary bg-emerald-zenith-primary/10 w-fit px-3 py-1.5 rounded-full">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-xs font-black">+12.4% this month</span>
                   </div>
                 </div>
-                <ul className="space-y-6">
+                <ul className="space-y-4">
                   {[
                     "High-fidelity chart visualization",
                     "Multi-currency support",
                     "Real-time transaction feed"
                   ].map((text, i) => (
-                    <li key={i} className="flex items-center gap-4 text-emerald-zenith-text-muted text-lg font-semibold">
-                      <CheckCircle className="text-emerald-zenith-primary w-6 h-6" />
+                    <li key={i} className="flex items-center gap-3 text-emerald-zenith-text-muted text-base font-semibold">
+                      <CheckCircle className="text-emerald-zenith-primary w-5 h-5" />
                       {text}
                     </li>
                   ))}
                 </ul>
               </div>
               <div className="lg:col-span-7">
-                <div className="bg-emerald-zenith-surface-high rounded-3xl border border-emerald-900/30 p-6 shadow-2xl relative">
-                  <div className="flex gap-2 mb-6">
+                <div className="bg-emerald-zenith-surface-high rounded-2xl border border-emerald-900/30 p-4 shadow-2xl relative">
+                  <div className="flex gap-2 mb-4">
                     <div className="w-3 h-3 rounded-full bg-red-500/50" />
                     <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
                     <div className="w-3 h-3 rounded-full bg-green-500/50" />
                   </div>
                   <img 
-                    alt="Dashboard Core UI" 
+                    alt="Modern dashboard analytics interface" 
                     className="rounded-2xl w-full h-auto shadow-inner" 
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVkriHBkRtCifozYpZobn83F5nBfVPLjvYM8mxyuaH7x8ceRyv7J1sRYUozev_UTuDTVo23VHWy6krWGnj_SatPKrTe5UT7svO4sdPj1JlkOcBMwIf0HfKucMLe-k4dzLga9sIFptIpYHXjt-LNE-UtodOrGNuQg6rqtolkc2FILDBkbnNwleEkW4KmED1tE0Dz_iw-BfefOrV1CaZDQFAOwR4vuOkgemcHb8Ofe-7862jHIRqEyGdILs3ovt24yAE6HsP1x1IguE" 
+                    src="https://images.pexels.com/photos/7947709/pexels-photo-7947709.jpeg?auto=compress&cs=tinysrgb&w=1600"
                     referrerPolicy="no-referrer"
                   />
                 </div>
@@ -265,35 +265,35 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
         </section>
 
         {/* Benefits Section */}
-        <section id="benefits" className="px-8 py-32 max-w-7xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-24 text-emerald-zenith-text">Why FinTrack?</h2>
-          <div className="grid md:grid-cols-3 gap-16">
+        <section id="benefits" className="px-8 py-20 max-w-7xl mx-auto text-center">
+          <h2 className="text-4xl md:text-[2.6rem] font-extrabold tracking-tighter mb-14 text-emerald-zenith-text">Why FinTrack?</h2>
+          <div className="grid md:grid-cols-3 gap-8">
             {[
               { icon: Sparkles, title: "Stay organized", desc: "Centralize every account, card, and investment into one cohesive, peaceful sanctuary." },
               { icon: ShieldCheck, title: "Avoid overspending", desc: "Intelligent alerts and real-time spending limits keep your financial health on track effortlessly." },
               { icon: Bot, title: "Smarter decisions", desc: "Leverage deep data to understand exactly where your wealth can grow the most for the future." }
             ].map((item, i) => (
-              <div key={i} className="p-10 rounded-3xl bg-emerald-zenith-surface-low border border-emerald-900/10 group hover:border-emerald-zenith-primary/40 transition-all">
-                <div className="w-20 h-20 bg-emerald-zenith-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-10 group-hover:scale-110 transition-transform">
-                  <item.icon className="text-emerald-zenith-primary w-10 h-10" />
+              <div key={i} className="p-7 rounded-3xl bg-emerald-zenith-surface-low border border-emerald-900/10 group hover:border-emerald-zenith-primary/40 transition-all">
+                <div className="w-14 h-14 bg-emerald-zenith-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                  <item.icon className="text-emerald-zenith-primary w-7 h-7" />
                 </div>
-                <h3 className="text-2xl font-bold mb-6 text-emerald-zenith-text tracking-tight">{item.title}</h3>
-                <p className="text-emerald-zenith-text-muted font-medium leading-relaxed">{item.desc}</p>
+                <h3 className="text-xl font-bold mb-4 text-emerald-zenith-text tracking-tight">{item.title}</h3>
+                <p className="text-sm text-emerald-zenith-text-muted font-medium leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* Final CTA */}
-        <section className="px-8 pb-32">
-          <div className="max-w-5xl mx-auto bg-gradient-to-br from-emerald-900/80 to-emerald-zenith-surface-high rounded-[4rem] p-16 md:p-24 text-center relative overflow-hidden border border-emerald-900/20 shadow-2xl">
+        <section className="px-8 pb-20">
+          <div className="max-w-4xl mx-auto bg-gradient-to-br from-emerald-900/80 to-emerald-zenith-surface-high rounded-[2.6rem] p-10 md:p-14 text-center relative overflow-hidden border border-emerald-900/20 shadow-2xl">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent)]" />
             <div className="relative z-10">
-              <h2 className="text-5xl md:text-6xl font-extrabold mb-8 tracking-tighter leading-tight text-emerald-zenith-text">Start managing your finances today</h2>
-              <p className="text-xl text-emerald-100/60 mb-12 max-w-2xl mx-auto font-medium">Join thousands of curators who have found their financial peace within the sanctuary.</p>
+              <h2 className="text-4xl md:text-5xl font-extrabold mb-5 tracking-tighter leading-tight text-emerald-zenith-text">Start managing your finances today</h2>
+              <p className="text-base md:text-lg text-emerald-100/60 mb-8 max-w-2xl mx-auto font-medium">Join thousands of curators who have found their financial peace within the sanctuary.</p>
               <button 
                 onClick={onGetStarted}
-                className="bg-emerald-zenith-primary text-emerald-zenith-accent px-12 py-6 rounded-2xl font-black text-2xl hover:brightness-110 active:scale-95 transition-all shadow-2xl shadow-emerald-500/40"
+                className="bg-emerald-zenith-primary text-emerald-zenith-accent px-9 py-4 rounded-2xl font-black text-lg hover:brightness-110 active:scale-95 transition-all shadow-2xl shadow-emerald-500/40"
               >
                 Create Free Account
               </button>
