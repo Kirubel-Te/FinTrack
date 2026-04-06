@@ -23,6 +23,11 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+
   body {
     @apply font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased;
     background-image:

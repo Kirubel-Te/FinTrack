@@ -10,7 +10,14 @@ import {
   Globe,
   Play
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
+
+const navItems = [
+  { label: 'Features', href: '#features', sectionId: 'features' },
+  { label: 'How it Works', href: '#how-it-works', sectionId: 'how-it-works' },
+  { label: 'Benefits', href: '#benefits', sectionId: 'benefits' },
+];
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -18,6 +25,43 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
+  const [activeSection, setActiveSection] = useState(navItems[0].sectionId);
+
+  useEffect(() => {
+    const sectionElements = navItems
+      .map((item) => document.getElementById(item.sectionId))
+      .filter((element): element is HTMLElement => element !== null);
+
+    if (sectionElements.length === 0) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((left, right) => right.intersectionRatio - left.intersectionRatio)[0];
+
+        if (visibleEntry?.target.id) {
+          setActiveSection(visibleEntry.target.id);
+        }
+      },
+      {
+        rootMargin: '-35% 0px -45% 0px',
+        threshold: [0.15, 0.3, 0.45, 0.6],
+      }
+    );
+
+    sectionElements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleNavClick = (sectionId: string) => {
+    setActiveSection(sectionId);
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <div className="min-h-screen bg-emerald-zenith-bg text-emerald-zenith-text selection:bg-emerald-zenith-primary/30 font-body overflow-x-hidden">
       {/* TopAppBar */}
@@ -28,9 +72,29 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
             <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-100/40">Financial Sanctuary</div>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm font-semibold">
-            <a className="text-emerald-zenith-primary border-b-2 border-emerald-zenith-primary pb-1" href="#features">Features</a>
-            <a className="text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-colors" href="#how-it-works">How it Works</a>
-            <a className="text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-colors" href="#benefits">Benefits</a>
+            {navItems.map((item) => {
+              const isActive = activeSection === item.sectionId;
+
+              return (
+                <a
+                  key={item.sectionId}
+                  href={item.href}
+                  aria-current={isActive ? 'location' : undefined}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    handleNavClick(item.sectionId);
+                  }}
+                  className={[
+                    'rounded-full px-4 py-2 transition-all duration-300',
+                    isActive
+                      ? 'bg-emerald-zenith-primary/10 text-emerald-zenith-primary shadow-[0_0_0_1px_rgba(52,211,153,0.18)]'
+                      : 'text-emerald-zenith-text-muted hover:bg-white/5 hover:text-emerald-zenith-text',
+                  ].join(' ')}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
           </div>
           <div className="flex items-center gap-4">
             <button 
@@ -113,8 +177,8 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
         </section>
 
         {/* Bento Features */}
-        <section id="features" className="px-8 py-32 bg-emerald-zenith-bg relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-900/30 to-transparent" />
+        <section id="features" className="scroll-mt-24 px-8 py-32 bg-emerald-zenith-bg relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-emerald-900/30 to-transparent" />
           <div className="max-w-7xl mx-auto relative z-10">
             <div className="text-center mb-24">
               <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-6 text-emerald-zenith-text">Crafted for Clarity</h2>
@@ -195,7 +259,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
         </section>
 
         {/* How It Works (Steps) */}
-        <section id="how-it-works" className="px-8 py-32 max-w-7xl mx-auto">
+        <section id="how-it-works" className="scroll-mt-24 px-8 py-32 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row gap-20 items-start">
             <div className="md:w-1/3">
               <h2 className="text-5xl font-extrabold tracking-tighter mb-8 leading-none text-emerald-zenith-text">A Journey to Stability.</h2>
@@ -220,7 +284,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
         {/* Dashboard Preview Section */}
         <section className="px-8 py-20 bg-emerald-zenith-bg">
           <div className="max-w-7xl mx-auto rounded-[2.4rem] border border-emerald-900/30 bg-emerald-zenith-surface p-6 md:p-10 shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-zenith-primary to-transparent" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-emerald-zenith-primary to-transparent" />
             <div className="grid lg:grid-cols-12 gap-10 items-center">
               <div className="lg:col-span-5 space-y-6">
                 <h2 className="text-4xl md:text-[2.65rem] font-extrabold tracking-tighter text-emerald-zenith-text leading-none">The Dashboard Experience</h2>
@@ -265,7 +329,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
         </section>
 
         {/* Benefits Section */}
-        <section id="benefits" className="px-8 py-20 max-w-7xl mx-auto text-center">
+        <section id="benefits" className="scroll-mt-24 px-8 py-20 max-w-7xl mx-auto text-center">
           <h2 className="text-4xl md:text-[2.6rem] font-extrabold tracking-tighter mb-14 text-emerald-zenith-text">Why FinTrack?</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
@@ -286,7 +350,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
 
         {/* Final CTA */}
         <section className="px-8 pb-20">
-          <div className="max-w-4xl mx-auto bg-gradient-to-br from-emerald-900/80 to-emerald-zenith-surface-high rounded-[2.6rem] p-10 md:p-14 text-center relative overflow-hidden border border-emerald-900/20 shadow-2xl">
+          <div className="max-w-4xl mx-auto bg-linear-to-br from-emerald-900/80 to-emerald-zenith-surface-high rounded-[2.6rem] p-10 md:p-14 text-center relative overflow-hidden border border-emerald-900/20 shadow-2xl">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent)]" />
             <div className="relative z-10">
               <h2 className="text-4xl md:text-5xl font-extrabold mb-5 tracking-tighter leading-tight text-emerald-zenith-text">Start managing your finances today</h2>
