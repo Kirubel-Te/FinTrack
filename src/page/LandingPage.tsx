@@ -349,18 +349,102 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
         </section>
 
         {/* Final CTA */}
-        <section className="px-8 pb-20">
-          <div className="max-w-4xl mx-auto bg-linear-to-br from-emerald-900/80 to-emerald-zenith-surface-high rounded-[2.6rem] p-10 md:p-14 text-center relative overflow-hidden border border-emerald-900/20 shadow-2xl">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent)]" />
-            <div className="relative z-10">
-              <h2 className="text-4xl md:text-5xl font-extrabold mb-5 tracking-tighter leading-tight text-emerald-zenith-text">Start managing your finances today</h2>
-              <p className="text-base md:text-lg text-emerald-100/60 mb-8 max-w-2xl mx-auto font-medium">Join thousands of curators who have found their financial peace within the sanctuary.</p>
-              <button 
-                onClick={onGetStarted}
-                className="bg-emerald-zenith-primary text-emerald-zenith-accent px-9 py-4 rounded-2xl font-black text-lg hover:brightness-110 active:scale-95 transition-all shadow-2xl shadow-emerald-500/40"
-              >
-                Create Free Account
-              </button>
+        <section className="px-8 pb-24 pt-8">
+          <div className="max-w-7xl mx-auto relative overflow-hidden rounded-[2.4rem] border border-emerald-900/25 bg-emerald-zenith-surface/85 shadow-2xl">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(52,211,153,0.18),transparent_38%),radial-gradient(circle_at_bottom_left,rgba(47,184,223,0.12),transparent_36%)]" />
+            <div className="absolute -top-24 -right-12 h-64 w-64 rounded-full bg-emerald-zenith-primary/20 blur-[120px]" />
+            <div className="absolute -bottom-28 -left-16 h-72 w-72 rounded-full bg-emerald-zenith-secondary/15 blur-[130px]" />
+
+            <div className="relative z-10 grid gap-10 p-8 md:p-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+              <div className="max-w-2xl">
+                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-zenith-primary/20 bg-emerald-zenith-bg/50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-zenith-primary">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Ready when you are
+                </div>
+                <h2 className="mt-5 text-4xl md:text-5xl font-black tracking-tighter leading-[0.96] text-emerald-zenith-text">
+                  Start managing your finances today
+                </h2>
+                <p className="mt-5 max-w-xl text-base md:text-lg leading-relaxed text-emerald-zenith-text-muted font-medium">
+                  Set up your money system in a space that feels calm, polished, and built for momentum. Track spending, shape budgets, and move with more clarity from day one.
+                </p>
+
+                <div className="mt-8 flex flex-wrap gap-4">
+                  <button 
+                    onClick={onGetStarted}
+                    className="inline-flex items-center justify-center rounded-2xl bg-emerald-zenith-primary px-7 py-4 text-sm font-black text-emerald-zenith-accent transition-all hover:brightness-110 active:scale-95 shadow-2xl shadow-emerald-500/35"
+                  >
+                    Create Free Account
+                  </button>
+                  <a
+                    href="#features"
+                    className="inline-flex items-center justify-center rounded-2xl border border-emerald-zenith-text/15 bg-emerald-zenith-bg/35 px-7 py-4 text-sm font-bold text-emerald-zenith-text transition-all hover:border-emerald-zenith-primary/40 hover:bg-emerald-zenith-primary/10 hover:text-emerald-zenith-primary"
+                  >
+                    Explore Features
+                  </a>
+                </div>
+
+                <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                  {[
+                    { title: '3 min setup', desc: 'Create your space without friction.' },
+                    { title: 'Live visibility', desc: 'See money movement as it happens.' },
+                    { title: 'Private by design', desc: 'Designed to feel secure and focused.' },
+                  ].map((item) => (
+                    <div key={item.title} className="rounded-2xl border border-emerald-900/20 bg-emerald-zenith-bg/45 px-4 py-4 backdrop-blur-sm">
+                      <p className="text-sm font-black tracking-tight text-emerald-zenith-text">{item.title}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-emerald-zenith-text-muted">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-0 rounded-4xl bg-emerald-zenith-primary/10 blur-3xl" />
+                <div className="relative rounded-4xl border border-emerald-900/25 bg-emerald-zenith-bg/60 p-5 shadow-2xl backdrop-blur-xl">
+                  <div className="flex items-center justify-between border-b border-emerald-900/20 pb-4">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-zenith-text-muted">Momentum snapshot</p>
+                      <p className="mt-2 text-2xl font-black tracking-tight text-emerald-zenith-text">$12,480.22</p>
+                    </div>
+                    <div className="rounded-full border border-emerald-zenith-primary/20 bg-emerald-zenith-primary/10 px-3 py-1.5 text-xs font-bold text-emerald-zenith-primary">
+                      +12.4% this month
+                    </div>
+                  </div>
+
+                  <div className="mt-5 space-y-3">
+                    {[
+                      { label: 'Budget pacing', value: '72%' },
+                      { label: 'Savings goal', value: '91%' },
+                      { label: 'Spending control', value: 'Excellent' },
+                    ].map((item, index) => (
+                      <div key={item.label} className="rounded-2xl border border-emerald-900/20 bg-emerald-zenith-surface/60 p-4">
+                        <div className="flex items-center justify-between gap-4">
+                          <div>
+                            <p className="text-sm font-semibold text-emerald-zenith-text">{item.label}</p>
+                            <p className="mt-1 text-xs text-emerald-zenith-text-muted">Weekly financial health update</p>
+                          </div>
+                          <p className="text-sm font-black text-emerald-zenith-primary">{item.value}</p>
+                        </div>
+                        <div className="mt-3 h-2 overflow-hidden rounded-full bg-emerald-zenith-bg">
+                          <div
+                            className="h-full rounded-full bg-emerald-zenith-primary"
+                            style={{ width: index === 0 ? '72%' : index === 1 ? '91%' : '100%' }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-5 flex items-center gap-3 rounded-2xl border border-emerald-900/20 bg-emerald-zenith-surface-high/70 px-4 py-4">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-zenith-primary/10 text-emerald-zenith-primary">
+                      <CheckCircle className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-emerald-zenith-text">Everything ready for launch</p>
+                      <p className="text-xs text-emerald-zenith-text-muted">Start with a clean dashboard and a focused workflow.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
