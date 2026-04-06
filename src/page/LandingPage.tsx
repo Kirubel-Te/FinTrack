@@ -20,6 +20,41 @@ const navItems = [
 ];
 
 const NAV_SCROLL_OFFSET = 96;
+const EASE_OUT: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+const sectionReveal = {
+  initial: { opacity: 0, y: 26 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.2 },
+  transition: { duration: 0.6, ease: EASE_OUT },
+};
+
+const staggerReveal = {
+  hidden: { opacity: 1 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const cardReveal = {
+  hidden: { opacity: 0, y: 18 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: EASE_OUT },
+  },
+};
+
+const footerReveal = {
+  initial: { opacity: 0 },
+  whileInView: { opacity: 1 },
+  viewport: { once: true, amount: 0.12 },
+  transition: { duration: 0.5, ease: EASE_OUT },
+};
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -241,7 +276,11 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
         </section>
 
         {/* Bento Features */}
-        <section id="features" className="scroll-mt-24 px-8 py-32 bg-emerald-zenith-bg relative overflow-hidden">
+        <motion.section
+          id="features"
+          className="scroll-mt-24 px-8 py-32 bg-emerald-zenith-bg relative overflow-hidden"
+          {...sectionReveal}
+        >
           <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-emerald-900/30 to-transparent" />
           <div className="absolute -top-16 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-emerald-zenith-primary/10 blur-[100px]" />
 
@@ -264,8 +303,14 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-12 auto-rows-[230px]">
-              <div className="relative overflow-hidden rounded-3xl border border-emerald-900/20 bg-emerald-zenith-surface p-7 md:col-span-7 md:row-span-2">
+            <motion.div
+              className="grid grid-cols-1 gap-6 md:grid-cols-12 auto-rows-[230px]"
+              variants={staggerReveal}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.16 }}
+            >
+              <motion.div variants={cardReveal} className="relative overflow-hidden rounded-3xl border border-emerald-900/20 bg-emerald-zenith-surface p-7 md:col-span-7 md:row-span-2">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_90%_10%,rgba(52,211,153,0.16),transparent_50%)]" />
                 <div className="relative z-10 flex h-full flex-col justify-between">
                   <div>
@@ -294,9 +339,9 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                     ))}
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="rounded-3xl bg-emerald-zenith-primary p-7 text-emerald-zenith-accent md:col-span-5">
+              <motion.div variants={cardReveal} className="rounded-3xl bg-emerald-zenith-primary p-7 text-emerald-zenith-accent md:col-span-5">
                 <div className="flex h-full flex-col justify-between">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-zenith-accent/10">
                     <TrendingUp className="h-6 w-6" />
@@ -308,9 +353,9 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                     </p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="rounded-3xl border border-emerald-900/20 bg-emerald-zenith-surface-high p-7 md:col-span-5">
+              <motion.div variants={cardReveal} className="rounded-3xl border border-emerald-900/20 bg-emerald-zenith-surface-high p-7 md:col-span-5">
                 <div className="flex h-full flex-col justify-center">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-zenith-primary/12">
                     <Wallet className="h-6 w-6 text-emerald-zenith-primary" />
@@ -320,9 +365,9 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                     Shape spending boundaries with intention and keep each category accountable.
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="relative overflow-hidden rounded-3xl border border-emerald-900/25 bg-emerald-zenith-surface/80 p-7 md:col-span-12">
+              <motion.div variants={cardReveal} className="relative overflow-hidden rounded-3xl border border-emerald-900/25 bg-emerald-zenith-surface/80 p-7 md:col-span-12">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_90%_16%,rgba(47,184,223,0.22),transparent_48%)]" />
                 <div className="relative z-10 grid h-full gap-5 sm:grid-cols-[1fr_auto] sm:items-center lg:grid-cols-[1.2fr_0.8fr]">
                   <div className="max-w-none">
@@ -345,36 +390,46 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
-        </section>
+        </motion.section>
 
         {/* How It Works (Steps) */}
-        <section id="how-it-works" className="scroll-mt-24 px-8 py-32 max-w-7xl mx-auto">
+        <motion.section
+          id="how-it-works"
+          className="scroll-mt-24 px-8 py-32 max-w-7xl mx-auto"
+          {...sectionReveal}
+        >
           <div className="flex flex-col md:flex-row gap-20 items-start">
             <div className="md:w-1/3">
               <h2 className="text-5xl font-extrabold tracking-tighter mb-8 leading-none text-emerald-zenith-text">A Journey to Stability.</h2>
               <p className="text-emerald-zenith-text-muted text-lg font-medium leading-relaxed">We've distilled wealth management into three effortless, cinematic movements.</p>
             </div>
-            <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-12">
+            <motion.div
+              className="md:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-12"
+              variants={staggerReveal}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+            >
               {[
                 { step: "01", title: "Record activity", desc: "Connect your accounts or log manually with our intuitive sidebar interface." },
                 { step: "02", title: "Monitor flow", desc: "Watch as your financial ecosystem comes to life in real-time with bento analytics." },
                 { step: "03", title: "Optimize wealth", desc: "Use precision tools to refine your budget and accelerate your growth exponentially." }
               ].map((item, i) => (
-                <div key={i} className="relative group">
+                <motion.div key={i} variants={cardReveal} className="relative group">
                   <div className="text-6xl font-black text-emerald-zenith-primary/10 mb-8 transition-colors group-hover:text-emerald-zenith-primary/20">{item.step}</div>
                   <h4 className="text-2xl font-bold mb-4 text-emerald-zenith-text tracking-tight">{item.title}</h4>
                   <p className="text-emerald-zenith-text-muted font-medium leading-relaxed">{item.desc}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Dashboard Preview Section */}
-        <section className="px-8 py-20 bg-emerald-zenith-bg">
+        <motion.section className="px-8 py-20 bg-emerald-zenith-bg" {...sectionReveal}>
           <div className="max-w-7xl mx-auto relative overflow-hidden rounded-[2.6rem] border border-emerald-900/25 bg-emerald-zenith-surface p-6 md:p-10 shadow-2xl">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_8%,rgba(52,211,153,0.14),transparent_36%),radial-gradient(circle_at_92%_88%,rgba(47,184,223,0.1),transparent_34%)]" />
             <div className="absolute top-0 left-0 h-1 w-full bg-linear-to-r from-transparent via-emerald-zenith-primary/85 to-transparent" />
@@ -462,30 +517,40 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Benefits Section */}
-        <section id="benefits" className="scroll-mt-24 px-8 py-20 max-w-7xl mx-auto text-center">
+        <motion.section
+          id="benefits"
+          className="scroll-mt-24 px-8 py-20 max-w-7xl mx-auto text-center"
+          {...sectionReveal}
+        >
           <h2 className="text-4xl md:text-[2.6rem] font-extrabold tracking-tighter mb-14 text-emerald-zenith-text">Why FinTrack?</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <motion.div
+            className="grid md:grid-cols-3 gap-8"
+            variants={staggerReveal}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+          >
             {[
               { icon: Sparkles, title: "Stay organized", desc: "Centralize every account, card, and investment into one cohesive, peaceful sanctuary." },
               { icon: ShieldCheck, title: "Avoid overspending", desc: "Intelligent alerts and real-time spending limits keep your financial health on track effortlessly." },
               { icon: Bot, title: "Smarter decisions", desc: "Leverage deep data to understand exactly where your wealth can grow the most for the future." }
             ].map((item, i) => (
-              <div key={i} className="p-7 rounded-3xl bg-emerald-zenith-surface-low border border-emerald-900/10 group hover:border-emerald-zenith-primary/40 transition-all">
+              <motion.div key={i} variants={cardReveal} className="p-7 rounded-3xl bg-emerald-zenith-surface-low border border-emerald-900/10 group hover:border-emerald-zenith-primary/40 transition-all">
                 <div className="w-14 h-14 bg-emerald-zenith-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                   <item.icon className="text-emerald-zenith-primary w-7 h-7" />
                 </div>
                 <h3 className="text-xl font-bold mb-4 text-emerald-zenith-text tracking-tight">{item.title}</h3>
                 <p className="text-sm text-emerald-zenith-text-muted font-medium leading-relaxed">{item.desc}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
         {/* Final CTA */}
-        <section className="px-8 pb-24 pt-8">
+        <motion.section className="px-8 pb-24 pt-8" {...sectionReveal}>
           <div className="max-w-7xl mx-auto relative overflow-hidden rounded-[2.4rem] border border-emerald-900/25 bg-emerald-zenith-surface/85 shadow-2xl">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(52,211,153,0.18),transparent_38%),radial-gradient(circle_at_bottom_left,rgba(47,184,223,0.12),transparent_36%)]" />
             <div className="absolute -top-24 -right-12 h-64 w-64 rounded-full bg-emerald-zenith-primary/20 blur-[120px]" />
@@ -583,11 +648,14 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-emerald-zenith-bg border-t border-emerald-900/10">
+      <motion.footer
+        className="bg-emerald-zenith-bg border-t border-emerald-900/10"
+        {...footerReveal}
+      >
         <div className="flex flex-col md:flex-row justify-between items-center w-full px-8 py-16 max-w-7xl mx-auto gap-12">
           <div className="flex flex-col items-center md:items-start gap-4">
             <div className="text-2xl font-black text-emerald-zenith-primary tracking-tighter">FinTrack</div>
@@ -604,7 +672,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
             <a className="text-emerald-400/50 hover:text-emerald-400 transition-all" href="#"><Globe className="w-6 h-6" /></a>
           </div>
         </div>
-      </footer>
+      </motion.footer>
     </div>
   );
 }
