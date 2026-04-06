@@ -283,45 +283,89 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
 
         {/* Dashboard Preview Section */}
         <section className="px-8 py-20 bg-emerald-zenith-bg">
-          <div className="max-w-7xl mx-auto rounded-[2.4rem] border border-emerald-900/30 bg-emerald-zenith-surface p-6 md:p-10 shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-emerald-zenith-primary to-transparent" />
-            <div className="grid lg:grid-cols-12 gap-10 items-center">
-              <div className="lg:col-span-5 space-y-6">
-                <h2 className="text-4xl md:text-[2.65rem] font-extrabold tracking-tighter text-emerald-zenith-text leading-none">The Dashboard Experience</h2>
-                <div className="p-6 bg-emerald-zenith-surface-high rounded-2xl border border-emerald-900/20 shadow-xl">
-                  <p className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2">Current Sanctuary Balance</p>
-                  <p className="text-4xl md:text-[2.7rem] font-black tracking-tighter text-emerald-zenith-text">$142,850.42</p>
-                  <div className="mt-4 flex items-center gap-2.5 text-emerald-zenith-primary bg-emerald-zenith-primary/10 w-fit px-3 py-1.5 rounded-full">
-                    <TrendingUp className="w-4 h-4" />
-                    <span className="text-xs font-black">+12.4% this month</span>
-                  </div>
+          <div className="max-w-7xl mx-auto relative overflow-hidden rounded-[2.6rem] border border-emerald-900/25 bg-emerald-zenith-surface p-6 md:p-10 shadow-2xl">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_8%,rgba(52,211,153,0.14),transparent_36%),radial-gradient(circle_at_92%_88%,rgba(47,184,223,0.1),transparent_34%)]" />
+            <div className="absolute top-0 left-0 h-1 w-full bg-linear-to-r from-transparent via-emerald-zenith-primary/85 to-transparent" />
+
+            <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_1.08fr]">
+              <div className="space-y-7">
+                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-zenith-primary/20 bg-emerald-zenith-bg/35 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-zenith-primary">
+                  <ReceiptText className="h-3.5 w-3.5" />
+                  Dashboard Experience
                 </div>
-                <ul className="space-y-4">
+
+                <h2 className="max-w-xl text-4xl md:text-[2.7rem] font-black tracking-tighter leading-[0.95] text-emerald-zenith-text">
+                  A financial command center that feels calm and instantly actionable.
+                </h2>
+
+                <p className="max-w-xl text-base md:text-lg font-medium leading-relaxed text-emerald-zenith-text-muted">
+                  Every metric, trend, and transaction is arranged for quick understanding. No noisy clutter, only clear signals to help you move money with confidence.
+                </p>
+
+                <div className="grid gap-3 sm:grid-cols-2">
                   {[
-                    "High-fidelity chart visualization",
-                    "Multi-currency support",
-                    "Real-time transaction feed"
-                  ].map((text, i) => (
-                    <li key={i} className="flex items-center gap-3 text-emerald-zenith-text-muted text-base font-semibold">
-                      <CheckCircle className="text-emerald-zenith-primary w-5 h-5" />
+                    { label: 'Sanctuary balance', value: '$142,850.42', icon: Wallet },
+                    { label: 'Monthly momentum', value: '+12.4%', icon: TrendingUp },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-2xl border border-emerald-900/20 bg-emerald-zenith-bg/45 p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted">{item.label}</p>
+                          <p className="mt-2 text-xl font-black tracking-tight text-emerald-zenith-text">{item.value}</p>
+                        </div>
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-zenith-primary/12 text-emerald-zenith-primary">
+                          <item.icon className="h-5 w-5" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <ul className="space-y-3">
+                  {[
+                    'Precision analytics with real-time balance changes',
+                    'Smart category signals for faster decisions',
+                    'Clear budgeting lanes with less cognitive load',
+                  ].map((text) => (
+                    <li key={text} className="flex items-center gap-3 text-sm md:text-base font-semibold text-emerald-zenith-text-muted">
+                      <CheckCircle className="h-5 w-5 text-emerald-zenith-primary" />
                       {text}
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="lg:col-span-7">
-                <div className="bg-emerald-zenith-surface-high rounded-2xl border border-emerald-900/30 p-4 shadow-2xl relative">
-                  <div className="flex gap-2 mb-4">
-                    <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                    <div className="w-3 h-3 rounded-full bg-green-500/50" />
+
+              <div className="relative">
+                <div className="absolute -inset-6 rounded-[2.1rem] bg-emerald-zenith-primary/8 blur-3xl" />
+                <div className="relative rounded-[2.1rem] border border-emerald-900/30 bg-emerald-zenith-bg/55 p-4 backdrop-blur-xl shadow-2xl">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2.5 w-2.5 rounded-full bg-rose-400/60" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-amber-300/70" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
+                    </div>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-emerald-zenith-text-muted">Live preview</p>
                   </div>
-                  <img 
-                    alt="Modern dashboard analytics interface" 
-                    className="rounded-2xl w-full h-auto shadow-inner" 
+
+                  <img
+                    alt="Modern dashboard analytics interface"
+                    className="w-full rounded-2xl border border-emerald-900/20 shadow-inner"
                     src="https://images.pexels.com/photos/7947709/pexels-photo-7947709.jpeg?auto=compress&cs=tinysrgb&w=1600"
                     referrerPolicy="no-referrer"
                   />
+
+                  <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                    {[
+                      { label: 'Income Flow', value: '+$8,420' },
+                      { label: 'Expenses', value: '$3,115' },
+                      { label: 'Savings', value: '$2,240' },
+                    ].map((stat) => (
+                      <div key={stat.label} className="rounded-xl border border-emerald-900/20 bg-emerald-zenith-surface-high/60 p-3">
+                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-zenith-text-muted">{stat.label}</p>
+                        <p className="mt-1 text-sm font-black text-emerald-zenith-text">{stat.value}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
