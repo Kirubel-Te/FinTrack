@@ -7,7 +7,6 @@ import { BudgetsPage } from './page/BudgetPage'
 import { TransactionsPage } from './page/TransactionPage'
 import PlaceholderPage from './page/PlaceholderPage'
 import { LandingPage } from './page/LandingPage'
-import HeroPage from './page/HeroPage'
 
 const App = () => {
   const navigate = useNavigate()
@@ -18,12 +17,11 @@ const App = () => {
         path="/"
         element={
           <LandingPage
-            onGetStarted={() => navigate('/hero')}
+            onGetStarted={() => navigate('/register')}
             onLogin={() => navigate('/login')}
           />
         }
       />
-      <Route path="/hero" element={<HeroPage />} />
       <Route path="/app" element={<DashboardLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="transactions" element={<TransactionsPage />} />
