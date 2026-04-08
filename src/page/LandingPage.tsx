@@ -14,9 +14,9 @@ import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 
 const navItems = [
-  { label: 'Features', href: '#hero', sectionId: 'hero' },
-  { label: 'How it Works', href: '#how-it-works', sectionId: 'how-it-works' },
-  { label: 'Benefits', href: '#benefits', sectionId: 'benefits' },
+  { label: 'Features', icon: ReceiptText, href: '#hero', sectionId: 'hero' },
+  { label: 'How it Works', icon: TrendingUp, href: '#how-it-works', sectionId: 'how-it-works' },
+  { label: 'Benefits', icon: CheckCircle, href: '#benefits', sectionId: 'benefits' },
 ];
 
 const NAV_SCROLL_OFFSET = 96;
@@ -156,7 +156,10 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                       : 'text-emerald-zenith-text-muted hover:bg-white/5 hover:text-emerald-zenith-text',
                   ].join(' ')}
                 >
-                  {item.label}
+                  <span className="inline-flex items-center gap-2">
+                    <item.icon className="h-3.5 w-3.5" />
+                    <span>{item.label}</span>
+                  </span>
                 </a>
               );
             })}
