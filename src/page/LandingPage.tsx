@@ -56,6 +56,16 @@ const footerReveal = {
   transition: { duration: 0.5, ease: EASE_OUT },
 };
 
+const latitudeLines = [10, 20, 32, 46, 62, 78, 90];
+const longitudeLines = [8, 21, 38, 54, 71, 88];
+const focusPoints = [
+  { top: 20, left: 21 },
+  { top: 32, left: 54 },
+  { top: 46, left: 38 },
+  { top: 62, left: 71 },
+  { top: 78, left: 54 },
+];
+
 interface LandingPageProps {
   onGetStarted: () => void;
   onLogin?: () => void;
@@ -128,7 +138,43 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-emerald-zenith-bg text-emerald-zenith-text selection:bg-emerald-zenith-primary/30 font-body overflow-x-hidden">
+    <div className="relative min-h-screen bg-emerald-zenith-bg text-emerald-zenith-text selection:bg-emerald-zenith-primary/30 font-body overflow-x-hidden">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-1 overflow-hidden home-grid-map">
+        {latitudeLines.map((position, index) => (
+          <span
+            key={`lat-${position}`}
+            className="home-grid-line home-grid-line-lat"
+            style={{
+              top: `${position}%`,
+              animationDelay: `${index * 0.4}s`,
+            }}
+          />
+        ))}
+
+        {longitudeLines.map((position, index) => (
+          <span
+            key={`long-${position}`}
+            className="home-grid-line home-grid-line-long"
+            style={{
+              left: `${position}%`,
+              animationDelay: `${index * 0.45}s`,
+            }}
+          />
+        ))}
+
+        {focusPoints.map((point, index) => (
+          <span
+            key={`point-${point.top}-${point.left}`}
+            className="home-grid-focus"
+            style={{
+              top: `${point.top}%`,
+              left: `${point.left}%`,
+              animationDelay: `${index * 0.5}s`,
+            }}
+          />
+        ))}
+      </div>
+
       {/* TopAppBar */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-emerald-zenith-bg/80 backdrop-blur-xl border-b border-emerald-900/30">
         <div className="flex justify-between items-center w-full px-8 h-16 max-w-7xl mx-auto">
@@ -181,7 +227,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
         </div>
       </nav>
 
-      <main className="pt-16">
+      <main className="relative z-10 pt-16">
         {/* Hero Section */}
         <section id="hero" className="scroll-mt-24 relative mx-auto max-w-7xl overflow-hidden px-8 pb-24 pt-20">
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_14%_10%,rgba(52,211,153,0.14),transparent_36%),radial-gradient(circle_at_86%_80%,rgba(47,184,223,0.11),transparent_34%)]" />
