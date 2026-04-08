@@ -239,7 +239,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
               transition={{ duration: 0.75, ease: 'easeOut' }}
               className="space-y-7"
             >
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-zenith-primary/25 bg-emerald-zenith-surface/45 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-zenith-primary">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-zenith-primary/25 bg-emerald-zenith-surface/45 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-zenith-primary home-fade-up">
                 <Sparkles className="h-3.5 w-3.5" />
                 Meet FinTrack
               </div>
@@ -255,7 +255,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
               <div className="flex flex-wrap items-center gap-4">
                 <button
                   onClick={onGetStarted}
-                  className="inline-flex items-center justify-center rounded-2xl bg-emerald-zenith-primary px-8 py-3.5 text-base font-black text-emerald-zenith-accent transition-all hover:brightness-110 active:scale-95 shadow-2xl shadow-emerald-500/35"
+                  className="inline-flex items-center justify-center rounded-2xl bg-emerald-zenith-primary px-8 py-3.5 text-base font-black text-emerald-zenith-accent transition-all hover:brightness-110 active:scale-95 shadow-2xl shadow-emerald-500/35 home-cta-sheen"
                 >
                   Get Started
                 </button>
@@ -273,8 +273,12 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                   { label: 'Setup Time', value: '3 min' },
                   { label: 'Focus Score', value: 'Clean UI' },
                   { label: 'Flow', value: 'Real-time' },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-2xl border border-emerald-900/20 bg-emerald-zenith-surface/55 px-4 py-3 backdrop-blur-sm">
+                ].map((item, i) => (
+                  <div
+                    key={item.label}
+                    className="rounded-2xl border border-emerald-900/20 bg-emerald-zenith-surface/55 px-4 py-3 backdrop-blur-sm home-lift-card home-fade-up"
+                    style={{ animationDelay: `${0.18 + i * 0.08}s` }}
+                  >
                     <p className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted">{item.label}</p>
                     <p className="mt-1 text-sm font-black text-emerald-zenith-text">{item.value}</p>
                   </div>
@@ -288,10 +292,10 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
               transition={{ duration: 0.85, ease: 'easeOut' }}
               className="relative"
             >
-              <div className="absolute -top-14 -right-12 h-56 w-56 rounded-full bg-emerald-zenith-primary/20 blur-[110px]" />
-              <div className="absolute -bottom-16 -left-14 h-64 w-64 rounded-full bg-emerald-zenith-secondary/16 blur-[120px]" />
+              <div className="absolute -top-14 -right-12 h-56 w-56 rounded-full bg-emerald-zenith-primary/20 blur-[110px] home-glow-orb" />
+              <div className="absolute -bottom-16 -left-14 h-64 w-64 rounded-full bg-emerald-zenith-secondary/16 blur-[120px] home-glow-orb" style={{ animationDelay: '1.2s' }} />
 
-              <div className="relative overflow-hidden rounded-4xl border border-emerald-900/25 bg-emerald-zenith-surface/75 p-4 shadow-2xl backdrop-blur-xl">
+              <div className="relative overflow-hidden rounded-4xl border border-emerald-900/25 bg-emerald-zenith-surface/75 p-4 shadow-2xl backdrop-blur-xl home-float-card">
                 <div className="mb-4 flex items-center justify-between rounded-2xl border border-emerald-900/20 bg-emerald-zenith-bg/55 px-4 py-3">
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-zenith-text-muted">Live balance</p>
@@ -587,9 +591,9 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
               { icon: ShieldCheck, title: "Avoid overspending", desc: "Intelligent alerts and real-time spending limits keep your financial health on track effortlessly." },
               { icon: Bot, title: "Smarter decisions", desc: "Leverage deep data to understand exactly where your wealth can grow the most for the future." }
             ].map((item, i) => (
-              <motion.div key={i} variants={cardReveal} className="p-7 rounded-3xl bg-emerald-zenith-surface-low border border-emerald-900/10 group hover:border-emerald-zenith-primary/40 transition-all">
-                <div className="w-14 h-14 bg-emerald-zenith-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                  <item.icon className="text-emerald-zenith-primary w-7 h-7" />
+              <motion.div key={i} variants={cardReveal} className="p-7 rounded-3xl bg-emerald-zenith-surface-low border border-emerald-900/10 group transition-all home-benefit-card" style={{ animationDelay: `${0.1 * i}s` }}>
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-6 home-benefit-icon">
+                  <item.icon className="text-emerald-zenith-primary w-7 h-7 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3" />
                 </div>
                 <h3 className="text-xl font-bold mb-4 text-emerald-zenith-text tracking-tight">{item.title}</h3>
                 <p className="text-sm text-emerald-zenith-text-muted font-medium leading-relaxed">{item.desc}</p>

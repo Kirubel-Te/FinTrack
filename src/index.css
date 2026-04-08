@@ -87,6 +87,54 @@
   }
 }
 
+@keyframes home-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes home-orb-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.58;
+  }
+  50% {
+    transform: translate3d(12px, -14px, 0) scale(1.05);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.58;
+  }
+}
+
+@keyframes home-fade-up {
+  0% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes home-cta-sheen {
+  0% {
+    transform: translateX(-125%) skewX(-18deg);
+  }
+  42%,
+  100% {
+    transform: translateX(220%) skewX(-18deg);
+  }
+}
+
 @layer components {
   .home-grid-map {
     background:
@@ -137,6 +185,85 @@
     border-radius: 999px;
     border: 1px solid rgba(52, 211, 153, 0.3);
   }
+
+  .home-glow-orb {
+    animation: home-orb-drift 7.8s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+
+  .home-float-card {
+    animation: home-float 6.8s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .home-fade-up {
+    animation: home-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .home-lift-card {
+    transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 260ms ease, border-color 260ms ease;
+  }
+
+  .home-lift-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 46px rgba(1, 10, 8, 0.36);
+  }
+
+  .home-benefit-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), border-color 300ms ease, box-shadow 300ms ease, background-color 300ms ease;
+  }
+
+  .home-benefit-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 16% 16%, rgba(52, 211, 153, 0.14), transparent 58%);
+    opacity: 0;
+    transition: opacity 300ms ease;
+    pointer-events: none;
+  }
+
+  .home-benefit-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    border-color: rgba(52, 211, 153, 0.45);
+    box-shadow: 0 22px 50px rgba(3, 18, 14, 0.42);
+    background-color: rgba(32, 67, 56, 0.52);
+  }
+
+  .home-benefit-card:hover::before {
+    opacity: 1;
+  }
+
+  .home-benefit-icon {
+    background: rgba(52, 211, 153, 0.1);
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), background-color 300ms ease, box-shadow 300ms ease;
+  }
+
+  .home-benefit-card:hover .home-benefit-icon {
+    transform: translateY(-2px);
+    background: rgba(52, 211, 153, 0.18);
+    box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.2), 0 14px 28px rgba(10, 44, 35, 0.45);
+  }
+
+  .home-cta-sheen {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .home-cta-sheen::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -32%;
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0));
+    animation: home-cta-sheen 4.4s ease-in-out infinite;
+    pointer-events: none;
+  }
 }
 
 @media (max-width: 768px) {
@@ -149,7 +276,25 @@
 @media (prefers-reduced-motion: reduce) {
   .home-grid-line-lat,
   .home-grid-line-long,
-  .home-grid-focus {
+  .home-grid-focus,
+  .home-glow-orb,
+  .home-float-card,
+  .home-fade-up,
+  .home-cta-sheen::after {
     animation: none;
+  }
+
+  .home-lift-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .home-benefit-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .home-benefit-card::before {
+    transition: none;
   }
 }
