@@ -1,9 +1,17 @@
 # FinTrack Frontend - Project Status
 
-Last updated: 2026-04-01
+Last updated: 2026-04-10
 
 ## Current Snapshot
-FinTrack is now a multi-page React + TypeScript + Vite app using React Router, with a complete dashboard shell and polished finance UI screens. Authentication forms are connected to API endpoints, while most portfolio/transaction/budget data is still static mock data rendered in the frontend.
+FinTrack is now a multi-surface React + TypeScript + Vite app with a branded public landing page, auth flow, and an /app dashboard shell powered by nested React Router routes. Authentication forms are connected to API endpoints, while most dashboard, transaction, and budget content is still static mock data rendered in the frontend.
+
+## Recent Work (Since 2026-04-01)
+- Added a polished public landing experience at / with section-based smooth-scroll navigation, motion reveals, and branded marketing blocks.
+- Restructured authenticated app navigation under /app with nested routes for dashboard, transactions, budgets, and settings placeholder.
+- Updated sidebar and in-app navigation links to use /app-prefixed paths consistently.
+- Updated login success flow to navigate to /app and persist auth payload/token to localStorage.
+- Updated register success flow to redirect to /login with a success notice passed through route state.
+- Kept settings as a dedicated placeholder surface at /app/settings (instead of sharing other placeholder paths).
 
 ## What Is Implemented
 
@@ -25,10 +33,11 @@ FinTrack is now a multi-page React + TypeScript + Vite app using React Router, w
 ### Routing and App Structure
 - BrowserRouter is configured in main entry.
 - Route tree is implemented with nested layout routing:
-  - / -> DashboardLayout + Dashboard
-  - /transactions -> TransactionsPage
-  - /budgets -> BudgetsPage
-  - /settings -> PlaceholderPage
+  - / -> LandingPage
+  - /app -> DashboardLayout + Dashboard
+  - /app/transactions -> TransactionsPage
+  - /app/budgets -> BudgetsPage
+  - /app/settings -> PlaceholderPage
   - /login -> LoginPage
   - /register -> RegisterPage
   - * -> redirect to /
@@ -57,11 +66,13 @@ FinTrack is now a multi-page React + TypeScript + Vite app using React Router, w
   - submit calls API helper login()
   - success and error messaging in UI
   - localStorage persistence for auth payload and token
+  - success redirect to /app
 - Register page:
   - controlled form state
   - client-side checks for full name split and password confirmation
   - submit calls API helper register()
   - error handling and post-success navigation
+  - post-success notice handoff to login route state
 - API layer in src/api/auth.ts:
   - central fetch helper for POST auth calls
   - /api/auth/login and /api/auth/register endpoints
@@ -74,7 +85,7 @@ FinTrack is now a multi-page React + TypeScript + Vite app using React Router, w
 - Motion/reveal animations are implemented across major pages.
 
 ## Current Gaps and Incomplete Areas
-- No authentication guard for protected routes yet.
+- No authentication guard for /app protected routes yet.
 - No logout/session-expiry flow yet.
 - No API integration yet for:
   - dashboard metrics
@@ -86,10 +97,10 @@ FinTrack is now a multi-page React + TypeScript + Vite app using React Router, w
 - Several pages still rely on hardcoded sample content and sample media assets.
 
 ## Suggested Next Steps (Priority Order)
-1. Add route protection and auth bootstrap check (redirect unauthenticated users to /login).
+1. Add route protection and auth bootstrap check for /app routes (redirect unauthenticated users to /login).
 2. Implement logout and token/session lifecycle handling.
 3. Connect dashboard, transactions, and budgets to real backend endpoints.
 4. Wire Add Income/Add Expense modal forms to create transaction APIs.
 5. Replace UI-only filters/pagination/export with real query-driven behavior.
-6. Build the settings page and account/profile preferences.
+6. Build the /app/settings page and account/profile preferences.
 7. Add test coverage for auth flows and core dashboard navigation.
