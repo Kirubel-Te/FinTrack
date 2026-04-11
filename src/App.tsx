@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router'
 import { useNavigate } from 'react-router'
-import LoginPage from './page/LoginPage'
+import LoginPage from './page/loginPage'
 import RegisterPage from './page/Register'
 import Dashboard, { DashboardLayout } from './page/Dashboard'
 import { BudgetsPage } from './page/BudgetPage'
