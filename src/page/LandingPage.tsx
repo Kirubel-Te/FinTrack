@@ -229,10 +229,10 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
 
       <main className="relative z-10 pt-16">
         {/* Hero Section */}
-        <section id="hero" className="scroll-mt-24 relative mx-auto max-w-7xl overflow-hidden px-8 pb-24 pt-20">
+        <section id="hero" className="scroll-mt-24 relative w-full overflow-hidden px-8 pb-24 pt-20">
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_14%_10%,rgba(52,211,153,0.14),transparent_36%),radial-gradient(circle_at_86%_80%,rgba(47,184,223,0.11),transparent_34%)]" />
 
-          <div className="grid items-center gap-12 lg:grid-cols-[1.04fr_0.96fr]">
+          <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.04fr_0.96fr]">
             <motion.div
               initial={{ opacity: 0, x: -36 }}
               animate={{ opacity: 1, x: 0 }}
