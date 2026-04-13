@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Wallet, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { register, sanitizeErrorMessage } from '../api/auth';
+import { register, toUserFriendlyAuthError } from '../api/auth';
 
 type RegisterPageProps = {
   onRegisterSuccess?: (notice?: string) => void;
@@ -68,7 +68,7 @@ export default function RegisterPage({ onRegisterSuccess, onSignIn }: RegisterPa
       }
     } catch (error) {
       const rawMessage = error instanceof Error ? error.message : error;
-      setErrorMessage(sanitizeErrorMessage(rawMessage, 'Unable to create your account.'));
+      setErrorMessage(toUserFriendlyAuthError(rawMessage, "Can't register right now. Please try again later."));
       setIsSubmitting(false);
       return;
     }

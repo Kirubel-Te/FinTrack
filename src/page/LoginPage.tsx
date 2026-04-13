@@ -6,7 +6,7 @@ import {
   AUTH_STORAGE_KEY,
   AUTH_TOKEN_STORAGE_KEY,
   login,
-  sanitizeErrorMessage,
+  toUserFriendlyAuthError,
 } from '../api/auth';
 
 type LoginPageProps = {
@@ -76,7 +76,7 @@ export default function LoginPage({ onCreateAccount, onLoginSuccess, notice }: L
       }
     } catch (error) {
       const rawMessage = error instanceof Error ? error.message : error;
-      setErrorMessage(sanitizeErrorMessage(rawMessage, 'Unable to log in.'));
+      setErrorMessage(toUserFriendlyAuthError(rawMessage, "Can't log in right now. Please try again later."));
     } finally {
       setIsSubmitting(false);
     }
