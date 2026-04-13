@@ -205,6 +205,6 @@ const postAuth = async <TBody extends Record<string, unknown>>(
   return payload;
 };
 
-export const login = (payload: LoginPayload) => postAuth('/api/auth/login', payload);
+export const login = (payload: LoginPayload) => postAuth('/api/v1/auth/login', payload);
 
 export const register = (payload: RegisterPayload) => postAuth('/api/v1/auth/register', payload);

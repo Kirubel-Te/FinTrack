@@ -2,7 +2,12 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Wallet, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { register, toUserFriendlyAuthError } from '../api/auth';
+import {
+  AUTH_STORAGE_KEY,
+  AUTH_TOKEN_STORAGE_KEY,
+  register,
+  toUserFriendlyAuthError,
+} from '../api/auth';
 
 type RegisterPageProps = {
   onRegisterSuccess?: (notice?: string) => void;
@@ -59,12 +64,18 @@ export default function RegisterPage({ onRegisterSuccess, onSignIn }: RegisterPa
         password: formData.password,
       });
 
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(response));
+
+      if (typeof response.token === 'string' && response.token) {
+        localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, response.token);
+      }
+
       const successNotice = response.message ?? 'Account created successfully.';
 
       if (typeof onRegisterSuccess === 'function') {
         onRegisterSuccess(successNotice);
       } else {
-        navigate('/login', { state: { notice: successNotice } });
+        navigate('/app', { state: { notice: successNotice } });
       }
     } catch (error) {
       const rawMessage = error instanceof Error ? error.message : error;
