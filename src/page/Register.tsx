@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Wallet, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { register } from '../api/auth';
+import { register, sanitizeErrorMessage } from '../api/auth';
 
 type RegisterPageProps = {
   onRegisterSuccess?: (notice?: string) => void;
@@ -67,7 +67,8 @@ export default function RegisterPage({ onRegisterSuccess, onSignIn }: RegisterPa
         navigate('/login', { state: { notice: successNotice } });
       }
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unable to create your account.');
+      const rawMessage = error instanceof Error ? error.message : error;
+      setErrorMessage(sanitizeErrorMessage(rawMessage, 'Unable to create your account.'));
       setIsSubmitting(false);
       return;
     }

@@ -22,6 +22,26 @@ export type RegisterPayload = {
   password: string;
 };
 
+export const sanitizeErrorMessage = (value: unknown, fallback: string): string => {
+  if (typeof value !== 'string') {
+    return fallback;
+  }
+
+  const rawMessage = value.trim();
+  if (!rawMessage) {
+    return fallback;
+  }
+
+  if (!rawMessage.includes('<') || !rawMessage.includes('>')) {
+    return rawMessage;
+  }
+
+  const doc = new DOMParser().parseFromString(rawMessage, 'text/html');
+  const cleanText = doc.body.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+
+  return cleanText || fallback;
+};
+
 const parseResponseBody = async (response: Response): Promise<AuthResponse> => {
   const contentType = response.headers.get('content-type') ?? '';
 
@@ -35,12 +55,12 @@ const parseResponseBody = async (response: Response): Promise<AuthResponse> => {
 
 const getErrorMessage = (payload: AuthResponse, fallback: string) => {
   if (typeof payload.message === 'string' && payload.message.trim()) {
-    return payload.message;
+    return sanitizeErrorMessage(payload.message, fallback);
   }
 
   const error = payload.error;
   if (typeof error === 'string' && error.trim()) {
-    return error;
+    return sanitizeErrorMessage(error, fallback);
   }
 
   return fallback;
@@ -67,6 +87,6 @@ const postAuth = async <TBody extends Record<string, unknown>>(
   return payload;
 };
 
-export const login = (payload: LoginPayload) => postAuth('/api/auth/login', payload);
+export const login = (payload: LoginPayload) => postAuth('/api/v1/auth/login', payload);
 
-export const register = (payload: RegisterPayload) => postAuth('/api/auth/register', payload);
+export const register = (payload: RegisterPayload) => postAuth('/api/v1/auth/register', payload);

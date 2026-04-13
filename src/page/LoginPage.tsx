@@ -6,6 +6,7 @@ import {
   AUTH_STORAGE_KEY,
   AUTH_TOKEN_STORAGE_KEY,
   login,
+  sanitizeErrorMessage,
 } from '../api/auth';
 
 type LoginPageProps = {
@@ -74,7 +75,8 @@ export default function LoginPage({ onCreateAccount, onLoginSuccess, notice }: L
         navigate('/app', { state: { notice: successNotice } });
       }
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unable to log in.');
+      const rawMessage = error instanceof Error ? error.message : error;
+      setErrorMessage(sanitizeErrorMessage(rawMessage, 'Unable to log in.'));
     } finally {
       setIsSubmitting(false);
     }
