@@ -2,18 +2,24 @@ import {
   LayoutDashboard, 
   ReceiptText, 
   Wallet, 
-  Settings
+  Settings,
+  LogOut
 } from 'lucide-react';
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
 import { cn } from '../lib/utils';
+import { useEffect, useState } from 'react';
+import { clearAuthSession, getMe, getStoredAuthSession, logout, type AuthUser } from '../api/auth';
 
-const firstNames = ['Ava', 'Noah', 'Liam', 'Emma', 'Maya', 'Leo', 'Sofia', 'Ethan'];
-const lastNames = ['Johnson', 'Martinez', 'Patel', 'Bennett', 'Nguyen', 'Walker', 'Brooks', 'Morgan'];
+const avatarForName = (firstName: string, lastName: string) => (
+  `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(`${firstName}-${lastName}`)}`
+);
 
-const profile = {
-  firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
-  lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
-  avatar: `https://api.dicebear.com/9.x/adventurer/svg?seed=${Math.random().toString(36).slice(2, 10)}`,
+const fallbackProfile: AuthUser = {
+  id: 'local',
+  firstName: 'FinTrack',
+  lastName: 'User',
+  email: 'account@local',
+  createdAt: new Date().toISOString(),
 };
 
 const navItems = [
@@ -24,6 +30,41 @@ const navItems = [
 ];
 
 export function Sidebar() {
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState<AuthUser>(() => getStoredAuthSession()?.user ?? fallbackProfile);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    getMe()
+      .then((user) => {
+        if (active) {
+          setProfile(user);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          clearAuthSession();
+          navigate('/login', { replace: true });
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+    await logout();
+    navigate('/login', { replace: true, state: { notice: 'You have been logged out.' } });
+  };
+
   return (
     <aside className="fixed left-0 top-0 h-full w-16 md:w-64 bg-emerald-zenith-accent border-r border-emerald-900/30 flex flex-col py-6 md:py-8 z-50">
       <div className="px-3 md:px-6 mb-6 md:mb-8 text-center md:text-left">
@@ -60,7 +101,7 @@ export function Sidebar() {
       <div className="px-2 md:px-4 mt-auto">
         <div className="w-full flex items-center justify-center md:justify-start gap-0 md:gap-3 px-2 md:px-3 py-2 rounded-xl bg-white/5 border border-emerald-900/30">
           <img
-            src={profile.avatar}
+            src={avatarForName(profile.firstName, profile.lastName)}
             alt={`${profile.firstName} ${profile.lastName}`}
             className="w-9 h-9 rounded-full border border-emerald-zenith-primary/50 bg-emerald-zenith-surface-high"
           />
@@ -68,9 +109,20 @@ export function Sidebar() {
             <p className="text-sm font-semibold text-emerald-zenith-text leading-tight truncate">
               {profile.firstName} {profile.lastName}
             </p>
-            <p className="text-xs text-emerald-zenith-text-muted">Personal Account</p>
+            <p className="text-xs text-emerald-zenith-text-muted truncate">{profile.email}</p>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="mt-3 w-full flex items-center justify-center md:justify-start gap-2 px-2 md:px-3 py-2 rounded-xl border border-emerald-900/30 bg-white/5 text-emerald-zenith-text-muted hover:text-emerald-zenith-primary hover:border-emerald-zenith-primary/30 transition-colors disabled:opacity-60"
+        >
+          <LogOut className="w-4 h-4" />
+          <span className="hidden md:inline text-xs font-semibold">
+            {isLoggingOut ? 'Logging out...' : 'Logout'}
+          </span>
+        </button>
       </div>
     </aside>
   );

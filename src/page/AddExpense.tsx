@@ -11,6 +11,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { createExpense } from '../api/finance';
 
 interface AddExpenseModalProps {
   isOpen: boolean;
@@ -19,6 +20,71 @@ interface AddExpenseModalProps {
 
 export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
   const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [description, setDescription] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const resetForm = () => {
+    setAmount('');
+    setCategory('');
+    setDate(new Date().toISOString().slice(0, 10));
+    setDescription('');
+    setErrorMessage(null);
+    setSuccessMessage(null);
+  };
+
+  const closeAndReset = () => {
+    resetForm();
+    onClose();
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    const parsedAmount = Number(amount);
+
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      setErrorMessage('Please enter a valid amount greater than zero.');
+      return;
+    }
+
+    if (!category.trim()) {
+      setErrorMessage('Please select an expense category.');
+      return;
+    }
+
+    if (!date) {
+      setErrorMessage('Please choose a valid date.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await createExpense({
+        amount: parsedAmount,
+        category: category.trim(),
+        date,
+        description: description.trim() || null,
+      });
+
+      setSuccessMessage('Expense added successfully.');
+      window.dispatchEvent(new Event('fintrack:transaction-updated'));
+      setTimeout(() => {
+        closeAndReset();
+      }, 500);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to add expense right now.';
+      setErrorMessage(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -48,7 +114,7 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
               <div className="p-6 md:p-8">
                 <header className="mb-8 text-center relative">
                   <button 
-                    onClick={onClose}
+                    onClick={closeAndReset}
                     className="absolute -top-2 -right-2 p-1.5 text-emerald-zenith-text-muted hover:text-emerald-zenith-text transition-colors"
                   >
                     <X className="w-5 h-5" />
@@ -57,7 +123,19 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
                   <p className="text-emerald-zenith-text-muted font-medium text-sm md:text-base">Record a new outflow from your financial sanctuary</p>
                 </header>
 
-                <form className="space-y-7" onSubmit={(e) => e.preventDefault()}>
+                <form className="space-y-7" onSubmit={handleSubmit}>
+                  {errorMessage && (
+                    <div className="rounded-xl border border-emerald-zenith-error/25 bg-emerald-zenith-error/10 px-4 py-3 text-sm text-emerald-zenith-error">
+                      {errorMessage}
+                    </div>
+                  )}
+
+                  {successMessage && (
+                    <div className="rounded-xl border border-emerald-zenith-primary/25 bg-emerald-zenith-primary/10 px-4 py-3 text-sm text-emerald-zenith-primary">
+                      {successMessage}
+                    </div>
+                  )}
+
                   {/* Big Amount Input (Scale Asymmetry) */}
                   <div className="text-center space-y-3">
                     <label className="block text-[10px] uppercase tracking-[0.3em] text-emerald-zenith-text-muted font-black">Transaction Amount</label>
@@ -67,6 +145,9 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
                         type="number" 
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
+                        step="0.01"
+                        min="0"
+                        disabled={isSubmitting}
                         placeholder="0.00"
                         className="bg-transparent border-none text-3xl md:text-5xl font-black text-emerald-zenith-text placeholder:text-emerald-zenith-text-muted/30 focus:ring-0 focus:outline-none p-0 w-full text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
@@ -80,7 +161,12 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
                       <label className="block text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted px-1">Category</label>
                       <div className="relative group">
                         <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-emerald-zenith-primary/60 group-focus-within:text-emerald-zenith-primary transition-colors" />
-                        <select defaultValue="" className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl py-3 pl-12 pr-10 text-sm text-emerald-zenith-text appearance-none focus:ring-2 focus:ring-emerald-zenith-primary/20 focus:border-emerald-zenith-primary transition-all cursor-pointer font-bold">
+                        <select
+                          value={category}
+                          onChange={(event) => setCategory(event.target.value)}
+                          disabled={isSubmitting}
+                          className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl py-3 pl-12 pr-10 text-sm text-emerald-zenith-text appearance-none focus:ring-2 focus:ring-emerald-zenith-primary/20 focus:border-emerald-zenith-primary transition-all cursor-pointer font-bold"
+                        >
                           <option disabled value="">Select category</option>
                           <option value="housing">Housing & Utilities</option>
                           <option value="transport">Transportation</option>
@@ -99,6 +185,9 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
                         <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-emerald-zenith-primary/60 group-focus-within:text-emerald-zenith-primary transition-colors" />
                         <input 
                           type="date" 
+                          value={date}
+                          onChange={(event) => setDate(event.target.value)}
+                          disabled={isSubmitting}
                           className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl py-3 pl-12 pr-4 text-sm text-emerald-zenith-text focus:ring-2 focus:ring-emerald-zenith-primary/20 focus:border-emerald-zenith-primary transition-all font-bold scheme-dark"
                         />
                       </div>
@@ -111,6 +200,9 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
                         <FileText className="absolute left-4 top-4 w-4.5 h-4.5 text-emerald-zenith-primary/60 group-focus-within:text-emerald-zenith-primary transition-colors" />
                         <textarea 
                           rows={3}
+                          value={description}
+                          onChange={(event) => setDescription(event.target.value)}
+                          disabled={isSubmitting}
                           placeholder="What was this expense for?"
                           className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl py-3 pl-12 pr-4 text-sm text-emerald-zenith-text focus:ring-2 focus:ring-emerald-zenith-primary/20 focus:border-emerald-zenith-primary transition-all resize-none font-bold placeholder:text-emerald-zenith-text-muted/40"
                         />
@@ -122,17 +214,19 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
                   <div className="pt-4 flex flex-col md:flex-row gap-3">
                     <button 
                       type="button"
-                      onClick={onClose}
+                      onClick={closeAndReset}
+                      disabled={isSubmitting}
                       className="flex-1 order-2 md:order-1 py-3 px-6 rounded-xl border border-emerald-zenith-text-muted/25 text-emerald-zenith-text-muted font-black uppercase tracking-widest text-[11px] hover:bg-emerald-zenith-surface-high transition-all active:scale-[0.98]"
                     >
                       Cancel
                     </button>
                     <button 
                       type="submit"
+                      disabled={isSubmitting}
                       className="flex-2 order-1 md:order-2 py-3 px-6 rounded-xl bg-emerald-zenith-primary text-emerald-zenith-accent font-black uppercase tracking-widest text-[11px] shadow-xl shadow-emerald-zenith-primary/20 hover:brightness-110 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                     >
                       <PlusCircle className="w-4.5 h-4.5" />
-                      Add Expense
+                      {isSubmitting ? 'Adding...' : 'Add Expense'}
                     </button>
                   </div>
                 </form>

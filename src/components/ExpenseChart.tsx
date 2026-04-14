@@ -1,14 +1,28 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { MoreVertical } from 'lucide-react';
 
-const data = [
+type ExpenseSlice = {
+  name: string;
+  value: number;
+  color: string;
+};
+
+const defaultData: ExpenseSlice[] = [
   { name: 'Housing', value: 45, color: '#34d399' },
   { name: 'Food', value: 25, color: '#60e2b1' },
   { name: 'Transport', value: 15, color: '#1f8f72' },
   { name: 'Leisure', value: 15, color: '#f38b82' },
 ];
 
-export function ExpenseChart() {
+type ExpenseChartProps = {
+  data?: ExpenseSlice[];
+  totalAmount?: number;
+};
+
+export function ExpenseChart({ data = defaultData, totalAmount }: ExpenseChartProps) {
+  const computedTotal = data.reduce((sum, item) => sum + item.value, 0);
+  const totalDisplay = typeof totalAmount === 'number' ? totalAmount : computedTotal;
+
   return (
     <div className="bg-emerald-zenith-surface rounded-2xl p-4.5 md:p-5 border border-emerald-900/10 h-full flex flex-col">
       <div className="flex justify-between items-center mb-4.5">
@@ -44,7 +58,7 @@ export function ExpenseChart() {
           </ResponsiveContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-zenith-text-muted">Total</span>
-            <span className="text-xl md:text-2xl font-black">$6.4k</span>
+            <span className="text-xl md:text-2xl font-black">${totalDisplay.toLocaleString()}</span>
           </div>
         </div>
 

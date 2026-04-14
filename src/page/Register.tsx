@@ -3,8 +3,6 @@ import { motion } from 'motion/react';
 import { Wallet, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import {
-  AUTH_STORAGE_KEY,
-  AUTH_TOKEN_STORAGE_KEY,
   register,
   toUserFriendlyAuthError,
 } from '../api/auth';
@@ -57,20 +55,14 @@ export default function RegisterPage({ onRegisterSuccess, onSignIn }: RegisterPa
     setIsSubmitting(true);
 
     try {
-      const response = await register({
+      const session = await register({
         firstName,
         lastName,
         email: formData.email.trim(),
         password: formData.password,
       });
 
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(response));
-
-      if (typeof response.token === 'string' && response.token) {
-        localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, response.token);
-      }
-
-      const successNotice = response.message ?? 'Account created successfully.';
+      const successNotice = `Welcome, ${session.user.firstName}. Your account is ready.`;
 
       if (typeof onRegisterSuccess === 'function') {
         onRegisterSuccess(successNotice);

@@ -3,40 +3,66 @@ import { Smartphone, Briefcase, ShoppingBasket } from 'lucide-react';
 import { Link } from 'react-router';
 import { cn } from '../lib/utils';
 
-const transactions = [
+export type RecentTransaction = {
+  id: string;
+  name: string;
+  description?: string;
+  category: string;
+  date: string;
+  amount: number;
+  type: 'Expense' | 'Income';
+};
+
+const defaultTransactions: RecentTransaction[] = [
   {
-    id: 1,
+    id: '1',
     name: 'Apple Store Subscription',
     description: 'iCloud Storage (2TB)',
     category: 'Entertainment',
-    icon: Smartphone,
     date: 'Oct 24, 2023',
     amount: -9.99,
     type: 'Expense'
   },
   {
-    id: 2,
+    id: '2',
     name: 'Stripe Payout',
     description: 'Consulting Fees #482',
     category: 'Consulting',
-    icon: Briefcase,
     date: 'Oct 22, 2023',
     amount: 4250.00,
     type: 'Income'
   },
   {
-    id: 3,
+    id: '3',
     name: 'Whole Foods Market',
     description: 'Weekly Groceries',
     category: 'Shopping',
-    icon: ShoppingBasket,
     date: 'Oct 21, 2023',
     amount: -285.42,
     type: 'Expense'
   }
 ];
 
-export function TransactionTable() {
+const getCategoryIcon = (category: string) => {
+  const normalized = category.toLowerCase();
+
+  if (normalized.includes('salary') || normalized.includes('business') || normalized.includes('freelance')) {
+    return Briefcase;
+  }
+
+  if (normalized.includes('shopping') || normalized.includes('food') || normalized.includes('dining')) {
+    return ShoppingBasket;
+  }
+
+  return Smartphone;
+};
+
+type TransactionTableProps = {
+  transactions?: RecentTransaction[];
+  isLoading?: boolean;
+};
+
+export function TransactionTable({ transactions = defaultTransactions, isLoading = false }: TransactionTableProps) {
   return (
     <div className="bg-emerald-zenith-surface rounded-2xl border border-emerald-900/10 overflow-hidden">
       <div className="p-5 md:p-6 flex justify-between items-center border-b border-emerald-900/10">
@@ -64,6 +90,13 @@ export function TransactionTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-emerald-900/10">
+            {isLoading && (
+              <tr>
+                <td colSpan={5} className="px-5 md:px-6 py-10 text-center text-sm text-emerald-zenith-text-muted">
+                  Loading recent transactions...
+                </td>
+              </tr>
+            )}
             {transactions.map((t) => (
               <tr key={t.id} className="hover:bg-white/5 transition-colors group cursor-pointer">
                 <td className="px-5 md:px-6 py-4.5 md:py-5">
@@ -75,7 +108,10 @@ export function TransactionTable() {
                 <td className="px-5 md:px-6 py-4.5 md:py-5">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-emerald-zenith-surface-high rounded-lg">
-                      <t.icon className="w-3.5 h-3.5 text-emerald-zenith-text-muted" />
+                      {(() => {
+                        const Icon = getCategoryIcon(t.category);
+                        return <Icon className="w-3.5 h-3.5 text-emerald-zenith-text-muted" />;
+                      })()}
                     </div>
                     <span className="text-xs md:text-sm font-semibold text-emerald-zenith-text-muted">{t.category}</span>
                   </div>
@@ -99,6 +135,13 @@ export function TransactionTable() {
                 </td>
               </tr>
             ))}
+            {!isLoading && transactions.length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-5 md:px-6 py-10 text-center text-sm text-emerald-zenith-text-muted">
+                  No transactions found yet.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

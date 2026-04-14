@@ -13,77 +13,164 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Reveal } from '../components/Reveal';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { listExpenses, listIncomes, type TransactionRecord } from '../api/finance';
 
-const transactions = [
-  {
-    id: 1,
-    name: 'Monthly Salary - Q4',
-    category: 'Earnings',
-    icon: CreditCard,
-    iconBg: 'bg-emerald-zenith-primary/10',
-    iconColor: 'text-emerald-zenith-primary',
-    date: 'Oct 28, 2023',
-    type: 'Income',
-    amount: 8450.00
-  },
-  {
-    id: 2,
-    name: 'Premium Residence Rent',
-    category: 'Housing',
-    icon: Home,
-    iconBg: 'bg-emerald-zenith-error/10',
-    iconColor: 'text-emerald-zenith-error',
-    date: 'Oct 25, 2023',
-    type: 'Expense',
-    amount: -2100.00
-  },
-  {
-    id: 3,
-    name: 'The Emerald Grill',
-    category: 'Dining',
-    icon: Utensils,
-    iconBg: 'bg-emerald-zenith-warning/10',
-    iconColor: 'text-emerald-zenith-warning',
-    date: 'Oct 22, 2023',
-    type: 'Expense',
-    amount: -342.50
-  },
-  {
-    id: 4,
-    name: 'Stock Dividends - Portfolio A',
-    category: 'Investment',
-    icon: TrendingUp,
-    iconBg: 'bg-emerald-zenith-primary/10',
-    iconColor: 'text-emerald-zenith-primary',
-    date: 'Oct 20, 2023',
-    type: 'Income',
-    amount: 1280.00
-  },
-  {
-    id: 5,
-    name: 'Tech Gear - New Monitor',
-    category: 'Shopping',
-    icon: ShoppingBag,
-    iconBg: 'bg-emerald-zenith-secondary/10',
-    iconColor: 'text-emerald-zenith-secondary',
-    date: 'Oct 18, 2023',
-    type: 'Expense',
-    amount: -899.99
-  },
-  {
-    id: 6,
-    name: 'Uber - Corporate Meeting',
-    category: 'Transport',
-    icon: Car,
-    iconBg: 'bg-emerald-zenith-text-muted/10',
-    iconColor: 'text-emerald-zenith-text-muted',
-    date: 'Oct 15, 2023',
-    type: 'Expense',
-    amount: -45.20
+type TransactionRow = {
+  id: string;
+  name: string;
+  category: string;
+  date: string;
+  sortAt: number;
+  type: 'Income' | 'Expense';
+  amount: number;
+  icon: typeof CreditCard;
+  iconBg: string;
+  iconColor: string;
+};
+
+const iconForCategory = (category: string) => {
+  const normalized = category.toLowerCase();
+
+  if (normalized.includes('house') || normalized.includes('rent')) {
+    return { icon: Home, iconBg: 'bg-emerald-zenith-error/10', iconColor: 'text-emerald-zenith-error' };
   }
-];
+
+  if (normalized.includes('food') || normalized.includes('dining')) {
+    return { icon: Utensils, iconBg: 'bg-emerald-zenith-warning/10', iconColor: 'text-emerald-zenith-warning' };
+  }
+
+  if (normalized.includes('shop') || normalized.includes('luxury')) {
+    return { icon: ShoppingBag, iconBg: 'bg-emerald-zenith-secondary/10', iconColor: 'text-emerald-zenith-secondary' };
+  }
+
+  if (normalized.includes('transport') || normalized.includes('car')) {
+    return { icon: Car, iconBg: 'bg-emerald-zenith-text-muted/10', iconColor: 'text-emerald-zenith-text-muted' };
+  }
+
+  if (normalized.includes('salary') || normalized.includes('investment') || normalized.includes('business')) {
+    return { icon: TrendingUp, iconBg: 'bg-emerald-zenith-primary/10', iconColor: 'text-emerald-zenith-primary' };
+  }
+
+  return { icon: CreditCard, iconBg: 'bg-emerald-zenith-primary/10', iconColor: 'text-emerald-zenith-primary' };
+};
+
+const mapRecordToRow = (record: TransactionRecord, type: 'Income' | 'Expense'): TransactionRow => {
+  const iconInfo = iconForCategory(record.category);
+
+  return {
+    id: `${type.toLowerCase()}-${record.id}`,
+    name: record.description?.trim() || `${record.category} ${type.toLowerCase()}`,
+    category: record.category,
+    date: new Date(record.date).toLocaleDateString(undefined, {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+    }),
+    sortAt: new Date(record.date).getTime(),
+    type,
+    amount: type === 'Income' ? Math.abs(record.amount) : -Math.abs(record.amount),
+    ...iconInfo,
+  };
+};
 
 export function TransactionsPage() {
+  const [transactions, setTransactions] = useState<TransactionRow[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [page, setPage] = useState(1);
+
+  const pageSize = 10;
+
+  const loadTransactions = useCallback(async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const query = {
+        page: 1,
+        limit: 100,
+        category: selectedCategory || undefined,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
+      };
+
+      const [incomes, expenses] = await Promise.all([
+        listIncomes(query),
+        listExpenses(query),
+      ]);
+
+      const rows = [
+        ...incomes.data.map((record) => mapRecordToRow(record, 'Income')),
+        ...expenses.data.map((record) => mapRecordToRow(record, 'Expense')),
+      ].sort((a, b) => b.sortAt - a.sortAt);
+
+      setTransactions(rows);
+      setPage(1);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to load transactions.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [endDate, selectedCategory, startDate]);
+
+  useEffect(() => {
+    void loadTransactions();
+  }, [loadTransactions]);
+
+  useEffect(() => {
+    const onTransactionUpdated = () => {
+      void loadTransactions();
+    };
+
+    window.addEventListener('fintrack:transaction-updated', onTransactionUpdated);
+
+    return () => {
+      window.removeEventListener('fintrack:transaction-updated', onTransactionUpdated);
+    };
+  }, [loadTransactions]);
+
+  const categoryOptions = useMemo(() => (
+    Array.from(new Set(transactions.map((item) => item.category))).sort((a, b) => a.localeCompare(b))
+  ), [transactions]);
+
+  const totalPages = Math.max(1, Math.ceil(transactions.length / pageSize));
+  const clampedPage = Math.min(page, totalPages);
+  const paginatedTransactions = useMemo(() => {
+    const start = (clampedPage - 1) * pageSize;
+    return transactions.slice(start, start + pageSize);
+  }, [clampedPage, transactions]);
+
+  const downloadCsv = () => {
+    if (!transactions.length) {
+      return;
+    }
+
+    const header = ['Name', 'Category', 'Date', 'Type', 'Amount'];
+    const rows = transactions.map((item) => [
+      item.name,
+      item.category,
+      item.date,
+      item.type,
+      item.amount.toFixed(2),
+    ]);
+
+    const csvContent = [header, ...rows]
+      .map((row) => row.map((value) => `"${value.replaceAll('"', '""')}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'transactions.csv';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="p-4 lg:p-5 space-y-7 lg:space-y-8 max-w-7xl mx-auto w-full">
       {/* Header Section */}
@@ -102,29 +189,55 @@ export function TransactionsPage() {
         <div className="flex w-full lg:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <div className="flex flex-col gap-1.5">
             <span className="text-[10px] uppercase tracking-[0.2em] text-emerald-zenith-text-muted font-black px-1">Category</span>
-            <select className="bg-emerald-zenith-surface-high border-none rounded-lg text-sm font-bold text-emerald-zenith-text px-4 py-2 focus:ring-2 focus:ring-emerald-zenith-primary/20 min-w-41.25 appearance-none cursor-pointer">
-              <option>All Categories</option>
-              <option>Housing</option>
-              <option>Utilities</option>
-              <option>Investment</option>
-              <option>Salary</option>
-              <option>Entertainment</option>
+            <select
+              value={selectedCategory}
+              onChange={(event) => setSelectedCategory(event.target.value)}
+              className="bg-emerald-zenith-surface-high border-none rounded-lg text-sm font-bold text-emerald-zenith-text px-4 py-2 focus:ring-2 focus:ring-emerald-zenith-primary/20 min-w-41.25 appearance-none cursor-pointer"
+            >
+              <option value="">All Categories</option>
+              {categoryOptions.map((category) => (
+                <option key={category} value={category}>{category}</option>
+              ))}
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
             <span className="text-[10px] uppercase tracking-[0.2em] text-emerald-zenith-text-muted font-black px-1">Date Range</span>
-            <div className="flex items-center gap-2.5 bg-emerald-zenith-surface-high rounded-lg px-4 py-2 cursor-pointer hover:bg-emerald-zenith-surface-high/80 transition-colors">
+            <div className="flex items-center gap-2.5 bg-emerald-zenith-surface-high rounded-lg px-4 py-2 hover:bg-emerald-zenith-surface-high/80 transition-colors">
               <CalendarIcon className="w-4 h-4 text-emerald-zenith-primary" />
-              <span className="text-sm font-bold text-emerald-zenith-text">Oct 01 - Oct 31, 2023</span>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(event) => setStartDate(event.target.value)}
+                className="bg-transparent text-sm font-bold text-emerald-zenith-text outline-none"
+              />
+              <span className="text-sm font-bold text-emerald-zenith-text">to</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(event) => setEndDate(event.target.value)}
+                className="bg-transparent text-sm font-bold text-emerald-zenith-text outline-none"
+              />
             </div>
           </div>
         </div>
         <div className="flex w-full sm:w-auto items-center justify-end sm:justify-start gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-bold text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-all bg-emerald-zenith-surface-high/50 rounded-lg hover:bg-emerald-zenith-surface-high">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedCategory('');
+              setStartDate('');
+              setEndDate('');
+            }}
+            className="flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-bold text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-all bg-emerald-zenith-surface-high/50 rounded-lg hover:bg-emerald-zenith-surface-high"
+          >
             <Filter className="w-4 h-4" />
-            <span>Advanced Filters</span>
+            <span>Reset Filters</span>
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-bold text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-all bg-emerald-zenith-surface-high/50 rounded-lg hover:bg-emerald-zenith-surface-high">
+          <button
+            type="button"
+            onClick={downloadCsv}
+            className="flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-bold text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-all bg-emerald-zenith-surface-high/50 rounded-lg hover:bg-emerald-zenith-surface-high"
+          >
             <Download className="w-4 h-4" />
             <span>Export CSV</span>
           </button>
@@ -150,7 +263,21 @@ export function TransactionsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-emerald-zenith-text-muted/15">
-            {transactions.map((t) => (
+            {isLoading && (
+              <tr>
+                <td className="px-6 py-10 text-center text-sm text-emerald-zenith-text-muted" colSpan={5}>
+                  Loading transactions...
+                </td>
+              </tr>
+            )}
+            {!isLoading && errorMessage && (
+              <tr>
+                <td className="px-6 py-10 text-center text-sm text-emerald-zenith-error" colSpan={5}>
+                  {errorMessage}
+                </td>
+              </tr>
+            )}
+            {!isLoading && !errorMessage && paginatedTransactions.map((t) => (
               <tr key={t.id} className="hover:bg-emerald-zenith-primary/5 transition-colors group cursor-pointer">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
@@ -190,6 +317,13 @@ export function TransactionsPage() {
                 </td>
               </tr>
             ))}
+            {!isLoading && !errorMessage && paginatedTransactions.length === 0 && (
+              <tr>
+                <td className="px-6 py-10 text-center text-sm text-emerald-zenith-text-muted" colSpan={5}>
+                  No transactions matched your filters.
+                </td>
+              </tr>
+            )}
           </tbody>
           </table>
         </div>
@@ -197,18 +331,27 @@ export function TransactionsPage() {
         {/* Pagination Controls */}
         <div className="px-6 py-4 bg-emerald-zenith-surface-high/20 border-t border-emerald-zenith-text-muted/15 flex items-center justify-between">
           <span className="text-[10px] font-black text-emerald-zenith-text-muted uppercase tracking-[0.2em]">
-            SHOWING 1-6 OF 124 TRANSACTIONS
+            SHOWING {transactions.length === 0 ? 0 : (clampedPage - 1) * pageSize + 1}-{Math.min(clampedPage * pageSize, transactions.length)} OF {transactions.length} TRANSACTIONS
           </span>
           <div className="flex items-center gap-2">
-            <button className="flex items-center justify-center w-8 h-8 rounded-lg text-emerald-zenith-text-muted hover:text-emerald-zenith-primary hover:bg-emerald-zenith-primary/10 transition-all border border-transparent hover:border-emerald-zenith-primary/20">
+            <button
+              type="button"
+              disabled={clampedPage <= 1}
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              className="flex items-center justify-center w-8 h-8 rounded-lg text-emerald-zenith-text-muted hover:text-emerald-zenith-primary hover:bg-emerald-zenith-primary/10 transition-all border border-transparent hover:border-emerald-zenith-primary/20 disabled:opacity-40"
+            >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <button className="flex items-center justify-center w-8 h-8 rounded-lg text-xs font-black bg-emerald-zenith-primary text-emerald-zenith-accent shadow-lg shadow-emerald-zenith-primary/20">1</button>
-            <button className="flex items-center justify-center w-8 h-8 rounded-lg text-xs font-black text-emerald-zenith-text-muted hover:bg-emerald-zenith-surface-high transition-all">2</button>
-            <button className="flex items-center justify-center w-8 h-8 rounded-lg text-xs font-black text-emerald-zenith-text-muted hover:bg-emerald-zenith-surface-high transition-all">3</button>
-            <span className="text-emerald-zenith-text-muted px-1 font-bold">...</span>
-            <button className="flex items-center justify-center w-8 h-8 rounded-lg text-xs font-black text-emerald-zenith-text-muted hover:bg-emerald-zenith-surface-high transition-all">21</button>
-            <button className="flex items-center justify-center w-8 h-8 rounded-lg text-emerald-zenith-text-muted hover:text-emerald-zenith-primary hover:bg-emerald-zenith-primary/10 transition-all border border-transparent hover:border-emerald-zenith-primary/20">
+            <button className="flex items-center justify-center w-8 h-8 rounded-lg text-xs font-black bg-emerald-zenith-primary text-emerald-zenith-accent shadow-lg shadow-emerald-zenith-primary/20">
+              {clampedPage}
+            </button>
+            <span className="text-emerald-zenith-text-muted px-1 text-xs font-bold">/ {totalPages}</span>
+            <button
+              type="button"
+              disabled={clampedPage >= totalPages}
+              onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+              className="flex items-center justify-center w-8 h-8 rounded-lg text-emerald-zenith-text-muted hover:text-emerald-zenith-primary hover:bg-emerald-zenith-primary/10 transition-all border border-transparent hover:border-emerald-zenith-primary/20 disabled:opacity-40"
+            >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

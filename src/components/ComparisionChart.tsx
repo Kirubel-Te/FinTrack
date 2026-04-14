@@ -1,6 +1,12 @@
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-const data = [
+type ComparisonPoint = {
+  month: string;
+  income: number;
+  expenses: number;
+};
+
+const defaultData: ComparisonPoint[] = [
   { month: 'JAN', income: 4000, expenses: 2400 },
   { month: 'FEB', income: 5000, expenses: 3200 },
   { month: 'MAR', income: 3500, expenses: 2800 },
@@ -9,7 +15,11 @@ const data = [
   { month: 'JUN', income: 5800, expenses: 2600 },
 ];
 
-export function ComparisonChart() {
+type ComparisonChartProps = {
+  data?: ComparisonPoint[];
+};
+
+export function ComparisonChart({ data = defaultData }: ComparisonChartProps) {
   return (
     <div className="bg-emerald-zenith-surface rounded-2xl p-4.5 md:p-5 border border-emerald-900/10 h-full flex flex-col">
       <div className="flex justify-between items-center mb-5">

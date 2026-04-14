@@ -3,8 +3,6 @@ import { motion } from 'motion/react';
 import { Wallet, Eye, EyeOff } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router';
 import {
-  AUTH_STORAGE_KEY,
-  AUTH_TOKEN_STORAGE_KEY,
   login,
   toUserFriendlyAuthError,
 } from '../api/auth';
@@ -55,18 +53,12 @@ export default function LoginPage({ onCreateAccount, onLoginSuccess, notice }: L
     setIsSubmitting(true);
 
     try {
-      const response = await login({
+      const session = await login({
         email: formData.email.trim(),
         password: formData.password,
       });
 
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(response));
-
-      if (typeof response.token === 'string' && response.token) {
-        localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, response.token);
-      }
-
-      const successNotice = response.message ?? 'Login successful.';
+      const successNotice = `Welcome back, ${session.user.firstName}.`;
       setSuccessMessage(successNotice);
 
       if (typeof onLoginSuccess === 'function') {
