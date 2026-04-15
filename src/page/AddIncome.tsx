@@ -165,7 +165,7 @@ export function AddIncomeModal({ isOpen, onClose }: AddIncomeModalProps) {
                           value={category}
                           onChange={(event) => setCategory(event.target.value)}
                           disabled={isSubmitting}
-                          className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl py-3 pl-12 pr-10 text-sm text-emerald-zenith-text appearance-none focus:ring-2 focus:ring-emerald-zenith-primary/20 focus:border-emerald-zenith-primary transition-all cursor-pointer font-bold"
+                          className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl py-3 pl-12 pr-10 text-sm text-emerald-zenith-text appearance-none focus:ring-2 focus:ring-emerald-zenith-primary/20 focus:border-emerald-zenith-primary transition-all cursor-pointer font-bold [&_option]:bg-emerald-zenith-surface-high [&_option]:text-emerald-zenith-text"
                         >
                           <option disabled value="">Select source</option>
                           <option value="salary">Salary</option>

@@ -192,7 +192,7 @@ export function TransactionsPage() {
             <select
               value={selectedCategory}
               onChange={(event) => setSelectedCategory(event.target.value)}
-              className="bg-emerald-zenith-surface-high border-none rounded-lg text-sm font-bold text-emerald-zenith-text px-4 py-2 focus:ring-2 focus:ring-emerald-zenith-primary/20 min-w-41.25 appearance-none cursor-pointer"
+              className="bg-emerald-zenith-surface-high border-none rounded-lg text-sm font-bold text-emerald-zenith-text px-4 py-2 focus:ring-2 focus:ring-emerald-zenith-primary/20 min-w-41.25 appearance-none cursor-pointer [&_option]:bg-emerald-zenith-surface-high [&_option]:text-emerald-zenith-text"
             >
               <option value="">All Categories</option>
               {categoryOptions.map((category) => (

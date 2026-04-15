@@ -5,6 +5,8 @@ import {
   ShoppingBag,
   Car,
   PlusCircle,
+  Minus,
+  Plus,
   ArrowRight,
   Edit2,
   Trash2,
@@ -71,6 +73,9 @@ const defaultSummaryForCategory = (category: BudgetCategory): BudgetSummary => (
 
 const currentMonth = new Date().getMonth() + 1;
 const currentYear = new Date().getFullYear();
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as const;
+const MIN_YEAR = 2000;
+const MAX_YEAR = 2100;
 
 function BudgetCard({ title, category, summary, large, onEdit, onDelete }: BudgetCardProps) {
   const Icon = categoryIcon(category);
@@ -207,6 +212,26 @@ export function BudgetsPage() {
   const [filterMonth, setFilterMonth] = useState<number>(currentMonth);
   const [filterYear, setFilterYear] = useState<number>(currentYear);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const shiftFilterMonth = (delta: number) => {
+    const nextDate = new Date(filterYear, filterMonth - 1 + delta, 1);
+    setFilterMonth(nextDate.getMonth() + 1);
+    setFilterYear(Math.min(MAX_YEAR, Math.max(MIN_YEAR, nextDate.getFullYear())));
+  };
+
+  const shiftFilterYear = (delta: number) => {
+    setFilterYear((current) => Math.min(MAX_YEAR, Math.max(MIN_YEAR, current + delta)));
+  };
+
+  const shiftFormMonth = (delta: number) => {
+    const nextDate = new Date(formYear, formMonth - 1 + delta, 1);
+    setFormMonth(nextDate.getMonth() + 1);
+    setFormYear(Math.min(MAX_YEAR, Math.max(MIN_YEAR, nextDate.getFullYear())));
+  };
+
+  const shiftFormYear = (delta: number) => {
+    setFormYear((current) => Math.min(MAX_YEAR, Math.max(MIN_YEAR, current + delta)));
+  };
 
   const loadBudgetsData = useCallback(async () => {
     setIsLoading(true);
@@ -380,32 +405,60 @@ export function BudgetsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
           <div className="space-y-2">
             <label className="block text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted px-1">Month</label>
-            <input
-              type="number"
-              min={1}
-              max={12}
-              value={filterMonth}
-              onChange={(event) => setFilterMonth(Number(event.target.value))}
-              className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-zenith-text"
-            />
+            <div className="flex items-center rounded-xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1.5">
+              <button
+                type="button"
+                onClick={() => shiftFilterMonth(-1)}
+                className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                aria-label="Previous month"
+              >
+                <Minus className="h-4 w-4" />
+              </button>
+              <div className="flex-1 text-center">
+                <p className="text-xs font-black uppercase tracking-widest text-emerald-zenith-primary">
+                  {MONTH_LABELS[filterMonth - 1]}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => shiftFilterMonth(1)}
+                className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                aria-label="Next month"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
           </div>
           <div className="space-y-2">
             <label className="block text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted px-1">Year</label>
-            <input
-              type="number"
-              min={2000}
-              max={2100}
-              value={filterYear}
-              onChange={(event) => setFilterYear(Number(event.target.value))}
-              className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-zenith-text"
-            />
+            <div className="flex items-center rounded-xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1.5">
+              <button
+                type="button"
+                onClick={() => shiftFilterYear(-1)}
+                className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                aria-label="Previous year"
+              >
+                <Minus className="h-4 w-4" />
+              </button>
+              <div className="flex-1 text-center">
+                <p className="text-sm font-black tracking-wide text-emerald-zenith-text">{filterYear}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => shiftFilterYear(1)}
+                className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                aria-label="Next year"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
           </div>
           <div className="space-y-2">
             <label className="block text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted px-1">Category</label>
             <select
               value={filterCategory}
               onChange={(event) => setFilterCategory(event.target.value as '' | BudgetCategory)}
-              className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-zenith-text"
+              className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-zenith-text [&_option]:bg-emerald-zenith-surface-high [&_option]:text-emerald-zenith-text"
             >
               <option value="">All Categories</option>
               {FIXED_CATEGORIES.map((category) => (
@@ -428,7 +481,7 @@ export function BudgetsPage() {
                 value={formAmount}
                 onChange={(event) => setFormAmount(event.target.value)}
                 placeholder="0.00"
-                className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-zenith-text"
+                className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-zenith-text [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 disabled={isSaving}
                 required
               />
@@ -439,7 +492,7 @@ export function BudgetsPage() {
               <select
                 value={formCategory}
                 onChange={(event) => setFormCategory(event.target.value as BudgetCategory)}
-                className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-zenith-text"
+                className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-zenith-text [&_option]:bg-emerald-zenith-surface-high [&_option]:text-emerald-zenith-text"
                 disabled={isSaving}
               >
                 {FIXED_CATEGORIES.map((category) => (
@@ -450,28 +503,58 @@ export function BudgetsPage() {
 
             <div className="space-y-2">
               <label className="block text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted px-1">Month</label>
-              <input
-                type="number"
-                min={1}
-                max={12}
-                value={formMonth}
-                onChange={(event) => setFormMonth(Number(event.target.value))}
-                className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-zenith-text"
-                disabled={isSaving}
-              />
+              <div className="flex items-center rounded-xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1.5">
+                <button
+                  type="button"
+                  onClick={() => shiftFormMonth(-1)}
+                  disabled={isSaving}
+                  className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary disabled:opacity-50"
+                  aria-label="Previous month"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <div className="flex-1 text-center">
+                  <p className="text-xs font-black uppercase tracking-widest text-emerald-zenith-primary">
+                    {MONTH_LABELS[formMonth - 1]}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => shiftFormMonth(1)}
+                  disabled={isSaving}
+                  className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary disabled:opacity-50"
+                  aria-label="Next month"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="block text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted px-1">Year</label>
-              <input
-                type="number"
-                min={2000}
-                max={2100}
-                value={formYear}
-                onChange={(event) => setFormYear(Number(event.target.value))}
-                className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-zenith-text"
-                disabled={isSaving}
-              />
+              <div className="flex items-center rounded-xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1.5">
+                <button
+                  type="button"
+                  onClick={() => shiftFormYear(-1)}
+                  disabled={isSaving}
+                  className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary disabled:opacity-50"
+                  aria-label="Previous year"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <div className="flex-1 text-center">
+                  <p className="text-sm font-black tracking-wide text-emerald-zenith-text">{formYear}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => shiftFormYear(1)}
+                  disabled={isSaving}
+                  className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary disabled:opacity-50"
+                  aria-label="Next year"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             <div className="flex gap-3 md:justify-end">
