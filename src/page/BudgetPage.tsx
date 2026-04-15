@@ -11,6 +11,8 @@ import {
   Edit2,
   Trash2,
   HeartPulse,
+  X,
+  AlertTriangle,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Reveal } from '../components/Reveal';
@@ -188,6 +190,160 @@ function BudgetCard({ title, category, summary, large, onEdit, onDelete }: Budge
   );
 }
 
+type BudgetEditModalProps = {
+  budget: Budget | null;
+  amount: string;
+  isSaving: boolean;
+  onAmountChange: (value: string) => void;
+  onCancel: () => void;
+  onSave: (event: React.FormEvent<HTMLFormElement>) => void;
+};
+
+function BudgetEditModal({ budget, amount, isSaving, onAmountChange, onCancel, onSave }: BudgetEditModalProps) {
+  if (!budget) {
+    return null;
+  }
+
+  return (
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 md:p-6">
+      <div
+        className="fixed inset-0 bg-emerald-zenith-bg/80 backdrop-blur-xl"
+        onClick={onCancel}
+        aria-hidden="true"
+      />
+
+      <div className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-emerald-zenith-text-muted/15 bg-emerald-zenith-surface shadow-2xl shadow-emerald-950/20">
+        <div className="absolute top-0 left-0 h-1.5 w-full bg-linear-to-r from-emerald-zenith-primary to-emerald-zenith-secondary" />
+
+        <form className="relative p-6 md:p-8" onSubmit={onSave}>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="absolute right-4 top-4 rounded-lg p-2 text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface-high hover:text-emerald-zenith-text"
+            aria-label="Close edit dialog"
+          >
+            <X className="h-5 w-5" />
+          </button>
+
+          <div className="space-y-2 pr-10">
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-zenith-primary">Edit budget</p>
+            <h3 className="text-2xl font-black tracking-tight text-emerald-zenith-text">Update {CATEGORY_LABELS[(budget.category ?? 'food') as BudgetCategory]} budget</h3>
+            <p className="text-sm text-emerald-zenith-text-muted">
+              Change the allocated amount without leaving the page.
+            </p>
+          </div>
+
+          <div className="mt-7 space-y-3">
+            <label className="block text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted">Budget Amount</label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={amount}
+              onChange={(event) => onAmountChange(event.target.value)}
+              disabled={isSaving}
+              className="w-full rounded-2xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/50 px-4 py-3 text-base font-bold text-emerald-zenith-text outline-none transition-all focus:border-emerald-zenith-primary/50 focus:ring-2 focus:ring-emerald-zenith-primary/15 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              placeholder="0.00"
+              autoFocus
+            />
+            <p className="text-xs text-emerald-zenith-text-muted">
+              Current amount: ${budget.amount.toLocaleString()}
+            </p>
+          </div>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={onCancel}
+              disabled={isSaving}
+              className="flex-1 rounded-2xl border border-emerald-zenith-text-muted/25 px-5 py-3 text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted transition-all hover:bg-emerald-zenith-surface-high disabled:opacity-60"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="flex-1 rounded-2xl bg-emerald-zenith-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-emerald-zenith-accent transition-all hover:brightness-110 disabled:opacity-60"
+            >
+              {isSaving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+type BudgetDeleteModalProps = {
+  budget: Budget | null;
+  isDeleting: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+};
+
+function BudgetDeleteModal({ budget, isDeleting, onCancel, onConfirm }: BudgetDeleteModalProps) {
+  if (!budget) {
+    return null;
+  }
+
+  return (
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 md:p-6">
+      <div
+        className="fixed inset-0 bg-emerald-zenith-bg/80 backdrop-blur-xl"
+        onClick={onCancel}
+        aria-hidden="true"
+      />
+
+      <div className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-emerald-zenith-text-muted/15 bg-emerald-zenith-surface shadow-2xl shadow-emerald-950/20">
+        <div className="absolute top-0 left-0 h-1.5 w-full bg-linear-to-r from-emerald-zenith-error to-emerald-zenith-warning" />
+
+        <div className="relative p-6 md:p-8">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="absolute right-4 top-4 rounded-lg p-2 text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface-high hover:text-emerald-zenith-text"
+            aria-label="Close delete dialog"
+          >
+            <X className="h-5 w-5" />
+          </button>
+
+          <div className="flex items-start gap-4 pr-10">
+            <div className="flex size-12 items-center justify-center rounded-2xl bg-emerald-zenith-error/10 text-emerald-zenith-error">
+              <AlertTriangle className="h-6 w-6" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-zenith-error">Delete budget</p>
+              <h3 className="text-2xl font-black tracking-tight text-emerald-zenith-text">Remove {CATEGORY_LABELS[(budget.category ?? 'food') as BudgetCategory]} budget?</h3>
+              <p className="text-sm text-emerald-zenith-text-muted">
+                This will permanently delete the budget for {MONTH_LABELS[(budget.month ?? currentMonth) - 1]} {budget.year ?? currentYear}.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={onCancel}
+              disabled={isDeleting}
+              className="flex-1 rounded-2xl border border-emerald-zenith-text-muted/25 px-5 py-3 text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted transition-all hover:bg-emerald-zenith-surface-high disabled:opacity-60"
+            >
+              Keep Budget
+            </button>
+            <button
+              type="button"
+              onClick={onConfirm}
+              disabled={isDeleting}
+              className="flex-1 rounded-2xl bg-emerald-zenith-error px-5 py-3 text-xs font-black uppercase tracking-widest text-white transition-all hover:brightness-110 disabled:opacity-60"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Budget'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function BudgetsPage() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [summaryResponse, setSummaryResponse] = useState<BudgetSummaryResponse>({
@@ -212,6 +368,10 @@ export function BudgetsPage() {
   const [filterMonth, setFilterMonth] = useState<number>(currentMonth);
   const [filterYear, setFilterYear] = useState<number>(currentYear);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
+  const [editingAmount, setEditingAmount] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<Budget | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const shiftFilterMonth = (delta: number) => {
     const nextDate = new Date(filterYear, filterMonth - 1 + delta, 1);
@@ -310,34 +470,27 @@ export function BudgetsPage() {
   };
 
   const handleDeleteBudget = async (id: string) => {
-    const shouldDelete = window.confirm('Delete this budget?');
-
-    if (!shouldDelete) {
-      return;
-    }
-
+    setIsDeleting(true);
     try {
       await deleteBudget(id);
+      setDeleteTarget(null);
       await loadBudgetsData();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unable to delete budget right now.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   const handleEditBudget = async (budget: Budget) => {
-    const nextAmount = window.prompt('Update budget amount', String(budget.amount));
-
-    if (!nextAmount) {
-      return;
-    }
-
-    const parsedAmount = Number(nextAmount);
+    const parsedAmount = Number(editingAmount);
 
     if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
       setErrorMessage('Please provide a valid budget amount.');
       return;
     }
 
+    setIsSaving(true);
     try {
       await updateBudget(budget.id, {
         amount: parsedAmount,
@@ -347,9 +500,12 @@ export function BudgetsPage() {
         year: budget.year,
       });
       setErrorMessage(null);
+      setEditingBudget(null);
       await loadBudgetsData();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unable to update budget right now.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -598,14 +754,43 @@ export function BudgetsPage() {
                   category={item.category}
                   summary={item.summary}
                   large={index === 0}
-                  onEdit={budgetEntry ? () => { void handleEditBudget(budgetEntry); } : undefined}
-                  onDelete={budgetEntry ? () => { void handleDeleteBudget(budgetEntry.id); } : undefined}
+                  onEdit={budgetEntry ? () => {
+                    setEditingBudget(budgetEntry);
+                    setEditingAmount(String(budgetEntry.amount));
+                  } : undefined}
+                  onDelete={budgetEntry ? () => setDeleteTarget(budgetEntry) : undefined}
                 />
               </Reveal>
             );
           })}
         </div>
       )}
+
+      <BudgetEditModal
+        budget={editingBudget}
+        amount={editingAmount}
+        isSaving={isSaving}
+        onAmountChange={setEditingAmount}
+        onCancel={() => setEditingBudget(null)}
+        onSave={(event) => {
+          event.preventDefault();
+
+          if (editingBudget) {
+            void handleEditBudget(editingBudget);
+          }
+        }}
+      />
+
+      <BudgetDeleteModal
+        budget={deleteTarget}
+        isDeleting={isDeleting}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) {
+            void handleDeleteBudget(deleteTarget.id);
+          }
+        }}
+      />
 
       <section className="mt-12 md:mt-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
@@ -624,7 +809,17 @@ export function BudgetsPage() {
 
           <Reveal className="lg:col-span-2" delay={0.12}>
             <div className="bg-emerald-zenith-surface-high rounded-3xl md:rounded-[2.5rem] p-6 md:p-10 relative overflow-hidden h-72 md:h-90 group">
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 opacity-25 mix-blend-screen"
+                style={{
+                  backgroundImage: "url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1600&q=80')",
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
               <div className="absolute inset-0 bg-linear-to-t from-emerald-zenith-surface-high via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-emerald-zenith-bg/35" />
 
               <div className="absolute bottom-5 md:bottom-10 left-5 md:left-10 right-5 md:right-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 md:gap-0">
                 <div>
