@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { Wallet, Eye, EyeOff } from 'lucide-react';
+import { Wallet, Eye, EyeOff, House } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router';
 import {
   login,
@@ -159,7 +159,17 @@ export default function LoginPage({ onCreateAccount, onLoginSuccess, notice }: L
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-3xl font-black tracking-tight text-emerald-zenith-text">Log In</h2>
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-3xl font-black tracking-tight text-emerald-zenith-text">Log In</h2>
+                <button
+                  type="button"
+                  onClick={() => navigate('/')}
+                  className="inline-flex items-center gap-2 rounded-xl border border-emerald-zenith-text-muted/25 bg-emerald-zenith-surface-high/40 px-3 py-2 text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted transition-all hover:border-emerald-zenith-primary/40 hover:text-emerald-zenith-primary"
+                >
+                  <House className="h-3.5 w-3.5" />
+                  <span>Home</span>
+                </button>
+              </div>
               <p className="text-sm text-emerald-zenith-text-muted">
                 Enter your credentials to access your account.
               </p>

@@ -437,6 +437,18 @@ export function BudgetsPage() {
     void loadBudgetsData();
   }, [loadBudgetsData]);
 
+  useEffect(() => {
+    const onTransactionUpdated = () => {
+      void loadBudgetsData();
+    };
+
+    window.addEventListener('fintrack:transaction-updated', onTransactionUpdated);
+
+    return () => {
+      window.removeEventListener('fintrack:transaction-updated', onTransactionUpdated);
+    };
+  }, [loadBudgetsData]);
+
   const handleCreateBudget = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -557,64 +569,64 @@ export function BudgetsPage() {
         </button>
       </div>
 
-      <section className="rounded-3xl border border-emerald-zenith-text-muted/15 bg-emerald-zenith-surface p-5 md:p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+      <section className="rounded-2xl border border-emerald-zenith-text-muted/15 bg-emerald-zenith-surface p-4 md:p-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
           <div className="space-y-2">
-            <label className="block text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted px-1">Month</label>
-            <div className="flex items-center rounded-xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1.5">
+            <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Month</label>
+            <div className="flex items-center rounded-lg border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1">
               <button
                 type="button"
                 onClick={() => shiftFilterMonth(-1)}
-                className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
                 aria-label="Previous month"
               >
-                <Minus className="h-4 w-4" />
+                <Minus className="h-3.5 w-3.5" />
               </button>
               <div className="flex-1 text-center">
-                <p className="text-xs font-black uppercase tracking-widest text-emerald-zenith-primary">
+                <p className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-primary">
                   {MONTH_LABELS[filterMonth - 1]}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => shiftFilterMonth(1)}
-                className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
                 aria-label="Next month"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
           <div className="space-y-2">
-            <label className="block text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted px-1">Year</label>
-            <div className="flex items-center rounded-xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1.5">
+            <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Year</label>
+            <div className="flex items-center rounded-lg border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1">
               <button
                 type="button"
                 onClick={() => shiftFilterYear(-1)}
-                className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
                 aria-label="Previous year"
               >
-                <Minus className="h-4 w-4" />
+                <Minus className="h-3.5 w-3.5" />
               </button>
               <div className="flex-1 text-center">
-                <p className="text-sm font-black tracking-wide text-emerald-zenith-text">{filterYear}</p>
+                <p className="text-xs font-black tracking-wide text-emerald-zenith-text">{filterYear}</p>
               </div>
               <button
                 type="button"
                 onClick={() => shiftFilterYear(1)}
-                className="flex size-9 items-center justify-center rounded-lg text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
                 aria-label="Next year"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
           <div className="space-y-2">
-            <label className="block text-xs font-black uppercase tracking-widest text-emerald-zenith-text-muted px-1">Category</label>
+            <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Category</label>
             <select
               value={filterCategory}
               onChange={(event) => setFilterCategory(event.target.value as '' | BudgetCategory)}
-              className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-xl px-4 py-3 text-sm font-bold text-emerald-zenith-text [&_option]:bg-emerald-zenith-surface-high [&_option]:text-emerald-zenith-text"
+              className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-lg px-3.5 py-2.5 text-xs font-bold text-emerald-zenith-text [&_option]:bg-emerald-zenith-surface-high [&_option]:text-emerald-zenith-text"
             >
               <option value="">All Categories</option>
               {FIXED_CATEGORIES.map((category) => (
