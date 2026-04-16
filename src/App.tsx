@@ -7,7 +7,7 @@ import RegisterPage from './page/Register'
 import Dashboard, { DashboardLayout } from './page/Dashboard'
 import { BudgetsPage } from './page/BudgetPage'
 import { TransactionsPage } from './page/TransactionPage'
-import PlaceholderPage from './page/PlaceholderPage'
+import SettingsPage from './page/SettingsPage'
 import { LandingPage } from './page/LandingPage'
 import { clearAuthSession, getMe, getStoredAccessToken } from './api/auth'
 
@@ -121,13 +121,7 @@ const App = () => {
         <Route path="budgets" element={<BudgetsPage />} />
         <Route
           path="settings"
-          element={
-            <PlaceholderPage
-              notice="Settings page will be available soon."
-              backToPath="/app"
-              backToLabel="Back to Dashboard"
-            />
-          }
+          element={<SettingsPage />}
         />
       </Route>
       <Route
