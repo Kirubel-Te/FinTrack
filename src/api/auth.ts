@@ -34,6 +34,8 @@ type AuthErrorResponse = {
 
 type AuthResponse = AuthSession | ApiSuccessResponse<AuthTokens> | AuthErrorResponse;
 
+let refreshSessionInFlight: Promise<AuthTokens> | null = null;
+
 export type LoginPayload = {
   email: string;
   password: string;
@@ -453,16 +455,28 @@ export const register = async (payload: RegisterPayload): Promise<AuthSession> =
 };
 
 export const refreshSession = async (refreshToken?: string): Promise<AuthTokens> => {
+  if (refreshSessionInFlight) {
+    return refreshSessionInFlight;
+  }
+
   const resolvedToken = refreshToken ?? getStoredRefreshToken();
 
   if (!resolvedToken) {
     throw new Error('Session refresh token is missing.');
   }
 
-  const response = await postAuth('/api/v1/auth/refresh', { refreshToken: resolvedToken });
-  const tokens = unwrapTokenResponse(response);
-  updateStoredTokens(tokens);
-  return tokens;
+  refreshSessionInFlight = (async () => {
+    const response = await postAuth('/api/v1/auth/refresh', { refreshToken: resolvedToken });
+    const tokens = unwrapTokenResponse(response);
+    updateStoredTokens(tokens);
+    return tokens;
+  })();
+
+  try {
+    return await refreshSessionInFlight;
+  } finally {
+    refreshSessionInFlight = null;
+  }
 };
 
 export const getMe = () => getProtectedAuth<AuthUser>('/api/v1/auth/me');

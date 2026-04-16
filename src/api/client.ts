@@ -2,9 +2,8 @@ import {
   clearAuthSession,
   getAuthApiBaseUrl,
   getStoredAccessToken,
-  getStoredRefreshToken,
+  refreshSession,
   sanitizeErrorMessage,
-  updateStoredTokens,
 } from './auth';
 
 const API_BASE_URL = getAuthApiBaseUrl();
@@ -77,37 +76,8 @@ const toApiErrorMessage = (payload: unknown, fallback: string): string => {
 };
 
 const refreshTokensRaw = async (): Promise<boolean> => {
-  const refreshToken = getStoredRefreshToken();
-
-  if (!refreshToken) {
-    return false;
-  }
-
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
-      method: 'POST',
-      cache: 'no-store',
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-store',
-        Pragma: 'no-cache',
-      },
-      body: JSON.stringify({ refreshToken }),
-    });
-
-    const payload = await parseResponse(response);
-
-    if (!response.ok || !isObject(payload) || payload.success !== true || !isObject(payload.data)) {
-      return false;
-    }
-
-    const { accessToken, refreshToken: nextRefreshToken } = payload.data;
-
-    if (typeof accessToken !== 'string' || typeof nextRefreshToken !== 'string') {
-      return false;
-    }
-
-    updateStoredTokens({ accessToken, refreshToken: nextRefreshToken });
+    await refreshSession();
     return true;
   } catch {
     return false;

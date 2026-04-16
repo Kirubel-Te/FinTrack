@@ -8,7 +8,7 @@ import {
 import { NavLink, useNavigate } from 'react-router';
 import { cn } from '../lib/utils';
 import { useEffect, useState } from 'react';
-import { clearAuthSession, getMe, getStoredAuthSession, logout, type AuthUser } from '../api/auth';
+import { getMe, getStoredAuthSession, logout, type AuthUser } from '../api/auth';
 
 const avatarForName = (firstName: string, lastName: string) => (
   `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(`${firstName}-${lastName}`)}`
@@ -44,10 +44,7 @@ export function Sidebar() {
         }
       })
       .catch(() => {
-        if (active) {
-          clearAuthSession();
-          navigate('/login', { replace: true });
-        }
+        // Keep the locally cached profile if this best-effort request fails.
       });
 
     return () => {
