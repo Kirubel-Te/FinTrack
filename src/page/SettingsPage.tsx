@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { clearAuthSession, deleteAccount, getStoredAuthSession, logout } from '../api/auth';
+import { Reveal } from '../components/Reveal';
 
 type ActionStatus = {
   type: 'success' | 'error';
@@ -738,44 +739,50 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-5 md:px-6 lg:px-8 lg:py-7">
-      <section className="space-y-2">
-        <h1 className="text-3xl font-black tracking-tight text-emerald-zenith-text md:text-4xl">Settings</h1>
-        <p className="text-sm text-emerald-zenith-text-muted md:text-base">
-          Choose a settings category to manage each form separately.
-        </p>
-      </section>
+      <Reveal delay={0.04}>
+        <section className="space-y-2">
+          <h1 className="text-3xl font-black tracking-tight text-emerald-zenith-text md:text-4xl">Settings</h1>
+          <p className="text-sm text-emerald-zenith-text-muted md:text-base">
+            Choose a settings category to manage each form separately.
+          </p>
+        </section>
+      </Reveal>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[270px_minmax(0,1fr)]">
-        <aside className={`${sectionClassName} h-fit lg:sticky lg:top-5`}>
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-emerald-zenith-text-muted">
-            Settings Navigation
-          </p>
-          <div className="space-y-2">
-            {SETTINGS_SECTIONS.map((section) => {
-              const Icon = section.icon;
-              const isActive = section.key === activeSection;
-              return (
-                <button
-                  key={section.key}
-                  type="button"
-                  onClick={() => handleSectionChange(section.key)}
-                  className={`w-full rounded-xl border px-3.5 py-3 text-left transition-all ${isActive
-                    ? 'border-emerald-zenith-primary/45 bg-emerald-zenith-primary/12 text-emerald-zenith-primary shadow-sm shadow-emerald-950/10'
-                    : 'border-emerald-900/20 bg-emerald-zenith-surface-high/25 text-emerald-zenith-text hover:border-emerald-zenith-primary/35 hover:text-emerald-zenith-primary'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Icon className="h-4 w-4" />
-                    <span className="text-sm font-semibold">{section.label}</span>
-                  </div>
-                  <p className="mt-1 text-xs text-emerald-zenith-text-muted">{section.hint}</p>
-                </button>
-              );
-            })}
-          </div>
-        </aside>
+        <Reveal delay={0.1}>
+          <aside className={`${sectionClassName} h-fit lg:sticky lg:top-5`}>
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-emerald-zenith-text-muted">
+              Settings Navigation
+            </p>
+            <div className="space-y-2">
+              {SETTINGS_SECTIONS.map((section) => {
+                const Icon = section.icon;
+                const isActive = section.key === activeSection;
+                return (
+                  <button
+                    key={section.key}
+                    type="button"
+                    onClick={() => handleSectionChange(section.key)}
+                    className={`w-full rounded-xl border px-3.5 py-3 text-left transition-all ${isActive
+                      ? 'border-emerald-zenith-primary/45 bg-emerald-zenith-primary/12 text-emerald-zenith-primary shadow-sm shadow-emerald-950/10'
+                      : 'border-emerald-900/20 bg-emerald-zenith-surface-high/25 text-emerald-zenith-text hover:border-emerald-zenith-primary/35 hover:text-emerald-zenith-primary'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Icon className="h-4 w-4" />
+                      <span className="text-sm font-semibold">{section.label}</span>
+                    </div>
+                    <p className="mt-1 text-xs text-emerald-zenith-text-muted">{section.hint}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+        </Reveal>
 
-        <div>{renderActiveSection()}</div>
+        <Reveal key={activeSection} delay={0.14}>
+          <div>{renderActiveSection()}</div>
+        </Reveal>
       </div>
 
       {isDeleteModalOpen && (
