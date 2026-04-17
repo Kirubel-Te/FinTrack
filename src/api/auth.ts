@@ -495,3 +495,67 @@ export const logout = async () => {
     clearAuthSession();
   }
 };
+
+export const deleteAccount = async (): Promise<string> => {
+  const token = getStoredAccessToken();
+
+  if (!token) {
+    throw new Error('Your session has expired. Please log in again.');
+  }
+
+  const requestDelete = async (accessToken: string) => fetch(`${API_BASE_URL}/api/v1/auth/account`, {
+    method: 'DELETE',
+    cache: 'no-store',
+    headers: {
+      'Cache-Control': 'no-store',
+      Pragma: 'no-cache',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  let response: Response;
+  let payload: AuthResponse;
+
+  try {
+    response = await requestDelete(token);
+  } catch (error) {
+    throw new Error(toUserFriendlyAuthError(error instanceof Error ? error.message : error, 'Unable to connect right now. Check your internet and try again.'));
+  }
+
+  payload = await parseResponseBody(response);
+
+  if (response.status === 401) {
+    try {
+      const refreshedTokens = await refreshSession();
+      response = await requestDelete(refreshedTokens.accessToken);
+      payload = await parseResponseBody(response);
+    } catch {
+      clearAuthSession();
+      throw new Error('Your session is invalid. Please log in again.');
+    }
+  }
+
+  if (!response.ok) {
+    const fallbacks = getAuthErrorFallbacks('/api/v1/auth/account');
+    const fallbackForStatus = response.status >= 500 ? fallbacks.server : fallbacks.generic;
+    throw new Error(getErrorMessage(payload, fallbackForStatus, response.status));
+  }
+
+  clearAuthSession();
+
+  const payloadRecord: Record<string, unknown> | null = isObject(payload) ? payload : null;
+  const payloadData = payloadRecord && isObject(payloadRecord.data)
+    ? payloadRecord.data
+    : null;
+
+  if (
+    payloadRecord?.success === true
+    && payloadData
+    && typeof payloadData.message === 'string'
+    && payloadData.message.trim()
+  ) {
+    return payloadData.message;
+  }
+
+  return 'Account deleted successfully';
+};

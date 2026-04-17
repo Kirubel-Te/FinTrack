@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { clearAuthSession, getStoredAuthSession, logout } from '../api/auth';
+import { clearAuthSession, deleteAccount, getStoredAuthSession, logout } from '../api/auth';
 
 type ActionStatus = {
   type: 'success' | 'error';
@@ -406,17 +406,22 @@ export default function SettingsPage() {
     setDangerStatus(null);
 
     try {
-      clearAuthSession();
-      navigate('/login', {
-        replace: true,
-        state: { notice: 'Account deletion flow will be connected to backend next.' },
-      });
-    } catch {
-      setDangerStatus({ type: 'error', message: 'Unable to process account deletion right now.' });
-    } finally {
-      setIsDeletingAccount(false);
+      const successMessage = await deleteAccount();
       setIsDeleteModalOpen(false);
       setDeleteConfirmText('');
+      navigate('/login', {
+        replace: true,
+        state: { notice: successMessage },
+      });
+    } catch (error) {
+      setDangerStatus({
+        type: 'error',
+        message: error instanceof Error
+          ? error.message
+          : 'Unable to process account deletion right now.',
+      });
+    } finally {
+      setIsDeletingAccount(false);
     }
   };
 
