@@ -11,7 +11,7 @@ import {
   UserRound,
   X,
 } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { clearAuthSession, getStoredAuthSession, logout } from '../api/auth';
 
 type ActionStatus = {
@@ -42,11 +42,58 @@ type NotificationForm = {
   overspendingAlerts: boolean;
 };
 
+type SettingsSection = 'profile' | 'security' | 'budget' | 'notifications' | 'danger';
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'NGN', 'KES', 'INR'];
+const SETTINGS_SECTIONS: Array<{
+  key: SettingsSection;
+  label: string;
+  hint: string;
+  icon: React.ComponentType<{ className?: string }>;
+}> = [
+  {
+    key: 'profile',
+    label: 'Profile',
+    hint: 'Name and email details',
+    icon: UserRound,
+  },
+  {
+    key: 'security',
+    label: 'Security',
+    hint: 'Password and account safety',
+    icon: Lock,
+  },
+  {
+    key: 'budget',
+    label: 'Budget',
+    hint: 'Default budget and currency',
+    icon: PiggyBank,
+  },
+  {
+    key: 'notifications',
+    label: 'Notifications',
+    hint: 'Alert preferences',
+    icon: BellRing,
+  },
+  {
+    key: 'danger',
+    label: 'Danger Zone',
+    hint: 'Logout and delete account',
+    icon: CircleAlert,
+  },
+];
 
 const sectionClassName = 'rounded-2xl border border-emerald-900/20 bg-emerald-zenith-surface/60 p-5 shadow-lg shadow-emerald-950/10 backdrop-blur-sm md:p-6';
 const inputClassName = 'w-full rounded-xl border border-emerald-900/20 bg-emerald-zenith-surface-high/40 px-4 py-2.5 text-sm text-emerald-zenith-text placeholder:text-emerald-zenith-text-muted/45 outline-none transition-all focus:border-emerald-zenith-primary/45 focus:ring-2 focus:ring-emerald-zenith-primary/20';
+
+const isSettingsSection = (value: string | null): value is SettingsSection => (
+  value === 'profile'
+  || value === 'security'
+  || value === 'budget'
+  || value === 'notifications'
+  || value === 'danger'
+);
 
 const validateProfile = (values: ProfileForm): FieldErrors => {
   const errors: FieldErrors = {};
@@ -146,13 +193,13 @@ const ToggleSwitch = ({
     aria-checked={enabled}
     onClick={onToggle}
     disabled={disabled}
-    className={`relative h-7 w-12 rounded-full border transition-all ${enabled
+    className={`relative h-7 w-12 overflow-hidden rounded-full border transition-all ${enabled
       ? 'border-emerald-zenith-primary/60 bg-emerald-zenith-primary/35'
       : 'border-emerald-900/30 bg-emerald-zenith-surface-high/50'
     } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
   >
     <span
-      className={`absolute top-0.5 h-5.5 w-5.5 rounded-full bg-emerald-zenith-text shadow transition-transform ${enabled ? 'translate-x-6' : 'translate-x-0.5'
+      className={`absolute left-0.5 top-0.5 h-5.5 w-5.5 rounded-full bg-emerald-zenith-text shadow transition-transform ${enabled ? 'translate-x-5' : 'translate-x-0'
       }`}
     />
   </button>
@@ -160,6 +207,7 @@ const ToggleSwitch = ({
 
 export default function SettingsPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const storedSession = getStoredAuthSession();
 
   const initialProfile = useMemo<ProfileForm>(() => ({
@@ -208,6 +256,11 @@ export default function SettingsPage() {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+
+  const sectionParam = searchParams.get('section');
+  const activeSection: SettingsSection = isSettingsSection(sectionParam)
+    ? sectionParam
+    : 'profile';
 
   const isProfileDirty = profile.name.trim() !== initialProfile.name.trim()
     || profile.email.trim() !== initialProfile.email.trim();
@@ -367,295 +420,358 @@ export default function SettingsPage() {
     }
   };
 
+  const handleSectionChange = (section: SettingsSection) => {
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.set('section', section);
+    setSearchParams(nextSearchParams, { replace: true });
+  };
+
+  const renderActiveSection = () => {
+    switch (activeSection) {
+      case 'profile':
+        return (
+          <section className={sectionClassName}>
+            <SectionHeader
+              title="Profile Settings"
+              subtitle="Update your name and email used in your account."
+              icon={UserRound}
+            />
+
+            <form className="space-y-4" onSubmit={handleProfileSave}>
+              <div>
+                <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="settings-name">Name</label>
+                <input
+                  id="settings-name"
+                  value={profile.name}
+                  onChange={(event) => {
+                    setProfile((current) => ({ ...current, name: event.target.value }));
+                    setProfileErrors((current) => ({ ...current, name: '' }));
+                  }}
+                  className={`${inputClassName} mt-1.5`}
+                  placeholder="Your full name"
+                />
+                <FieldError message={profileErrors.name} />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="settings-email">Email</label>
+                <input
+                  id="settings-email"
+                  type="email"
+                  value={profile.email}
+                  onChange={(event) => {
+                    setProfile((current) => ({ ...current, email: event.target.value }));
+                    setProfileErrors((current) => ({ ...current, email: '' }));
+                  }}
+                  className={`${inputClassName} mt-1.5`}
+                  placeholder="name@company.com"
+                />
+                <FieldError message={profileErrors.email} />
+              </div>
+
+              {profileStatus && (
+                <p className={`rounded-xl border px-3 py-2 text-sm ${profileStatus.type === 'success'
+                  ? 'border-emerald-zenith-primary/35 bg-emerald-zenith-primary/10 text-emerald-zenith-primary'
+                  : 'border-emerald-zenith-error/35 bg-emerald-zenith-error/10 text-emerald-zenith-error'
+                }`}>
+                  {profileStatus.message}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={!isProfileDirty || isSavingProfile}
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-zenith-primary px-4 py-2.5 text-sm font-black text-emerald-zenith-accent shadow-md shadow-emerald-950/10 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                <Save className="h-4 w-4" />
+                {isSavingProfile ? 'Saving...' : 'Save Profile Changes'}
+              </button>
+            </form>
+          </section>
+        );
+      case 'security':
+        return (
+          <section className={sectionClassName}>
+            <SectionHeader
+              title="Password & Security"
+              subtitle="Keep your account secure by using a strong password."
+              icon={Lock}
+            />
+
+            <form className="space-y-4" onSubmit={handlePasswordSave}>
+              <div>
+                <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="current-password">Current Password</label>
+                <input
+                  id="current-password"
+                  type="password"
+                  value={password.currentPassword}
+                  onChange={(event) => {
+                    setPassword((current) => ({ ...current, currentPassword: event.target.value }));
+                    setPasswordErrors((current) => ({ ...current, currentPassword: '' }));
+                  }}
+                  className={`${inputClassName} mt-1.5`}
+                  placeholder="Enter current password"
+                />
+                <FieldError message={passwordErrors.currentPassword} />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="new-password">New Password</label>
+                <input
+                  id="new-password"
+                  type="password"
+                  value={password.newPassword}
+                  onChange={(event) => {
+                    setPassword((current) => ({ ...current, newPassword: event.target.value }));
+                    setPasswordErrors((current) => ({ ...current, newPassword: '' }));
+                  }}
+                  className={`${inputClassName} mt-1.5`}
+                  placeholder="At least 8 characters"
+                />
+                <FieldError message={passwordErrors.newPassword} />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="confirm-password">Confirm New Password</label>
+                <input
+                  id="confirm-password"
+                  type="password"
+                  value={password.confirmPassword}
+                  onChange={(event) => {
+                    setPassword((current) => ({ ...current, confirmPassword: event.target.value }));
+                    setPasswordErrors((current) => ({ ...current, confirmPassword: '' }));
+                  }}
+                  className={`${inputClassName} mt-1.5`}
+                  placeholder="Re-enter new password"
+                />
+                <FieldError message={passwordErrors.confirmPassword} />
+              </div>
+
+              {passwordStatus && (
+                <p className={`rounded-xl border px-3 py-2 text-sm ${passwordStatus.type === 'success'
+                  ? 'border-emerald-zenith-primary/35 bg-emerald-zenith-primary/10 text-emerald-zenith-primary'
+                  : 'border-emerald-zenith-error/35 bg-emerald-zenith-error/10 text-emerald-zenith-error'
+                }`}>
+                  {passwordStatus.message}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={!isPasswordDirty || isSavingPassword}
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-zenith-primary px-4 py-2.5 text-sm font-black text-emerald-zenith-accent shadow-md shadow-emerald-950/10 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                <ShieldAlert className="h-4 w-4" />
+                {isSavingPassword ? 'Updating...' : 'Update Password'}
+              </button>
+            </form>
+          </section>
+        );
+      case 'budget':
+        return (
+          <section className={sectionClassName}>
+            <SectionHeader
+              title="Budget Preferences"
+              subtitle="Set a default monthly budget and your preferred currency."
+              icon={PiggyBank}
+            />
+
+            <form className="space-y-4" onSubmit={handlePreferencesSave}>
+              <div>
+                <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="default-budget">Default Monthly Budget (optional)</label>
+                <input
+                  id="default-budget"
+                  value={preferences.monthlyBudget}
+                  onChange={(event) => {
+                    setPreferences((current) => ({ ...current, monthlyBudget: event.target.value }));
+                    setPreferenceErrors((current) => ({ ...current, monthlyBudget: '' }));
+                  }}
+                  className={`${inputClassName} mt-1.5`}
+                  placeholder="e.g. 2000"
+                  inputMode="decimal"
+                />
+                <FieldError message={preferenceErrors.monthlyBudget} />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="currency">Preferred Currency</label>
+                <select
+                  id="currency"
+                  value={preferences.currency}
+                  onChange={(event) => {
+                    setPreferences((current) => ({ ...current, currency: event.target.value }));
+                    setPreferenceErrors((current) => ({ ...current, currency: '' }));
+                  }}
+                  className={`${inputClassName} mt-1.5`}
+                >
+                  {CURRENCIES.map((currency) => (
+                    <option key={currency} value={currency} className="bg-emerald-zenith-surface text-emerald-zenith-text">
+                      {currency}
+                    </option>
+                  ))}
+                </select>
+                <FieldError message={preferenceErrors.currency} />
+              </div>
+
+              {preferenceStatus && (
+                <p className={`rounded-xl border px-3 py-2 text-sm ${preferenceStatus.type === 'success'
+                  ? 'border-emerald-zenith-primary/35 bg-emerald-zenith-primary/10 text-emerald-zenith-primary'
+                  : 'border-emerald-zenith-error/35 bg-emerald-zenith-error/10 text-emerald-zenith-error'
+                }`}>
+                  {preferenceStatus.message}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={!isPreferenceDirty || isSavingPreferences}
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-zenith-primary px-4 py-2.5 text-sm font-black text-emerald-zenith-accent shadow-md shadow-emerald-950/10 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                <Save className="h-4 w-4" />
+                {isSavingPreferences ? 'Saving...' : 'Save Budget Preferences'}
+              </button>
+            </form>
+          </section>
+        );
+      case 'notifications':
+        return (
+          <section className={sectionClassName}>
+            <SectionHeader
+              title="Notification Preferences"
+              subtitle="Decide how FinTrack alerts you about spending activity."
+              icon={BellRing}
+            />
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between rounded-xl border border-emerald-900/20 bg-emerald-zenith-surface-high/35 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-emerald-zenith-text">Budget Warning Alerts</p>
+                  <p className="text-xs text-emerald-zenith-text-muted">Notify when spending reaches 80% of budget.</p>
+                </div>
+                <ToggleSwitch
+                  enabled={notifications.budgetWarnings}
+                  onToggle={() => setNotifications((current) => ({ ...current, budgetWarnings: !current.budgetWarnings }))}
+                />
+              </div>
+
+              <div className="flex items-center justify-between rounded-xl border border-emerald-900/20 bg-emerald-zenith-surface-high/35 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-emerald-zenith-text">Overspending Alerts</p>
+                  <p className="text-xs text-emerald-zenith-text-muted">Notify when spending exceeds your monthly budget.</p>
+                </div>
+                <ToggleSwitch
+                  enabled={notifications.overspendingAlerts}
+                  onToggle={() => setNotifications((current) => ({ ...current, overspendingAlerts: !current.overspendingAlerts }))}
+                />
+              </div>
+
+              {preferenceStatus && (
+                <p className={`rounded-xl border px-3 py-2 text-sm ${preferenceStatus.type === 'success'
+                  ? 'border-emerald-zenith-primary/35 bg-emerald-zenith-primary/10 text-emerald-zenith-primary'
+                  : 'border-emerald-zenith-error/35 bg-emerald-zenith-error/10 text-emerald-zenith-error'
+                }`}>
+                  {preferenceStatus.message}
+                </p>
+              )}
+
+              <button
+                type="button"
+                onClick={handleNotificationsSave}
+                disabled={!isNotificationDirty || isSavingNotifications}
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-zenith-primary px-4 py-2.5 text-sm font-black text-emerald-zenith-accent shadow-md shadow-emerald-950/10 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                <Save className="h-4 w-4" />
+                {isSavingNotifications ? 'Saving...' : 'Save Notification Preferences'}
+              </button>
+            </div>
+          </section>
+        );
+      case 'danger':
+        return (
+          <section className={`${sectionClassName} border-emerald-zenith-error/30`}>
+            <SectionHeader
+              title="Danger Zone"
+              subtitle="Sensitive account actions. Proceed carefully."
+              icon={CircleAlert}
+            />
+
+            {dangerStatus && (
+              <p className={`mb-4 rounded-xl border px-3 py-2 text-sm ${dangerStatus.type === 'success'
+                ? 'border-emerald-zenith-primary/35 bg-emerald-zenith-primary/10 text-emerald-zenith-primary'
+                : 'border-emerald-zenith-error/35 bg-emerald-zenith-error/10 text-emerald-zenith-error'
+              }`}>
+                {dangerStatus.message}
+              </p>
+            )}
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-900/25 bg-emerald-zenith-surface-high/35 px-4 py-2.5 text-sm font-semibold text-emerald-zenith-text transition-colors hover:border-emerald-zenith-primary/35 hover:text-emerald-zenith-primary disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                <LogOut className="h-4 w-4" />
+                {isLoggingOut ? 'Logging out...' : 'Logout'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-zenith-error/40 bg-emerald-zenith-error/10 px-4 py-2.5 text-sm font-semibold text-emerald-zenith-error transition-colors hover:bg-emerald-zenith-error/18"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete Account
+              </button>
+            </div>
+          </section>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-5 md:px-6 lg:px-8 lg:py-7">
       <section className="space-y-2">
         <h1 className="text-3xl font-black tracking-tight text-emerald-zenith-text md:text-4xl">Settings</h1>
         <p className="text-sm text-emerald-zenith-text-muted md:text-base">
-          Manage your account details and essential preferences.
+          Choose a settings category to manage each form separately.
         </p>
       </section>
 
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-        <section className={sectionClassName}>
-          <SectionHeader
-            title="Profile Settings"
-            subtitle="Update your name and email used in your account."
-            icon={UserRound}
-          />
-
-          <form className="space-y-4" onSubmit={handleProfileSave}>
-            <div>
-              <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="settings-name">Name</label>
-              <input
-                id="settings-name"
-                value={profile.name}
-                onChange={(event) => {
-                  setProfile((current) => ({ ...current, name: event.target.value }));
-                  setProfileErrors((current) => ({ ...current, name: '' }));
-                }}
-                className={`${inputClassName} mt-1.5`}
-                placeholder="Your full name"
-              />
-              <FieldError message={profileErrors.name} />
-            </div>
-
-            <div>
-              <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="settings-email">Email</label>
-              <input
-                id="settings-email"
-                type="email"
-                value={profile.email}
-                onChange={(event) => {
-                  setProfile((current) => ({ ...current, email: event.target.value }));
-                  setProfileErrors((current) => ({ ...current, email: '' }));
-                }}
-                className={`${inputClassName} mt-1.5`}
-                placeholder="name@company.com"
-              />
-              <FieldError message={profileErrors.email} />
-            </div>
-
-            {profileStatus && (
-              <p className={`rounded-xl border px-3 py-2 text-sm ${profileStatus.type === 'success'
-                ? 'border-emerald-zenith-primary/35 bg-emerald-zenith-primary/10 text-emerald-zenith-primary'
-                : 'border-emerald-zenith-error/35 bg-emerald-zenith-error/10 text-emerald-zenith-error'
-              }`}>
-                {profileStatus.message}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={!isProfileDirty || isSavingProfile}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-zenith-primary px-4 py-2.5 text-sm font-black text-emerald-zenith-accent shadow-md shadow-emerald-950/10 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              <Save className="h-4 w-4" />
-              {isSavingProfile ? 'Saving...' : 'Save Profile Changes'}
-            </button>
-          </form>
-        </section>
-
-        <section className={sectionClassName}>
-          <SectionHeader
-            title="Password & Security"
-            subtitle="Keep your account secure by using a strong password."
-            icon={Lock}
-          />
-
-          <form className="space-y-4" onSubmit={handlePasswordSave}>
-            <div>
-              <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="current-password">Current Password</label>
-              <input
-                id="current-password"
-                type="password"
-                value={password.currentPassword}
-                onChange={(event) => {
-                  setPassword((current) => ({ ...current, currentPassword: event.target.value }));
-                  setPasswordErrors((current) => ({ ...current, currentPassword: '' }));
-                }}
-                className={`${inputClassName} mt-1.5`}
-                placeholder="Enter current password"
-              />
-              <FieldError message={passwordErrors.currentPassword} />
-            </div>
-
-            <div>
-              <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="new-password">New Password</label>
-              <input
-                id="new-password"
-                type="password"
-                value={password.newPassword}
-                onChange={(event) => {
-                  setPassword((current) => ({ ...current, newPassword: event.target.value }));
-                  setPasswordErrors((current) => ({ ...current, newPassword: '' }));
-                }}
-                className={`${inputClassName} mt-1.5`}
-                placeholder="At least 8 characters"
-              />
-              <FieldError message={passwordErrors.newPassword} />
-            </div>
-
-            <div>
-              <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="confirm-password">Confirm New Password</label>
-              <input
-                id="confirm-password"
-                type="password"
-                value={password.confirmPassword}
-                onChange={(event) => {
-                  setPassword((current) => ({ ...current, confirmPassword: event.target.value }));
-                  setPasswordErrors((current) => ({ ...current, confirmPassword: '' }));
-                }}
-                className={`${inputClassName} mt-1.5`}
-                placeholder="Re-enter new password"
-              />
-              <FieldError message={passwordErrors.confirmPassword} />
-            </div>
-
-            {passwordStatus && (
-              <p className={`rounded-xl border px-3 py-2 text-sm ${passwordStatus.type === 'success'
-                ? 'border-emerald-zenith-primary/35 bg-emerald-zenith-primary/10 text-emerald-zenith-primary'
-                : 'border-emerald-zenith-error/35 bg-emerald-zenith-error/10 text-emerald-zenith-error'
-              }`}>
-                {passwordStatus.message}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={!isPasswordDirty || isSavingPassword}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-zenith-primary px-4 py-2.5 text-sm font-black text-emerald-zenith-accent shadow-md shadow-emerald-950/10 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              <ShieldAlert className="h-4 w-4" />
-              {isSavingPassword ? 'Updating...' : 'Update Password'}
-            </button>
-          </form>
-        </section>
-
-        <section className={sectionClassName}>
-          <SectionHeader
-            title="Budget Preferences"
-            subtitle="Set a default monthly budget and your preferred currency."
-            icon={PiggyBank}
-          />
-
-          <form className="space-y-4" onSubmit={handlePreferencesSave}>
-            <div>
-              <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="default-budget">Default Monthly Budget (optional)</label>
-              <input
-                id="default-budget"
-                value={preferences.monthlyBudget}
-                onChange={(event) => {
-                  setPreferences((current) => ({ ...current, monthlyBudget: event.target.value }));
-                  setPreferenceErrors((current) => ({ ...current, monthlyBudget: '' }));
-                }}
-                className={`${inputClassName} mt-1.5`}
-                placeholder="e.g. 2000"
-                inputMode="decimal"
-              />
-              <FieldError message={preferenceErrors.monthlyBudget} />
-            </div>
-
-            <div>
-              <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="currency">Preferred Currency</label>
-              <select
-                id="currency"
-                value={preferences.currency}
-                onChange={(event) => {
-                  setPreferences((current) => ({ ...current, currency: event.target.value }));
-                  setPreferenceErrors((current) => ({ ...current, currency: '' }));
-                }}
-                className={`${inputClassName} mt-1.5`}
-              >
-                {CURRENCIES.map((currency) => (
-                  <option key={currency} value={currency} className="bg-emerald-zenith-surface text-emerald-zenith-text">
-                    {currency}
-                  </option>
-                ))}
-              </select>
-              <FieldError message={preferenceErrors.currency} />
-            </div>
-
-            {preferenceStatus && (
-              <p className={`rounded-xl border px-3 py-2 text-sm ${preferenceStatus.type === 'success'
-                ? 'border-emerald-zenith-primary/35 bg-emerald-zenith-primary/10 text-emerald-zenith-primary'
-                : 'border-emerald-zenith-error/35 bg-emerald-zenith-error/10 text-emerald-zenith-error'
-              }`}>
-                {preferenceStatus.message}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={!isPreferenceDirty || isSavingPreferences}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-zenith-primary px-4 py-2.5 text-sm font-black text-emerald-zenith-accent shadow-md shadow-emerald-950/10 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              <Save className="h-4 w-4" />
-              {isSavingPreferences ? 'Saving...' : 'Save Budget Preferences'}
-            </button>
-          </form>
-        </section>
-
-        <section className={sectionClassName}>
-          <SectionHeader
-            title="Notification Preferences"
-            subtitle="Decide how FinTrack alerts you about spending activity."
-            icon={BellRing}
-          />
-
-          <div className="space-y-4">
-            <div className="flex items-center justify-between rounded-xl border border-emerald-900/20 bg-emerald-zenith-surface-high/35 px-4 py-3">
-              <div>
-                <p className="text-sm font-semibold text-emerald-zenith-text">Budget Warning Alerts</p>
-                <p className="text-xs text-emerald-zenith-text-muted">Notify when spending reaches 80% of budget.</p>
-              </div>
-              <ToggleSwitch
-                enabled={notifications.budgetWarnings}
-                onToggle={() => setNotifications((current) => ({ ...current, budgetWarnings: !current.budgetWarnings }))}
-              />
-            </div>
-
-            <div className="flex items-center justify-between rounded-xl border border-emerald-900/20 bg-emerald-zenith-surface-high/35 px-4 py-3">
-              <div>
-                <p className="text-sm font-semibold text-emerald-zenith-text">Overspending Alerts</p>
-                <p className="text-xs text-emerald-zenith-text-muted">Notify when spending exceeds your monthly budget.</p>
-              </div>
-              <ToggleSwitch
-                enabled={notifications.overspendingAlerts}
-                onToggle={() => setNotifications((current) => ({ ...current, overspendingAlerts: !current.overspendingAlerts }))}
-              />
-            </div>
-
-            <button
-              type="button"
-              onClick={handleNotificationsSave}
-              disabled={!isNotificationDirty || isSavingNotifications}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-zenith-primary px-4 py-2.5 text-sm font-black text-emerald-zenith-accent shadow-md shadow-emerald-950/10 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              <Save className="h-4 w-4" />
-              {isSavingNotifications ? 'Saving...' : 'Save Notification Preferences'}
-            </button>
-          </div>
-        </section>
-      </div>
-
-      <section className={`${sectionClassName} border-emerald-zenith-error/30`}>
-        <SectionHeader
-          title="Danger Zone"
-          subtitle="Sensitive account actions. Proceed carefully."
-          icon={CircleAlert}
-        />
-
-        {dangerStatus && (
-          <p className={`mb-4 rounded-xl border px-3 py-2 text-sm ${dangerStatus.type === 'success'
-            ? 'border-emerald-zenith-primary/35 bg-emerald-zenith-primary/10 text-emerald-zenith-primary'
-            : 'border-emerald-zenith-error/35 bg-emerald-zenith-error/10 text-emerald-zenith-error'
-          }`}>
-            {dangerStatus.message}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[270px_minmax(0,1fr)]">
+        <aside className={`${sectionClassName} h-fit lg:sticky lg:top-5`}>
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-emerald-zenith-text-muted">
+            Settings Navigation
           </p>
-        )}
+          <div className="space-y-2">
+            {SETTINGS_SECTIONS.map((section) => {
+              const Icon = section.icon;
+              const isActive = section.key === activeSection;
+              return (
+                <button
+                  key={section.key}
+                  type="button"
+                  onClick={() => handleSectionChange(section.key)}
+                  className={`w-full rounded-xl border px-3.5 py-3 text-left transition-all ${isActive
+                    ? 'border-emerald-zenith-primary/45 bg-emerald-zenith-primary/12 text-emerald-zenith-primary shadow-sm shadow-emerald-950/10'
+                    : 'border-emerald-900/20 bg-emerald-zenith-surface-high/25 text-emerald-zenith-text hover:border-emerald-zenith-primary/35 hover:text-emerald-zenith-primary'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Icon className="h-4 w-4" />
+                    <span className="text-sm font-semibold">{section.label}</span>
+                  </div>
+                  <p className="mt-1 text-xs text-emerald-zenith-text-muted">{section.hint}</p>
+                </button>
+              );
+            })}
+          </div>
+        </aside>
 
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <button
-            type="button"
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-900/25 bg-emerald-zenith-surface-high/35 px-4 py-2.5 text-sm font-semibold text-emerald-zenith-text transition-colors hover:border-emerald-zenith-primary/35 hover:text-emerald-zenith-primary disabled:cursor-not-allowed disabled:opacity-45"
-          >
-            <LogOut className="h-4 w-4" />
-            {isLoggingOut ? 'Logging out...' : 'Logout'}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsDeleteModalOpen(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-zenith-error/40 bg-emerald-zenith-error/10 px-4 py-2.5 text-sm font-semibold text-emerald-zenith-error transition-colors hover:bg-emerald-zenith-error/18"
-          >
-            <Trash2 className="h-4 w-4" />
-            Delete Account
-          </button>
-        </div>
-      </section>
+        <div>{renderActiveSection()}</div>
+      </div>
 
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-70 flex items-center justify-center bg-black/55 px-4 backdrop-blur-sm">

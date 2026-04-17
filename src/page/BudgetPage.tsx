@@ -569,74 +569,6 @@ export function BudgetsPage() {
         </button>
       </div>
 
-      <section className="rounded-2xl border border-emerald-zenith-text-muted/15 bg-emerald-zenith-surface p-4 md:p-5">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
-          <div className="space-y-2">
-            <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Month</label>
-            <div className="flex items-center rounded-lg border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1">
-              <button
-                type="button"
-                onClick={() => shiftFilterMonth(-1)}
-                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
-                aria-label="Previous month"
-              >
-                <Minus className="h-3.5 w-3.5" />
-              </button>
-              <div className="flex-1 text-center">
-                <p className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-primary">
-                  {MONTH_LABELS[filterMonth - 1]}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => shiftFilterMonth(1)}
-                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
-                aria-label="Next month"
-              >
-                <Plus className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Year</label>
-            <div className="flex items-center rounded-lg border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1">
-              <button
-                type="button"
-                onClick={() => shiftFilterYear(-1)}
-                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
-                aria-label="Previous year"
-              >
-                <Minus className="h-3.5 w-3.5" />
-              </button>
-              <div className="flex-1 text-center">
-                <p className="text-xs font-black tracking-wide text-emerald-zenith-text">{filterYear}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => shiftFilterYear(1)}
-                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
-                aria-label="Next year"
-              >
-                <Plus className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Category</label>
-            <select
-              value={filterCategory}
-              onChange={(event) => setFilterCategory(event.target.value as '' | BudgetCategory)}
-              className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-lg px-3.5 py-2.5 text-xs font-bold text-emerald-zenith-text [&_option]:bg-emerald-zenith-surface-high [&_option]:text-emerald-zenith-text"
-            >
-              <option value="">All Categories</option>
-              {FIXED_CATEGORIES.map((category) => (
-                <option key={category} value={category}>{CATEGORY_LABELS[category]}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </section>
-
       {isCreateOpen && (
         <form onSubmit={handleCreateBudget} className="rounded-3xl border border-emerald-zenith-text-muted/15 bg-emerald-zenith-surface p-5 md:p-6 shadow-2xl shadow-emerald-950/10">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
@@ -745,6 +677,74 @@ export function BudgetsPage() {
           </div>
         </form>
       )}
+
+      <section className="rounded-2xl border border-emerald-zenith-text-muted/15 bg-emerald-zenith-surface p-4 md:p-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+          <div className="space-y-2">
+            <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Month</label>
+            <div className="flex items-center rounded-lg border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1">
+              <button
+                type="button"
+                onClick={() => shiftFilterMonth(-1)}
+                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                aria-label="Previous month"
+              >
+                <Minus className="h-3.5 w-3.5" />
+              </button>
+              <div className="flex-1 text-center">
+                <p className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-primary">
+                  {MONTH_LABELS[filterMonth - 1]}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => shiftFilterMonth(1)}
+                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                aria-label="Next month"
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Year</label>
+            <div className="flex items-center rounded-lg border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1">
+              <button
+                type="button"
+                onClick={() => shiftFilterYear(-1)}
+                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                aria-label="Previous year"
+              >
+                <Minus className="h-3.5 w-3.5" />
+              </button>
+              <div className="flex-1 text-center">
+                <p className="text-xs font-black tracking-wide text-emerald-zenith-text">{filterYear}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => shiftFilterYear(1)}
+                className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                aria-label="Next year"
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Category</label>
+            <select
+              value={filterCategory}
+              onChange={(event) => setFilterCategory(event.target.value as '' | BudgetCategory)}
+              className="w-full bg-emerald-zenith-surface-high/50 border border-emerald-zenith-text-muted/20 rounded-lg px-3.5 py-2.5 text-xs font-bold text-emerald-zenith-text [&_option]:bg-emerald-zenith-surface-high [&_option]:text-emerald-zenith-text"
+            >
+              <option value="">All Categories</option>
+              {FIXED_CATEGORIES.map((category) => (
+                <option key={category} value={category}>{CATEGORY_LABELS[category]}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </section>
 
       {errorMessage && (
         <div className="rounded-xl border border-emerald-zenith-error/30 bg-emerald-zenith-error/10 px-4 py-3 text-sm text-emerald-zenith-error">
