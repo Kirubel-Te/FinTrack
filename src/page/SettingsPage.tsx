@@ -740,9 +740,9 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-5 md:px-6 lg:px-8 lg:py-7">
       <Reveal delay={0.04}>
-        <section className="space-y-2">
-          <h1 className="text-3xl font-black tracking-tight text-emerald-zenith-text md:text-4xl">Settings</h1>
-          <p className="text-sm text-emerald-zenith-text-muted md:text-base">
+        <section className="dashboard-page-header">
+          <h1 className="dashboard-page-title">Settings</h1>
+          <p className="dashboard-page-subtitle">
             Choose a settings category to manage each form separately.
           </p>
         </section>

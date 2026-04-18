@@ -174,11 +174,11 @@ export function TransactionsPage() {
   return (
     <div className="p-4 lg:p-5 space-y-7 lg:space-y-8 max-w-7xl mx-auto w-full">
       {/* Header Section */}
-      <div className="space-y-2">
-        <h2 className="text-3xl md:text-4xl xl:text-5xl font-black tracking-tight text-emerald-zenith-text">
+      <div className="dashboard-page-header">
+        <h2 className="dashboard-page-title">
           Transactions
         </h2>
-        <p className="text-emerald-zenith-text-muted text-sm md:text-base font-medium max-w-2xl">
+        <p className="dashboard-page-subtitle">
           Your financial story, curated and detailed. Monitor every inflow and outflow within your sanctuary.
         </p>
       </div>

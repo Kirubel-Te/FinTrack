@@ -552,9 +552,9 @@ export function BudgetsPage() {
   return (
     <div className="p-5 lg:p-6 space-y-10 lg:space-y-12 max-w-7xl mx-auto w-full">
       <div className="flex flex-col gap-6 md:flex-row md:justify-between md:items-end">
-        <div className="space-y-3">
-          <h2 className="text-3xl md:text-4xl xl:text-5xl font-black tracking-tight text-emerald-zenith-text">Budgets</h2>
-          <p className="text-emerald-zenith-text-muted text-sm md:text-base font-medium max-w-lg">
+        <div className="dashboard-page-header">
+          <h2 className="dashboard-page-title">Budgets</h2>
+          <p className="dashboard-page-subtitle max-w-lg">
             Set monthly budgets per fixed category and track remaining balances from real expenses.
           </p>
         </div>

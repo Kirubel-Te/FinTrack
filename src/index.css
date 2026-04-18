@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Sora", "Manrope", ui-sans-serif, system-ui, sans-serif;
   
   /* Shared app tokens */
   --color-primary: #043427;
@@ -136,6 +138,25 @@
 }
 
 @layer components {
+  .dashboard-page-title {
+    @apply font-display text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl;
+    letter-spacing: -0.025em;
+    line-height: 1.02;
+    color: var(--color-emerald-zenith-text);
+    text-wrap: balance;
+    text-shadow: 0 1px 0 rgba(242, 250, 246, 0.06), 0 10px 26px rgba(5, 40, 31, 0.36);
+  }
+
+  .dashboard-page-subtitle {
+    @apply text-sm font-medium md:text-base;
+    color: color-mix(in srgb, var(--color-emerald-zenith-text-muted) 86%, white 14%);
+    max-width: 64ch;
+  }
+
+  .dashboard-page-header {
+    @apply space-y-2;
+  }
+
   .home-grid-map {
     background:
       radial-gradient(circle at 50% 50%, rgba(16, 34, 29, 0) 0%, rgba(16, 34, 29, 0.35) 62%, rgba(16, 34, 29, 0.72) 100%),

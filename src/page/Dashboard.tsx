@@ -202,11 +202,11 @@ export default function Dashboard() {
   return (
     <div className="p-5 lg:p-6 space-y-7 lg:space-y-8 max-w-7xl mx-auto w-full">
       {/* Hero Section */}
-      <section className="space-y-1.5">
-        <h2 className="text-3xl md:text-4xl xl:text-5xl font-black tracking-tight text-emerald-zenith-text">
+      <section className="dashboard-page-header">
+        <h2 className="dashboard-page-title">
           Portfolio Overview
         </h2>
-        <p className="text-emerald-zenith-text-muted text-sm md:text-base font-medium">
+        <p className="dashboard-page-subtitle">
           Track your live finances from incomes, expenses, and reports.
         </p>
         {errorMessage && (
