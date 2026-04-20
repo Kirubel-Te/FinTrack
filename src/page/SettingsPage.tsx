@@ -4,7 +4,6 @@ import {
   CircleAlert,
   LogOut,
   Lock,
-  PiggyBank,
   Save,
   ShieldAlert,
   Trash2,
@@ -33,20 +32,14 @@ type PasswordForm = {
   confirmPassword: string;
 };
 
-type PreferenceForm = {
-  monthlyBudget: string;
-  currency: string;
-};
-
 type NotificationForm = {
   budgetWarnings: boolean;
   overspendingAlerts: boolean;
 };
 
-type SettingsSection = 'profile' | 'security' | 'budget' | 'notifications' | 'danger';
+type SettingsSection = 'profile' | 'security' | 'notifications' | 'danger';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const CURRENCIES = ['USD', 'EUR', 'GBP', 'NGN', 'KES', 'INR'];
 const SETTINGS_SECTIONS: Array<{
   key: SettingsSection;
   label: string;
@@ -64,12 +57,6 @@ const SETTINGS_SECTIONS: Array<{
     label: 'Security',
     hint: 'Password and account safety',
     icon: Lock,
-  },
-  {
-    key: 'budget',
-    label: 'Budget',
-    hint: 'Default budget and currency',
-    icon: PiggyBank,
   },
   {
     key: 'notifications',
@@ -91,7 +78,6 @@ const inputClassName = 'w-full rounded-xl border border-emerald-900/20 bg-emeral
 const isSettingsSection = (value: string | null): value is SettingsSection => (
   value === 'profile'
   || value === 'security'
-  || value === 'budget'
   || value === 'notifications'
   || value === 'danger'
 );
@@ -131,23 +117,6 @@ const validatePassword = (values: PasswordForm): FieldErrors => {
     errors.confirmPassword = 'Please confirm your new password.';
   } else if (values.confirmPassword !== values.newPassword) {
     errors.confirmPassword = 'Passwords do not match.';
-  }
-
-  return errors;
-};
-
-const validateBudget = (values: PreferenceForm): FieldErrors => {
-  const errors: FieldErrors = {};
-
-  if (values.monthlyBudget.trim()) {
-    const parsed = Number(values.monthlyBudget);
-    if (!Number.isFinite(parsed) || parsed < 0) {
-      errors.monthlyBudget = 'Monthly budget must be 0 or more.';
-    }
-  }
-
-  if (!values.currency) {
-    errors.currency = 'Please choose a preferred currency.';
   }
 
   return errors;
@@ -222,14 +191,6 @@ export default function SettingsPage() {
     newPassword: '',
     confirmPassword: '',
   });
-  const [preferences, setPreferences] = useState<PreferenceForm>({
-    monthlyBudget: '',
-    currency: 'USD',
-  });
-  const [initialPreferences, setInitialPreferences] = useState<PreferenceForm>({
-    monthlyBudget: '',
-    currency: 'USD',
-  });
   const [notifications, setNotifications] = useState<NotificationForm>({
     budgetWarnings: true,
     overspendingAlerts: true,
@@ -241,7 +202,6 @@ export default function SettingsPage() {
 
   const [profileErrors, setProfileErrors] = useState<FieldErrors>({});
   const [passwordErrors, setPasswordErrors] = useState<FieldErrors>({});
-  const [preferenceErrors, setPreferenceErrors] = useState<FieldErrors>({});
 
   const [profileStatus, setProfileStatus] = useState<ActionStatus>(null);
   const [passwordStatus, setPasswordStatus] = useState<ActionStatus>(null);
@@ -250,7 +210,6 @@ export default function SettingsPage() {
 
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
-  const [isSavingPreferences, setIsSavingPreferences] = useState(false);
   const [isSavingNotifications, setIsSavingNotifications] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -271,9 +230,6 @@ export default function SettingsPage() {
     || password.newPassword
     || password.confirmPassword
   );
-
-  const isPreferenceDirty = preferences.monthlyBudget.trim() !== initialPreferences.monthlyBudget.trim()
-    || preferences.currency !== initialPreferences.currency;
 
   const isNotificationDirty = notifications.budgetWarnings !== initialNotifications.budgetWarnings
     || notifications.overspendingAlerts !== initialNotifications.overspendingAlerts;
@@ -330,34 +286,6 @@ export default function SettingsPage() {
       setPasswordStatus({ type: 'error', message: 'Unable to update password right now.' });
     } finally {
       setIsSavingPassword(false);
-    }
-  };
-
-  const handlePreferencesSave = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setPreferenceStatus(null);
-
-    const validationErrors = validateBudget(preferences);
-    setPreferenceErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) {
-      setPreferenceStatus({ type: 'error', message: 'Please fix preference errors before saving.' });
-      return;
-    }
-
-    if (!isPreferenceDirty) {
-      return;
-    }
-
-    setIsSavingPreferences(true);
-
-    try {
-      setInitialPreferences(preferences);
-      setPreferenceStatus({ type: 'success', message: 'Budget preferences saved locally.' });
-    } catch {
-      setPreferenceStatus({ type: 'error', message: 'Unable to save preferences right now.' });
-    } finally {
-      setIsSavingPreferences(false);
     }
   };
 
@@ -569,72 +497,6 @@ export default function SettingsPage() {
               >
                 <ShieldAlert className="h-4 w-4" />
                 {isSavingPassword ? 'Updating...' : 'Update Password'}
-              </button>
-            </form>
-          </section>
-        );
-      case 'budget':
-        return (
-          <section className={sectionClassName}>
-            <SectionHeader
-              title="Budget Preferences"
-              subtitle="Set a default monthly budget and your preferred currency."
-              icon={PiggyBank}
-            />
-
-            <form className="space-y-4" onSubmit={handlePreferencesSave}>
-              <div>
-                <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="default-budget">Default Monthly Budget (optional)</label>
-                <input
-                  id="default-budget"
-                  value={preferences.monthlyBudget}
-                  onChange={(event) => {
-                    setPreferences((current) => ({ ...current, monthlyBudget: event.target.value }));
-                    setPreferenceErrors((current) => ({ ...current, monthlyBudget: '' }));
-                  }}
-                  className={`${inputClassName} mt-1.5`}
-                  placeholder="e.g. 2000"
-                  inputMode="decimal"
-                />
-                <FieldError message={preferenceErrors.monthlyBudget} />
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-emerald-zenith-text" htmlFor="currency">Preferred Currency</label>
-                <select
-                  id="currency"
-                  value={preferences.currency}
-                  onChange={(event) => {
-                    setPreferences((current) => ({ ...current, currency: event.target.value }));
-                    setPreferenceErrors((current) => ({ ...current, currency: '' }));
-                  }}
-                  className={`${inputClassName} mt-1.5`}
-                >
-                  {CURRENCIES.map((currency) => (
-                    <option key={currency} value={currency} className="bg-emerald-zenith-surface text-emerald-zenith-text">
-                      {currency}
-                    </option>
-                  ))}
-                </select>
-                <FieldError message={preferenceErrors.currency} />
-              </div>
-
-              {preferenceStatus && (
-                <p className={`rounded-xl border px-3 py-2 text-sm ${preferenceStatus.type === 'success'
-                  ? 'border-emerald-zenith-primary/35 bg-emerald-zenith-primary/10 text-emerald-zenith-primary'
-                  : 'border-emerald-zenith-error/35 bg-emerald-zenith-error/10 text-emerald-zenith-error'
-                }`}>
-                  {preferenceStatus.message}
-                </p>
-              )}
-
-              <button
-                type="submit"
-                disabled={!isPreferenceDirty || isSavingPreferences}
-                className="inline-flex items-center gap-2 rounded-xl bg-emerald-zenith-primary px-4 py-2.5 text-sm font-black text-emerald-zenith-accent shadow-md shadow-emerald-950/10 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
-              >
-                <Save className="h-4 w-4" />
-                {isSavingPreferences ? 'Saving...' : 'Save Budget Preferences'}
               </button>
             </form>
           </section>
