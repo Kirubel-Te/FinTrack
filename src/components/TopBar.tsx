@@ -4,9 +4,10 @@ import { Search, Bell, HelpCircle } from 'lucide-react';
 type TopBarProps = {
   onAddIncomeClick?: () => void;
   onAddExpenseClick?: () => void;
+  onHelpClick?: () => void;
 };
 
-export function TopBar({ onAddIncomeClick, onAddExpenseClick }: TopBarProps) {
+export function TopBar({ onAddIncomeClick, onAddExpenseClick, onHelpClick }: TopBarProps) {
   return (
     <header className="sticky top-0 z-40 flex flex-col md:flex-row justify-between md:items-center h-auto md:h-16 px-3 md:px-6 lg:px-8 py-2 md:py-0 bg-emerald-zenith-bg/80 backdrop-blur-xl border-b border-emerald-900/20 gap-2 md:gap-4">
       <div className="flex items-center w-full md:flex-1 md:max-w-sm lg:max-w-lg">
@@ -45,7 +46,12 @@ export function TopBar({ onAddIncomeClick, onAddExpenseClick }: TopBarProps) {
             <Bell className="w-4.5 h-4.5" />
             <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-zenith-primary rounded-full border-2 border-emerald-zenith-bg" />
           </button>
-          <button className="p-1.5 text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-colors">
+          <button
+            type="button"
+            onClick={onHelpClick}
+            className="p-1.5 text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-colors"
+            aria-label="Open help"
+          >
             <HelpCircle className="w-4.5 h-4.5" />
           </button>
           <div className="w-9 h-9 rounded-full border-2 border-emerald-zenith-primary/20 p-0.5 overflow-hidden cursor-pointer hover:border-emerald-zenith-primary transition-colors">
