@@ -9,6 +9,7 @@ import { BudgetsPage } from './page/BudgetPage'
 import { TransactionsPage } from './page/TransactionPage'
 import SettingsPage from './page/SettingsPage'
 import { NotificationsPage } from './page/NotificationsPage'
+import { HelpCenterPage } from './page/HelpCenter'
 import { LandingPage } from './page/LandingPage'
 import { clearAuthSession, getMe, getStoredAccessToken } from './api/auth'
 
@@ -121,6 +122,7 @@ const App = () => {
         <Route path="transactions" element={<TransactionsPage />} />
         <Route path="budgets" element={<BudgetsPage />} />
         <Route path="notifications" element={<NotificationsPage />} />
+        <Route path="help-center" element={<HelpCenterPage />} />
         <Route
           path="settings"
           element={<SettingsPage />}

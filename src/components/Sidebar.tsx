@@ -3,6 +3,7 @@ import {
   ReceiptText, 
   Wallet, 
   Bell,
+  CircleHelp,
   Settings,
   LogOut
 } from 'lucide-react';
@@ -28,6 +29,7 @@ const navItems = [
   { icon: ReceiptText, label: 'Transactions', path: '/app/transactions' },
   { icon: Wallet, label: 'Budgets', path: '/app/budgets' },
   { icon: Bell, label: 'Notifications', path: '/app/notifications' },
+  { icon: CircleHelp, label: 'Help Center', path: '/app/help-center' },
   { icon: Settings, label: 'Settings', path: '/app/settings' },
 ];
 

@@ -9,7 +9,6 @@ import { Outlet, useNavigate } from 'react-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AddExpenseModal } from './AddExpense';
 import { AddIncomeModal } from './AddIncome';
-import { HelpCenterModal } from './HelpCenter';
 import { Reveal } from '../components/Reveal';
 import {
   getCategoryReport,
@@ -80,7 +79,6 @@ export function DashboardLayout() {
   const navigate = useNavigate();
   const [isAddIncomeOpen, setIsAddIncomeOpen] = useState(false);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex bg-emerald-zenith-bg text-emerald-zenith-text">
@@ -90,7 +88,7 @@ export function DashboardLayout() {
         <TopBar
           onAddIncomeClick={() => setIsAddIncomeOpen(true)}
           onAddExpenseClick={() => setIsAddExpenseOpen(true)}
-          onHelpClick={() => setIsHelpOpen(true)}
+          onHelpClick={() => navigate('/app/help-center')}
           onNotificationsClick={() => navigate('/app/notifications')}
         />
         <Outlet />
@@ -104,11 +102,6 @@ export function DashboardLayout() {
       <AddExpenseModal
         isOpen={isAddExpenseOpen}
         onClose={() => setIsAddExpenseOpen(false)}
-      />
-
-      <HelpCenterModal
-        isOpen={isHelpOpen}
-        onClose={() => setIsHelpOpen(false)}
       />
     </div>
   );

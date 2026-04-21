@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, BellRing, RefreshCw, Settings2, TriangleAlert } from 'lucide-react';
+import { AlertTriangle, BellRing, Minus, Plus, RefreshCw, Settings2, TriangleAlert } from 'lucide-react';
 import { Link } from 'react-router';
 import {
   getBudgetSummary,
@@ -40,6 +40,8 @@ const CATEGORY_LABELS: Record<BudgetCategory, string> = {
 const currentMonth = new Date().getMonth() + 1;
 const currentYear = new Date().getFullYear();
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as const;
+const MIN_YEAR = 2000;
+const MAX_YEAR = 2100;
 
 const isBudgetCategory = (value: BudgetSummary['category']): value is BudgetCategory => (
   typeof value === 'string' && FIXED_CATEGORIES.includes(value as BudgetCategory)
@@ -88,6 +90,16 @@ export function NotificationsPage() {
   const [month, setMonth] = useState<number>(currentMonth);
   const [year, setYear] = useState<number>(currentYear);
   const [preferences, setPreferences] = useState<NotificationPreferences>(() => getNotificationPreferences());
+
+  const shiftMonth = (delta: number) => {
+    const nextDate = new Date(year, month - 1 + delta, 1);
+    setMonth(nextDate.getMonth() + 1);
+    setYear(Math.min(MAX_YEAR, Math.max(MIN_YEAR, nextDate.getFullYear())));
+  };
+
+  const shiftYear = (delta: number) => {
+    setYear((current) => Math.min(MAX_YEAR, Math.max(MIN_YEAR, current + delta)));
+  };
 
   const loadAlerts = useCallback(async () => {
     setIsLoading(true);
@@ -151,31 +163,58 @@ export function NotificationsPage() {
       <Reveal delay={0.08}>
         <section className="rounded-2xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface p-4 md:p-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div className="grid grid-cols-2 gap-3 sm:max-w-md">
-              <label className="text-sm text-emerald-zenith-text-muted">
-                Month
-                <select
-                  value={month}
-                  onChange={(event) => setMonth(Number(event.target.value))}
-                  className="mt-1 block w-full rounded-xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/45 px-3 py-2 text-sm text-emerald-zenith-text"
-                >
-                  {MONTH_LABELS.map((label, index) => (
-                    <option key={label} value={index + 1}>{label}</option>
-                  ))}
-                </select>
-              </label>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:max-w-md">
+              <div className="space-y-2">
+                <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Month</label>
+                <div className="flex items-center rounded-lg border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1">
+                  <button
+                    type="button"
+                    onClick={() => shiftMonth(-1)}
+                    className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                    aria-label="Previous month"
+                  >
+                    <Minus className="h-3.5 w-3.5" />
+                  </button>
+                  <div className="flex-1 text-center">
+                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-primary">
+                      {MONTH_LABELS[month - 1]}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => shiftMonth(1)}
+                    className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                    aria-label="Next month"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
 
-              <label className="text-sm text-emerald-zenith-text-muted">
-                Year
-                <input
-                  type="number"
-                  min="2000"
-                  max="2100"
-                  value={year}
-                  onChange={(event) => setYear(Number(event.target.value))}
-                  className="mt-1 block w-full rounded-xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/45 px-3 py-2 text-sm text-emerald-zenith-text"
-                />
-              </label>
+              <div className="space-y-2">
+                <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Year</label>
+                <div className="flex items-center rounded-lg border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1">
+                  <button
+                    type="button"
+                    onClick={() => shiftYear(-1)}
+                    className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                    aria-label="Previous year"
+                  >
+                    <Minus className="h-3.5 w-3.5" />
+                  </button>
+                  <div className="flex-1 text-center">
+                    <p className="text-xs font-black tracking-wide text-emerald-zenith-text">{year}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => shiftYear(1)}
+                    className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                    aria-label="Next year"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
