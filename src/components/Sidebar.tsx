@@ -2,6 +2,7 @@ import {
   LayoutDashboard, 
   ReceiptText, 
   Wallet, 
+  Bell,
   Settings,
   LogOut
 } from 'lucide-react';
@@ -26,6 +27,7 @@ const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/app' },
   { icon: ReceiptText, label: 'Transactions', path: '/app/transactions' },
   { icon: Wallet, label: 'Budgets', path: '/app/budgets' },
+  { icon: Bell, label: 'Notifications', path: '/app/notifications' },
   { icon: Settings, label: 'Settings', path: '/app/settings' },
 ];
 

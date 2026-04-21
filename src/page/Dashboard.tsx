@@ -5,7 +5,7 @@ import { ExpenseChart } from '../components/ExpenseChart';
 import { ComparisonChart } from '../components/ComparisionChart';
 import { TransactionTable, type RecentTransaction } from '../components/Transaction';
 import { Landmark, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AddExpenseModal } from './AddExpense';
 import { AddIncomeModal } from './AddIncome';
@@ -77,6 +77,7 @@ const toPercentTrend = (current: number, previous: number) => {
 const formatTrendLabel = (value: number) => `${Math.abs(value).toFixed(1)}% vs last month`;
 
 export function DashboardLayout() {
+  const navigate = useNavigate();
   const [isAddIncomeOpen, setIsAddIncomeOpen] = useState(false);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -90,6 +91,7 @@ export function DashboardLayout() {
           onAddIncomeClick={() => setIsAddIncomeOpen(true)}
           onAddExpenseClick={() => setIsAddExpenseOpen(true)}
           onHelpClick={() => setIsHelpOpen(true)}
+          onNotificationsClick={() => navigate('/app/notifications')}
         />
         <Outlet />
       </main>

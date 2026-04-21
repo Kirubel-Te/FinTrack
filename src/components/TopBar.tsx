@@ -5,9 +5,10 @@ type TopBarProps = {
   onAddIncomeClick?: () => void;
   onAddExpenseClick?: () => void;
   onHelpClick?: () => void;
+  onNotificationsClick?: () => void;
 };
 
-export function TopBar({ onAddIncomeClick, onAddExpenseClick, onHelpClick }: TopBarProps) {
+export function TopBar({ onAddIncomeClick, onAddExpenseClick, onHelpClick, onNotificationsClick }: TopBarProps) {
   return (
     <header className="sticky top-0 z-40 flex flex-col md:flex-row justify-between md:items-center h-auto md:h-16 px-3 md:px-6 lg:px-8 py-2 md:py-0 bg-emerald-zenith-bg/80 backdrop-blur-xl border-b border-emerald-900/20 gap-2 md:gap-4">
       <div className="flex items-center w-full md:flex-1 md:max-w-sm lg:max-w-lg">
@@ -42,7 +43,12 @@ export function TopBar({ onAddIncomeClick, onAddExpenseClick, onHelpClick }: Top
         <div className="hidden lg:block h-7 w-px bg-emerald-900/30" />
 
         <div className="hidden lg:flex items-center gap-2 md:gap-3">
-          <button className="p-1.5 text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-colors relative">
+          <button
+            type="button"
+            onClick={onNotificationsClick}
+            className="p-1.5 text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-colors relative"
+            aria-label="Open notifications"
+          >
             <Bell className="w-4.5 h-4.5" />
             <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-zenith-primary rounded-full border-2 border-emerald-zenith-bg" />
           </button>

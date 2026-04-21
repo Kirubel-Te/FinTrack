@@ -13,6 +13,11 @@ import {
 import { useNavigate, useSearchParams } from 'react-router';
 import { clearAuthSession, deleteAccount, getStoredAuthSession, logout } from '../api/auth';
 import { Reveal } from '../components/Reveal';
+import {
+  getNotificationPreferences,
+  saveNotificationPreferences,
+  type NotificationPreferences,
+} from '../lib/notificationPreferences';
 
 type ActionStatus = {
   type: 'success' | 'error';
@@ -32,10 +37,7 @@ type PasswordForm = {
   confirmPassword: string;
 };
 
-type NotificationForm = {
-  budgetWarnings: boolean;
-  overspendingAlerts: boolean;
-};
+type NotificationForm = NotificationPreferences;
 
 type SettingsSection = 'profile' | 'security' | 'notifications' | 'danger';
 
@@ -191,14 +193,13 @@ export default function SettingsPage() {
     newPassword: '',
     confirmPassword: '',
   });
-  const [notifications, setNotifications] = useState<NotificationForm>({
-    budgetWarnings: true,
-    overspendingAlerts: true,
-  });
-  const [initialNotifications, setInitialNotifications] = useState<NotificationForm>({
-    budgetWarnings: true,
-    overspendingAlerts: true,
-  });
+  const initialNotificationPreferences = useMemo<NotificationForm>(
+    () => getNotificationPreferences(),
+    [],
+  );
+
+  const [notifications, setNotifications] = useState<NotificationForm>(initialNotificationPreferences);
+  const [initialNotifications, setInitialNotifications] = useState<NotificationForm>(initialNotificationPreferences);
 
   const [profileErrors, setProfileErrors] = useState<FieldErrors>({});
   const [passwordErrors, setPasswordErrors] = useState<FieldErrors>({});
@@ -299,6 +300,7 @@ export default function SettingsPage() {
     setIsSavingNotifications(true);
 
     try {
+      saveNotificationPreferences(notifications);
       setInitialNotifications(notifications);
       setPreferenceStatus({ type: 'success', message: 'Notification preferences saved locally.' });
     } catch {
