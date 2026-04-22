@@ -48,6 +48,17 @@ export type RegisterPayload = {
   password: string;
 };
 
+export type UpdateProfilePayload = {
+  firstName: string;
+  lastName: string;
+  email: string;
+};
+
+export type UpdatePasswordPayload = {
+  currentPassword: string;
+  newPassword: string;
+};
+
 const isBrowser = typeof window !== 'undefined';
 
 const getLocalStorage = () => (isBrowser ? window.localStorage : null);
@@ -399,6 +410,103 @@ const getProtectedAuth = async <TResponse>(path: string, allowRetry = true): Pro
   return payload as TResponse;
 };
 
+const patchProtectedAuth = async <TResponse, TBody extends Record<string, unknown>>(
+  path: string,
+  body: TBody,
+  allowRetry = true,
+): Promise<TResponse> => {
+  const token = getStoredAccessToken();
+  const fallbacks = getAuthErrorFallbacks(path);
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method: 'PATCH',
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+        Pragma: 'no-cache',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (error) {
+    throw new Error(toUserFriendlyAuthError(error instanceof Error ? error.message : error, fallbacks.network));
+  }
+
+  const payload = await parseResponseBody(response);
+
+  if (response.status === 401 && allowRetry) {
+    try {
+      await refreshSession();
+      return patchProtectedAuth<TResponse, TBody>(path, body, false);
+    } catch {
+      clearAuthSession();
+      throw new Error('Your session is invalid. Please log in again.');
+    }
+  }
+
+  if (!response.ok) {
+    const fallbackForStatus = response.status >= 500 ? fallbacks.server : fallbacks.generic;
+    throw new Error(getErrorMessage(payload, fallbackForStatus, response.status));
+  }
+
+  return payload as TResponse;
+};
+
+const normalizeAuthUser = (value: unknown): AuthUser | null => {
+  if (!isObject(value)) {
+    return null;
+  }
+
+  if (
+    typeof value.id !== 'string'
+    || typeof value.firstName !== 'string'
+    || typeof value.lastName !== 'string'
+    || typeof value.email !== 'string'
+    || typeof value.createdAt !== 'string'
+  ) {
+    return null;
+  }
+
+  return {
+    id: value.id,
+    firstName: value.firstName,
+    lastName: value.lastName,
+    email: value.email,
+    createdAt: value.createdAt,
+  };
+};
+
+const extractAuthUserFromPayload = (payload: unknown): AuthUser | null => {
+  const direct = normalizeAuthUser(payload);
+  if (direct) {
+    return direct;
+  }
+
+  if (!isObject(payload)) {
+    return null;
+  }
+
+  const dataUser = normalizeAuthUser(isObject(payload.data) ? payload.data.user : null);
+  if (dataUser) {
+    return dataUser;
+  }
+
+  const data = normalizeAuthUser(payload.data);
+  if (data) {
+    return data;
+  }
+
+  const user = normalizeAuthUser(payload.user);
+  if (user) {
+    return user;
+  }
+
+  return null;
+};
+
 const normalizeAuthSession = (payload: AuthResponse): AuthSession => {
   if (!isAuthSession(payload)) {
     throw new Error('Unexpected authentication response. Please try again.');
@@ -480,6 +588,40 @@ export const refreshSession = async (refreshToken?: string): Promise<AuthTokens>
 };
 
 export const getMe = () => getProtectedAuth<AuthUser>('/api/v1/auth/me');
+
+export const updateProfile = async (payload: UpdateProfilePayload): Promise<AuthUser> => {
+  const response = await patchProtectedAuth<unknown, UpdateProfilePayload>('/api/v1/auth/profile', payload);
+
+  const existingSession = getStoredAuthSession();
+  const existingUser = existingSession?.user;
+
+  const updatedUser = extractAuthUserFromPayload(response)
+    ?? (existingUser
+      ? {
+        ...existingUser,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        email: payload.email,
+      }
+      : null);
+
+  if (!updatedUser) {
+    throw new Error('Profile updated, but we could not read the updated user details.');
+  }
+
+  if (existingSession) {
+    persistAuthSession({
+      ...existingSession,
+      user: updatedUser,
+    });
+  }
+
+  return updatedUser;
+};
+
+export const updatePassword = async (payload: UpdatePasswordPayload): Promise<void> => {
+  await patchProtectedAuth<unknown, UpdatePasswordPayload>('/api/v1/auth/password', payload);
+};
 
 export const logout = async () => {
   const refreshToken = getStoredRefreshToken();

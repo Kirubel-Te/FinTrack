@@ -5,12 +5,11 @@ import {
   Bell,
   CircleHelp,
   Settings,
-  LogOut
 } from 'lucide-react';
-import { NavLink, useNavigate } from 'react-router';
+import { NavLink } from 'react-router';
 import { cn } from '../lib/utils';
 import { useEffect, useState } from 'react';
-import { getMe, getStoredAuthSession, logout, type AuthUser } from '../api/auth';
+import { getMe, getStoredAuthSession, type AuthUser } from '../api/auth';
 
 const avatarForName = (firstName: string, lastName: string) => (
   `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(`${firstName}-${lastName}`)}`
@@ -34,9 +33,7 @@ const navItems = [
 ];
 
 export function Sidebar() {
-  const navigate = useNavigate();
   const [profile, setProfile] = useState<AuthUser>(() => getStoredAuthSession()?.user ?? fallbackProfile);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -54,17 +51,7 @@ export function Sidebar() {
     return () => {
       active = false;
     };
-  }, [navigate]);
-
-  const handleLogout = async () => {
-    if (isLoggingOut) {
-      return;
-    }
-
-    setIsLoggingOut(true);
-    await logout();
-    navigate('/login', { replace: true, state: { notice: 'You have been logged out.' } });
-  };
+  }, []);
 
   return (
     <aside className="fixed left-0 top-0 h-full w-16 md:w-64 bg-emerald-zenith-accent border-r border-emerald-900/30 flex flex-col py-6 md:py-8 z-50">
@@ -100,7 +87,7 @@ export function Sidebar() {
       </nav>
 
       <div className="px-2 md:px-4 mt-auto">
-        <div className="w-full flex items-center justify-center md:justify-start gap-0 md:gap-3 px-2 md:px-3 py-2 rounded-xl bg-white/5 border border-emerald-900/30">
+        <div className="w-full flex items-center justify-center md:justify-start gap-0 md:gap-3 px-2 md:px-3 py-2">
           <img
             src={avatarForName(profile.firstName, profile.lastName)}
             alt={`${profile.firstName} ${profile.lastName}`}
@@ -113,17 +100,6 @@ export function Sidebar() {
             <p className="text-xs text-emerald-zenith-text-muted truncate">{profile.email}</p>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-          className="mt-3 w-full flex items-center justify-center md:justify-start gap-2 px-2 md:px-3 py-2 rounded-xl border border-emerald-900/30 bg-white/5 text-emerald-zenith-text-muted hover:text-emerald-zenith-primary hover:border-emerald-zenith-primary/30 transition-colors disabled:opacity-60"
-        >
-          <LogOut className="w-4 h-4" />
-          <span className="hidden md:inline text-xs font-semibold">
-            {isLoggingOut ? 'Logging out...' : 'Logout'}
-          </span>
-        </button>
       </div>
     </aside>
   );

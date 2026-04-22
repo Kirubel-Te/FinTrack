@@ -11,7 +11,14 @@ import {
   X,
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { clearAuthSession, deleteAccount, getStoredAuthSession, logout } from '../api/auth';
+import {
+  clearAuthSession,
+  deleteAccount,
+  getStoredAuthSession,
+  logout,
+  updatePassword,
+  updateProfile,
+} from '../api/auth';
 import { Reveal } from '../components/Reveal';
 import {
   getNotificationPreferences,
@@ -124,6 +131,16 @@ const validatePassword = (values: PasswordForm): FieldErrors => {
   return errors;
 };
 
+const splitFullName = (value: string): { firstName: string; lastName: string } => {
+  const normalized = value.trim().replace(/\s+/g, ' ');
+  const [firstName = '', ...rest] = normalized.split(' ');
+
+  return {
+    firstName,
+    lastName: rest.join(' '),
+  };
+};
+
 const FieldError = ({ message }: { message?: string }) => (
   message
     ? <p className="mt-1 text-xs text-emerald-zenith-error">{message}</p>
@@ -188,6 +205,7 @@ export default function SettingsPage() {
   }), [storedSession]);
 
   const [profile, setProfile] = useState<ProfileForm>(initialProfile);
+  const [savedProfile, setSavedProfile] = useState<ProfileForm>(initialProfile);
   const [password, setPassword] = useState<PasswordForm>({
     currentPassword: '',
     newPassword: '',
@@ -223,8 +241,8 @@ export default function SettingsPage() {
     ? sectionParam
     : 'profile';
 
-  const isProfileDirty = profile.name.trim() !== initialProfile.name.trim()
-    || profile.email.trim() !== initialProfile.email.trim();
+  const isProfileDirty = profile.name.trim() !== savedProfile.name.trim()
+    || profile.email.trim() !== savedProfile.email.trim();
 
   const isPasswordDirty = !!(
     password.currentPassword
@@ -254,9 +272,26 @@ export default function SettingsPage() {
     setIsSavingProfile(true);
 
     try {
-      setProfileStatus({ type: 'success', message: 'Profile settings saved. Ready for backend integration.' });
-    } catch {
-      setProfileStatus({ type: 'error', message: 'Unable to save profile right now.' });
+      const { firstName, lastName } = splitFullName(profile.name);
+      const updatedUser = await updateProfile({
+        firstName,
+        lastName,
+        email: profile.email.trim(),
+      });
+
+      const updatedProfile: ProfileForm = {
+        name: `${updatedUser.firstName} ${updatedUser.lastName}`.trim(),
+        email: updatedUser.email,
+      };
+
+      setProfile(updatedProfile);
+      setSavedProfile(updatedProfile);
+      setProfileStatus({ type: 'success', message: 'Profile settings saved successfully.' });
+    } catch (error) {
+      setProfileStatus({
+        type: 'error',
+        message: error instanceof Error ? error.message : 'Unable to save profile right now.',
+      });
     } finally {
       setIsSavingProfile(false);
     }
@@ -281,10 +316,17 @@ export default function SettingsPage() {
     setIsSavingPassword(true);
 
     try {
+      await updatePassword({
+        currentPassword: password.currentPassword,
+        newPassword: password.newPassword,
+      });
       setPassword({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      setPasswordStatus({ type: 'success', message: 'Password updated. Ready for backend integration.' });
-    } catch {
-      setPasswordStatus({ type: 'error', message: 'Unable to update password right now.' });
+      setPasswordStatus({ type: 'success', message: 'Password updated successfully.' });
+    } catch (error) {
+      setPasswordStatus({
+        type: 'error',
+        message: error instanceof Error ? error.message : 'Unable to update password right now.',
+      });
     } finally {
       setIsSavingPassword(false);
     }
