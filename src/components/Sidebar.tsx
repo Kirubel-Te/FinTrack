@@ -10,10 +10,7 @@ import { NavLink } from 'react-router';
 import { cn } from '../lib/utils';
 import { useEffect, useState } from 'react';
 import { getMe, getStoredAuthSession, type AuthUser } from '../api/auth';
-
-const avatarForName = (firstName: string, lastName: string) => (
-  `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(`${firstName}-${lastName}`)}`
-);
+import { avatarForName, getProfileDisplayName } from '../lib/profile';
 
 const fallbackProfile: AuthUser = {
   id: 'local',
@@ -90,12 +87,12 @@ export function Sidebar() {
         <div className="w-full flex items-center justify-center md:justify-start gap-0 md:gap-3 px-2 md:px-3 py-2">
           <img
             src={avatarForName(profile.firstName, profile.lastName)}
-            alt={`${profile.firstName} ${profile.lastName}`}
+            alt={getProfileDisplayName(profile)}
             className="w-9 h-9 rounded-full border border-emerald-zenith-primary/50 bg-emerald-zenith-surface-high"
           />
           <div className="hidden md:block min-w-0">
             <p className="text-sm font-semibold text-emerald-zenith-text leading-tight truncate">
-              {profile.firstName} {profile.lastName}
+              {getProfileDisplayName(profile)}
             </p>
             <p className="text-xs text-emerald-zenith-text-muted truncate">{profile.email}</p>
           </div>
