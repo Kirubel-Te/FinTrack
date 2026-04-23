@@ -161,57 +161,57 @@ export function NotificationsPage() {
       </section>
 
       <Reveal delay={0.08}>
-        <section className="rounded-2xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface p-4 md:p-5">
+        <section className="rounded-2xl border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface p-3.5 md:p-4">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:max-w-md">
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:max-w-md">
               <div className="space-y-2">
-                <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Month</label>
+                <label className="block text-[10px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Month</label>
                 <div className="flex items-center rounded-lg border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1">
                   <button
                     type="button"
                     onClick={() => shiftMonth(-1)}
-                    className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                    className="flex size-7.5 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
                     aria-label="Previous month"
                   >
-                    <Minus className="h-3.5 w-3.5" />
+                    <Minus className="h-3 w-3" />
                   </button>
                   <div className="flex-1 text-center">
-                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-primary">
+                    <p className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-zenith-primary">
                       {MONTH_LABELS[month - 1]}
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => shiftMonth(1)}
-                    className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                    className="flex size-7.5 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
                     aria-label="Next month"
                   >
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-3 w-3" />
                   </button>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Year</label>
+                <label className="block text-[10px] font-black uppercase tracking-[0.16em] text-emerald-zenith-text-muted px-1">Year</label>
                 <div className="flex items-center rounded-lg border border-emerald-zenith-text-muted/20 bg-emerald-zenith-surface-high/40 p-1">
                   <button
                     type="button"
                     onClick={() => shiftYear(-1)}
-                    className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                    className="flex size-7.5 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
                     aria-label="Previous year"
                   >
-                    <Minus className="h-3.5 w-3.5" />
+                    <Minus className="h-3 w-3" />
                   </button>
                   <div className="flex-1 text-center">
-                    <p className="text-xs font-black tracking-wide text-emerald-zenith-text">{year}</p>
+                    <p className="text-[11px] font-black tracking-wide text-emerald-zenith-text">{year}</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => shiftYear(1)}
-                    className="flex size-8 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
+                    className="flex size-7.5 items-center justify-center rounded-md text-emerald-zenith-text-muted transition-colors hover:bg-emerald-zenith-surface hover:text-emerald-zenith-primary"
                     aria-label="Next year"
                   >
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-3 w-3" />
                   </button>
                 </div>
               </div>
@@ -220,7 +220,7 @@ export function NotificationsPage() {
             <div className="flex flex-wrap items-center gap-2">
               <Link
                 to="/app/settings?section=notifications"
-                className="inline-flex items-center gap-2 rounded-xl border border-emerald-zenith-text-muted/25 bg-emerald-zenith-surface-high/35 px-3.5 py-2 text-sm font-semibold text-emerald-zenith-text hover:text-emerald-zenith-primary"
+                className="inline-flex items-center gap-2 rounded-xl border border-emerald-zenith-text-muted/25 bg-emerald-zenith-surface-high/35 px-3 py-2 text-sm font-semibold text-emerald-zenith-text hover:text-emerald-zenith-primary"
               >
                 <Settings2 className="h-4 w-4" />
                 Notification Settings
@@ -228,7 +228,7 @@ export function NotificationsPage() {
               <button
                 type="button"
                 onClick={() => void loadAlerts()}
-                className="inline-flex items-center gap-2 rounded-xl bg-emerald-zenith-primary px-3.5 py-2 text-sm font-black text-emerald-zenith-accent hover:brightness-110"
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-zenith-primary px-3 py-2 text-sm font-black text-emerald-zenith-accent hover:brightness-110"
               >
                 <RefreshCw className="h-4 w-4" />
                 Refresh

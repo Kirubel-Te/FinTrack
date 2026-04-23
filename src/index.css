@@ -139,7 +139,7 @@
 
 @layer components {
   .dashboard-page-title {
-    @apply font-display text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl;
+    @apply font-display text-2xl font-extrabold tracking-tight md:text-3xl xl:text-4xl;
     letter-spacing: -0.025em;
     line-height: 1.02;
     color: var(--color-emerald-zenith-text);
@@ -148,7 +148,7 @@
   }
 
   .dashboard-page-subtitle {
-    @apply text-sm font-medium md:text-base;
+    @apply text-sm font-medium md:text-[15px];
     color: color-mix(in srgb, var(--color-emerald-zenith-text-muted) 86%, white 14%);
     max-width: 64ch;
   }

@@ -185,14 +185,14 @@ export function TransactionsPage() {
 
       {/* Filter Bar */}
       <Reveal delay={0.04}>
-        <section className="bg-emerald-zenith-surface rounded-xl p-3.5 md:p-4 flex flex-wrap items-stretch md:items-center justify-between gap-4 border border-emerald-zenith-text-muted/15 shadow-sm">
-        <div className="flex w-full lg:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-4">
+        <section className="bg-emerald-zenith-surface rounded-xl p-3 md:p-3.5 flex flex-wrap items-stretch md:items-center justify-between gap-3 border border-emerald-zenith-text-muted/15 shadow-sm">
+        <div className="flex w-full lg:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] uppercase tracking-[0.2em] text-emerald-zenith-text-muted font-black px-1">Category</span>
+            <span className="text-[10px] uppercase tracking-[0.18em] text-emerald-zenith-text-muted font-black px-1">Category</span>
             <select
               value={selectedCategory}
               onChange={(event) => setSelectedCategory(event.target.value)}
-              className="bg-emerald-zenith-surface-high border-none rounded-lg text-sm font-bold text-emerald-zenith-text px-4 py-2 focus:ring-2 focus:ring-emerald-zenith-primary/20 min-w-41.25 appearance-none cursor-pointer [&_option]:bg-emerald-zenith-surface-high [&_option]:text-emerald-zenith-text"
+              className="bg-emerald-zenith-surface-high border-none rounded-lg text-sm font-bold text-emerald-zenith-text px-3.5 py-2 focus:ring-2 focus:ring-emerald-zenith-primary/20 min-w-41.25 appearance-none cursor-pointer [&_option]:bg-emerald-zenith-surface-high [&_option]:text-emerald-zenith-text"
             >
               <option value="">All Categories</option>
               {categoryOptions.map((category) => (
@@ -201,16 +201,16 @@ export function TransactionsPage() {
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] uppercase tracking-[0.2em] text-emerald-zenith-text-muted font-black px-1">Date Range</span>
-            <div className="flex items-center gap-2.5 bg-emerald-zenith-surface-high rounded-lg px-4 py-2 hover:bg-emerald-zenith-surface-high/80 transition-colors">
-              <CalendarIcon className="w-4 h-4 text-emerald-zenith-primary" />
+            <span className="text-[10px] uppercase tracking-[0.18em] text-emerald-zenith-text-muted font-black px-1">Date Range</span>
+            <div className="flex items-center gap-2 bg-emerald-zenith-surface-high rounded-lg px-3.5 py-2 hover:bg-emerald-zenith-surface-high/80 transition-colors">
+              <CalendarIcon className="w-3.5 h-3.5 text-emerald-zenith-primary" />
               <input
                 type="date"
                 value={startDate}
                 onChange={(event) => setStartDate(event.target.value)}
                 className="bg-transparent text-sm font-bold text-emerald-zenith-text outline-none"
               />
-              <span className="text-sm font-bold text-emerald-zenith-text">to</span>
+              <span className="text-sm font-bold text-emerald-zenith-text-muted">to</span>
               <input
                 type="date"
                 value={endDate}
@@ -228,7 +228,7 @@ export function TransactionsPage() {
               setStartDate('');
               setEndDate('');
             }}
-            className="flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-bold text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-all bg-emerald-zenith-surface-high/50 rounded-lg hover:bg-emerald-zenith-surface-high"
+            className="flex items-center gap-2 px-3.5 py-2 text-xs md:text-sm font-bold text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-all bg-emerald-zenith-surface-high/50 rounded-lg hover:bg-emerald-zenith-surface-high"
           >
             <Filter className="w-4 h-4" />
             <span>Reset Filters</span>
@@ -236,7 +236,7 @@ export function TransactionsPage() {
           <button
             type="button"
             onClick={downloadCsv}
-            className="flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-bold text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-all bg-emerald-zenith-surface-high/50 rounded-lg hover:bg-emerald-zenith-surface-high"
+            className="flex items-center gap-2 px-3.5 py-2 text-xs md:text-sm font-bold text-emerald-zenith-text-muted hover:text-emerald-zenith-primary transition-all bg-emerald-zenith-surface-high/50 rounded-lg hover:bg-emerald-zenith-surface-high"
           >
             <Download className="w-4 h-4" />
             <span>Export CSV</span>
@@ -255,31 +255,31 @@ export function TransactionsPage() {
           <table className="w-full min-w-[760px] text-left border-collapse">
           <thead>
             <tr className="bg-emerald-zenith-surface-high/30 border-b border-emerald-zenith-text-muted/15">
-              <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-black text-emerald-zenith-text-muted">Transaction Name</th>
-              <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-black text-emerald-zenith-text-muted">Category</th>
-              <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-black text-emerald-zenith-text-muted">Date</th>
-              <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-black text-emerald-zenith-text-muted">Type</th>
-              <th className="px-6 py-4 text-right text-[10px] uppercase tracking-[0.2em] font-black text-emerald-zenith-text-muted">Amount</th>
+              <th className="px-5 py-3.5 text-[10px] uppercase tracking-[0.18em] font-black text-emerald-zenith-text-muted">Transaction Name</th>
+              <th className="px-5 py-3.5 text-[10px] uppercase tracking-[0.18em] font-black text-emerald-zenith-text-muted">Category</th>
+              <th className="px-5 py-3.5 text-[10px] uppercase tracking-[0.18em] font-black text-emerald-zenith-text-muted">Date</th>
+              <th className="px-5 py-3.5 text-[10px] uppercase tracking-[0.18em] font-black text-emerald-zenith-text-muted">Type</th>
+              <th className="px-5 py-3.5 text-right text-[10px] uppercase tracking-[0.18em] font-black text-emerald-zenith-text-muted">Amount</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-emerald-zenith-text-muted/15">
             {isLoading && (
               <tr>
-                <td className="px-6 py-10 text-center text-sm text-emerald-zenith-text-muted" colSpan={5}>
+                <td className="px-5 py-9 text-center text-sm text-emerald-zenith-text-muted" colSpan={5}>
                   Loading transactions...
                 </td>
               </tr>
             )}
             {!isLoading && errorMessage && (
               <tr>
-                <td className="px-6 py-10 text-center text-sm text-emerald-zenith-error" colSpan={5}>
+                <td className="px-5 py-9 text-center text-sm text-emerald-zenith-error" colSpan={5}>
                   {errorMessage}
                 </td>
               </tr>
             )}
             {!isLoading && !errorMessage && paginatedTransactions.map((t) => (
               <tr key={t.id} className="hover:bg-emerald-zenith-primary/5 transition-colors group cursor-pointer">
-                <td className="px-6 py-4">
+                <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
                     <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110", t.iconBg)}>
                       <t.icon className={cn("w-4 h-4", t.iconColor)} />
@@ -289,17 +289,17 @@ export function TransactionsPage() {
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-5 py-4">
                     <span className="text-xs font-bold text-emerald-zenith-text-muted bg-emerald-zenith-surface-high px-3 py-1 rounded-full border border-emerald-zenith-text-muted/15">
                     {t.category}
                   </span>
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-5 py-4">
                   <span className="text-sm font-bold text-emerald-zenith-text-muted">
                     {t.date}
                   </span>
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-5 py-4">
                   <span className={cn(
                     "text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-md",
                     t.type === 'Income' ? "text-emerald-zenith-primary bg-emerald-zenith-primary/10" : "text-emerald-zenith-error bg-emerald-zenith-error/10"
@@ -307,7 +307,7 @@ export function TransactionsPage() {
                     {t.type}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right">
+                <td className="px-5 py-4 text-right">
                   <span className={cn(
                     "text-sm md:text-base font-black",
                     t.amount > 0 ? "text-emerald-zenith-primary" : "text-emerald-zenith-error"
@@ -319,7 +319,7 @@ export function TransactionsPage() {
             ))}
             {!isLoading && !errorMessage && paginatedTransactions.length === 0 && (
               <tr>
-                <td className="px-6 py-10 text-center text-sm text-emerald-zenith-text-muted" colSpan={5}>
+                <td className="px-5 py-9 text-center text-sm text-emerald-zenith-text-muted" colSpan={5}>
                   No transactions matched your filters.
                 </td>
               </tr>
@@ -329,8 +329,8 @@ export function TransactionsPage() {
         </div>
 
         {/* Pagination Controls */}
-        <div className="px-6 py-4 bg-emerald-zenith-surface-high/20 border-t border-emerald-zenith-text-muted/15 flex items-center justify-between">
-          <span className="text-[10px] font-black text-emerald-zenith-text-muted uppercase tracking-[0.2em]">
+        <div className="px-5 py-3.5 bg-emerald-zenith-surface-high/20 border-t border-emerald-zenith-text-muted/15 flex items-center justify-between">
+          <span className="text-[10px] font-black text-emerald-zenith-text-muted uppercase tracking-[0.18em]">
             SHOWING {transactions.length === 0 ? 0 : (clampedPage - 1) * pageSize + 1}-{Math.min(clampedPage * pageSize, transactions.length)} OF {transactions.length} TRANSACTIONS
           </span>
           <div className="flex items-center gap-2">
