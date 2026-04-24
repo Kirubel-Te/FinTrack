@@ -1,4 +1,13 @@
-import { apiRequest } from './client';
+import { ApiError, apiRequest } from './client';
+import {
+  clearAuthSession,
+  getAuthApiBaseUrl,
+  getStoredAccessToken,
+  refreshSession,
+  sanitizeErrorMessage,
+} from './auth';
+
+const API_BASE_URL = getAuthApiBaseUrl();
 
 export type TransactionRecord = {
   id: string;
@@ -16,6 +25,46 @@ export type ListQuery = {
   category?: string;
   startDate?: string;
   endDate?: string;
+};
+
+export type TransactionSearchQuery = {
+  keyword: string;
+  page?: number;
+  limit?: number;
+  category?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
+export type TransactionSearchRecord = {
+  id: string;
+  transactionType: 'income' | 'expense';
+  amount: number;
+  category: string;
+  description: string | null;
+  date: string;
+};
+
+export type TransactionSearchCategoryBreakdownItem = {
+  category: string;
+  totalCount: number;
+  totalAmount: number;
+};
+
+export type TransactionSearchAnalytics = {
+  totalCount: number;
+  totalAmount: number;
+  categoryBreakdown: TransactionSearchCategoryBreakdownItem[];
+  dateRange: {
+    startDate: string | null;
+    endDate: string | null;
+  };
+};
+
+export type TransactionSearchResponse = {
+  records: TransactionSearchRecord[];
+  analytics: TransactionSearchAnalytics;
+  meta?: PaginatedResponse<TransactionSearchRecord>['meta'];
 };
 
 export type PaginatedResponse<TData> = {
@@ -101,6 +150,178 @@ const normalizeArrayResponse = <TData>(payload: unknown, alternateArrayKeys: str
   }
 
   return [];
+};
+
+const buildUrl = (path: string, query?: Record<string, string | number | boolean | null | undefined>) => {
+  const url = new URL(`${API_BASE_URL}${path}`);
+
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value === undefined || value === null || value === '') {
+        continue;
+      }
+
+      url.searchParams.set(key, String(value));
+    }
+  }
+
+  return url.toString();
+};
+
+const parseResponse = async (response: Response): Promise<unknown> => {
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (contentType.includes('application/json')) {
+    return response.json();
+  }
+
+  const text = await response.text();
+  return text ? { message: text } : {};
+};
+
+const extractMessage = (payload: unknown, fallback: string): string => {
+  if (typeof payload === 'object' && payload !== null) {
+    const candidate = payload as { message?: unknown };
+
+    if (typeof candidate.message === 'string') {
+      return sanitizeErrorMessage(candidate.message, fallback);
+    }
+  }
+
+  return fallback;
+};
+
+const fetchAuthenticatedPayload = async (path: string, query?: TransactionSearchQuery): Promise<unknown> => {
+  const headers: Record<string, string> = {};
+  const accessToken = getStoredAccessToken();
+
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  const response = await fetch(buildUrl(path, query), {
+    method: 'GET',
+    cache: 'no-store',
+    headers,
+  });
+
+  const payload = await parseResponse(response);
+
+  if (response.status === 401) {
+    try {
+      await refreshSession();
+      return fetchAuthenticatedPayload(path, query);
+    } catch {
+      clearAuthSession();
+    }
+  }
+
+  if (!response.ok) {
+    throw new ApiError(
+      extractMessage(payload, `Request failed with status ${response.status}.`),
+      response.status,
+    );
+  }
+
+  return payload;
+};
+
+const normalizeSearchRecord = (value: unknown): TransactionSearchRecord | null => {
+  if (typeof value !== 'object' || value === null) {
+    return null;
+  }
+
+  const candidate = value as Record<string, unknown>;
+
+  if (typeof candidate.id !== 'string') {
+    return null;
+  }
+
+  const transactionType = candidate.transactionType === 'expense' ? 'expense' : 'income';
+
+  return {
+    id: candidate.id,
+    transactionType,
+    amount: toNumber(candidate.amount),
+    category: typeof candidate.category === 'string' ? candidate.category : '',
+    description: typeof candidate.description === 'string' ? candidate.description : null,
+    date: typeof candidate.date === 'string' ? candidate.date : new Date().toISOString(),
+  };
+};
+
+const normalizeSearchResponse = (payload: unknown): TransactionSearchResponse => {
+  if (typeof payload !== 'object' || payload === null) {
+    return {
+      records: [],
+      analytics: {
+        totalCount: 0,
+        totalAmount: 0,
+        categoryBreakdown: [],
+        dateRange: {
+          startDate: null,
+          endDate: null,
+        },
+      },
+    };
+  }
+
+  const candidate = payload as {
+    data?: {
+      records?: unknown;
+      analytics?: unknown;
+    };
+    meta?: PaginatedResponse<TransactionSearchRecord>['meta'];
+  };
+
+  const data = candidate.data ?? payload;
+  const searchData = data as {
+    records?: unknown;
+    analytics?: unknown;
+  };
+
+  const records = Array.isArray(searchData.records)
+    ? searchData.records.map((item) => normalizeSearchRecord(item)).filter((item): item is TransactionSearchRecord => item !== null)
+    : [];
+
+  const analyticsSource = typeof searchData.analytics === 'object' && searchData.analytics !== null
+    ? searchData.analytics as Record<string, unknown>
+    : {};
+
+  const dateRangeSource = typeof analyticsSource.dateRange === 'object' && analyticsSource.dateRange !== null
+    ? analyticsSource.dateRange as Record<string, unknown>
+    : {};
+
+  const categoryBreakdown = Array.isArray(analyticsSource.categoryBreakdown)
+    ? analyticsSource.categoryBreakdown
+        .map((item) => {
+          if (typeof item !== 'object' || item === null) {
+            return null;
+          }
+
+          const breakdownItem = item as Record<string, unknown>;
+
+          return {
+            category: typeof breakdownItem.category === 'string' ? breakdownItem.category : '',
+            totalCount: toNumber(breakdownItem.totalCount),
+            totalAmount: toNumber(breakdownItem.totalAmount),
+          };
+        })
+        .filter((item): item is TransactionSearchCategoryBreakdownItem => item !== null && item.category.length > 0)
+    : [];
+
+  return {
+    records,
+    analytics: {
+      totalCount: toNumber(analyticsSource.totalCount),
+      totalAmount: toNumber(analyticsSource.totalAmount),
+      categoryBreakdown,
+      dateRange: {
+        startDate: typeof dateRangeSource.startDate === 'string' ? dateRangeSource.startDate : null,
+        endDate: typeof dateRangeSource.endDate === 'string' ? dateRangeSource.endDate : null,
+      },
+    },
+    meta: candidate.meta,
+  };
 };
 
 export type ReportSummary = {
@@ -404,6 +625,11 @@ export const getCategoryReport = () => (
     path: '/api/v1/reports/categories',
   })
 );
+
+export const searchTransactions = async (query: TransactionSearchQuery): Promise<TransactionSearchResponse> => {
+  const payload = await fetchAuthenticatedPayload('/api/v1/reports/transactions/search', query);
+  return normalizeSearchResponse(payload);
+};
 
 export const createBudget = (payload: CreateBudgetPayload) => (
   apiRequest<unknown>({
