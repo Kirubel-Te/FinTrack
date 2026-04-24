@@ -81,7 +81,7 @@ const SETTINGS_SECTIONS: Array<{
   },
 ];
 
-const sectionClassName = 'rounded-2xl border border-emerald-900/20 bg-emerald-zenith-surface/60 p-5 shadow-lg shadow-emerald-950/10 backdrop-blur-sm md:p-6';
+const sectionClassName = 'rounded-2xl border border-emerald-900/20 bg-emerald-zenith-surface/60 p-6 shadow-lg shadow-emerald-950/10 backdrop-blur-sm';
 const inputClassName = 'w-full rounded-xl border border-emerald-900/20 bg-emerald-zenith-surface-high/40 px-4 py-2.5 text-sm text-emerald-zenith-text placeholder:text-emerald-zenith-text-muted/45 outline-none transition-all focus:border-emerald-zenith-primary/45 focus:ring-2 focus:ring-emerald-zenith-primary/20';
 
 const isSettingsSection = (value: string | null): value is SettingsSection => (
@@ -644,7 +644,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-5 md:px-6 lg:px-8 lg:py-7">
+    <div className="p-5 lg:p-6 space-y-7 lg:space-y-8 max-w-7xl mx-auto w-full">
       <Reveal delay={0.04}>
         <section className="dashboard-page-header">
           <h1 className="dashboard-page-title">Settings</h1>
@@ -654,9 +654,9 @@ export default function SettingsPage() {
         </section>
       </Reveal>
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[270px_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-4 xl:gap-5 lg:grid-cols-[270px_minmax(0,1fr)]">
         <Reveal delay={0.1}>
-          <aside className={`${sectionClassName} h-fit lg:sticky lg:top-5`}>
+          <aside className={`${sectionClassName} h-fit lg:sticky lg:top-6`}>
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-emerald-zenith-text-muted">
               Settings Navigation
             </p>
@@ -669,7 +669,7 @@ export default function SettingsPage() {
                     key={section.key}
                     type="button"
                     onClick={() => handleSectionChange(section.key)}
-                    className={`w-full rounded-xl border px-3.5 py-3 text-left transition-all ${isActive
+                    className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${isActive
                       ? 'border-emerald-zenith-primary/45 bg-emerald-zenith-primary/12 text-emerald-zenith-primary shadow-sm shadow-emerald-950/10'
                       : 'border-emerald-900/20 bg-emerald-zenith-surface-high/25 text-emerald-zenith-text hover:border-emerald-zenith-primary/35 hover:text-emerald-zenith-primary'
                     }`}
