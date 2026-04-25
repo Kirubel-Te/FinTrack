@@ -1,114 +1,89 @@
 # FinTrack Frontend - Project Status
 
-Last updated: 2026-04-19
+Last updated: 2026-04-25
 
-## Current Snapshot
-FinTrack is now a production-shaped React + TypeScript + Vite frontend with a public landing experience, authenticated `/app` shell, guarded routes, and backend-connected finance data flows. Core dashboard, transactions, budgets, and add-income/add-expense actions are integrated with API endpoints. Settings is implemented as a full screen with working logout and delete-account actions, while profile/security/preferences persistence is still mostly local-state scaffolding pending dedicated backend endpoints.
+## Executive Summary
+FinTrack frontend is in a strong near-complete state. Almost all major user-facing functionality is implemented and working end-to-end with backend integration for authentication, dashboard analytics, transactions, budgets, and transaction creation flows.
 
-## Recent Work (Since 2026-04-10)
-- Added auth route guards for protected pages via `RequireAuth` and guest redirects via `RedirectIfAuthenticated`, including session bootstrap checks against `/api/v1/auth/me`.
-- Implemented token refresh lifecycle with shared in-flight refresh protection to prevent duplicate refresh calls/races.
-- Added centralized API client (`apiRequest`) with auth header injection, 401 refresh-retry behavior, normalized error handling, and typed request helpers.
-- Integrated dashboard metrics with backend reports endpoints (`summary`, `monthly`, `categories`) and real recent transactions from incomes + expenses.
-- Integrated transactions page with real API-backed list/filter behavior and CSV export from loaded rows.
-- Integrated budgets page with API-backed create/list/update/delete and summary retrieval.
-- Replaced budget edit/delete browser dialogs with in-app themed modals.
-- Wired Add Income/Add Expense modals to create endpoints and added data-refresh events after successful submission.
-- Built full settings experience at `/app/settings` with section navigation, form validation, logout, and delete-account confirmation modal.
-- Standardized dashboard page heading typography via shared title/subtitle classes and display font token.
+Overall completion estimate: **85% to 90%**
 
-## What Is Implemented
+## Delivery Status by Area
 
-### Foundation and Tooling
-- Vite + React + TypeScript project is configured and running.
-- ESLint + TypeScript configs are in place.
-- Scripts available:
-  - `npm run dev`
-  - `npm run build`
-  - `npm run lint`
-  - `npm run preview`
-- Core dependencies include:
-  - `react`, `react-dom`, `react-router`
-  - `tailwindcss` + `@tailwindcss/vite`
-  - `motion`
-  - `lucide-react`
-  - `recharts`
+### 1) Core App Foundation - Complete
+- Vite + React + TypeScript setup is stable.
+- Linting and TypeScript configuration are in place.
+- Main scripts are available and usable: `dev`, `build`, `lint`, `preview`.
 
-### Routing and App Structure
-- BrowserRouter + nested route tree is implemented:
-  - `/` -> `LandingPage`
-  - `/app` -> `DashboardLayout` + index dashboard
-  - `/app/transactions` -> `TransactionsPage`
-  - `/app/budgets` -> `BudgetsPage`
-  - `/app/settings` -> `SettingsPage`
-  - `/login` -> `LoginPage`
-  - `/register` -> `RegisterPage`
-  - `*` -> redirect to `/`
-- `/app` routes are protected and verify session validity before rendering.
-- `/login` and `/register` redirect authenticated users to `/app`.
-- Shared dashboard shell is provided by `DashboardLayout` (`Sidebar`, `TopBar`, nested `Outlet`, global add-income/add-expense modals).
+### 2) Routing and Navigation - Complete
+- Public routes: `/`, `/login`, `/register`.
+- Authenticated app shell: `/app` with nested pages.
+- Implemented app pages:
+  - `/app` (Dashboard)
+  - `/app/transactions`
+  - `/app/budgets`
+  - `/app/notifications`
+  - `/app/help-center`
+  - `/app/settings`
+- Fallback route redirects unknown paths to `/`.
 
-### Authentication and Session Management
-- Auth endpoints integrated under `/api/v1/auth/*` for login, register, refresh, me, logout, and delete account.
-- Auth session persistence uses localStorage keys for session + access token + refresh token.
-- Refresh flow is serialized (`refreshSessionInFlight`) to avoid race conditions.
-- Protected requests retry once after refresh on 401 and clear session on unrecoverable auth failures.
-- Error messages are sanitized and normalized for user-friendly display.
+### 3) Authentication and Session Lifecycle - Complete
+- Login, register, me, refresh, logout, and delete-account API flows are integrated.
+- Protected route guard (`RequireAuth`) and guest redirect guard (`RedirectIfAuthenticated`) are implemented.
+- Session bootstrap validation is in place to avoid stale-token redirect flicker.
+- Token refresh handling includes in-flight request sharing to prevent refresh race conditions.
 
-### API Layer and Domain Integration
-- `src/api/client.ts` provides typed request wrapper with:
-  - query serialization
-  - JSON/text response parsing
-  - envelope extraction
-  - normalized `ApiError`
-  - optional 401 refresh retry
-- `src/api/finance.ts` provides typed domain helpers for:
-  - incomes (create/list)
-  - expenses (create/list)
+### 4) API Layer and Domain Integration - Complete
+- Centralized API client includes:
+  - auth header injection
+  - normalized API error handling
+  - response parsing and envelope extraction
+  - single retry flow for 401 via refresh
+- Finance API domain integration is done for:
+  - incomes
+  - expenses
   - reports (summary/monthly/categories)
-  - budgets (create/list/update/delete/summary)
-- Includes normalization helpers for flexible backend payload shapes and budget category normalization.
+  - budgets (CRUD + summary)
 
-### Dashboard, Transactions, and Budgets
-- Dashboard is API-driven:
-  - KPI cards from summary endpoint
-  - comparison chart from recent monthly reports
-  - category chart from category report endpoint
-  - recent transactions combined from incomes + expenses
-- Transactions page is API-driven:
-  - category/date filtering sent to list endpoints
-  - merged income/expense rows with client pagination
-  - CSV export for current loaded dataset
-- Budgets page is API-driven:
-  - category/month/year filters
-  - create budget flow
-  - edit/delete actions via in-page modals
-  - summary/total computations from backend response normalization
+### 5) Finance Product Flows - Mostly Complete
+- Dashboard is backend-driven with summary cards, charts, and real recent transactions.
+- Transactions page supports API-backed loading/filtering and CSV export.
+- Budgets page supports list/create/edit/delete and summary calculations.
+- Add Income/Add Expense modals are wired to API create endpoints and trigger refresh events.
 
-### Add Income and Add Expense Flows
-- Both modals submit to backend (`createIncome`, `createExpense`).
-- Includes client-side validation, loading/success/error states, and auto-close on success.
-- Emits `fintrack:transaction-updated` event to trigger dashboard/transactions refresh.
+### 6) Settings, Notifications, and Help - Mostly Complete
+- Settings page is fully built with multiple sections and strong UX states.
+- Logout and delete-account flows are functional.
+- Notifications page is available and linked to budget threshold logic plus notification preferences.
+- Help Center is implemented as a dedicated dashboard page.
 
-### Settings and UX System
-- `/app/settings` is a complete multi-section page (Profile, Security, Budget, Notifications, Danger Zone).
-- Working account actions:
-  - logout
-  - delete account with explicit `DELETE` confirmation modal
-- Form UX includes field-level validation and status messaging.
-- Design system is consistent across app surfaces using emerald tokens and shared typography utilities (`dashboard-page-title`, `dashboard-page-subtitle`).
+## Major Functionalities Completion Check
+- [x] Authentication (login/register/session/refresh/logout)
+- [x] Protected dashboard app shell
+- [x] Dashboard analytics from backend
+- [x] Transactions listing and filtering
+- [x] Budget management (create/edit/delete/summary)
+- [x] Add income and add expense flows
+- [x] Settings page and danger-zone actions
+- [x] Notifications and Help Center pages
+- [ ] Full backend wiring for all settings save actions
+- [ ] Test suite coverage (unit/integration/e2e)
+- [ ] Server-side pagination/sorting for large transaction datasets
 
-## Current Gaps and Incomplete Areas
-- Settings profile/security/preferences/notifications save flows are mostly local-state confirmations and are not fully wired to dedicated backend update endpoints yet.
-- Transaction pagination is client-side after fetching up to a fixed list size; not fully server-driven pagination.
-- CSV export is local dataset export only (no backend export job/download endpoint).
-- Some presentation copy and side panels still include static helper/demo content.
-- Automated tests are not yet present for auth guards, API integration flows, and key dashboard page behaviors.
+## Remaining Work (High Priority)
+1. Integrate settings profile/security/preferences save actions with dedicated backend update endpoints.
+2. Move transactions to server-driven pagination and sorting (instead of client-side pagination on fetched rows).
+3. Add automated tests for auth guards, refresh lifecycle, and critical finance flows.
 
-## Suggested Next Steps (Priority Order)
-1. Add backend profile/security/preferences endpoints integration for settings save actions.
-2. Implement server-driven transaction pagination/sorting and align filters with backend query capabilities.
-3. Add optimistic UI updates or cache strategy for transaction and budget mutations.
-4. Introduce route-level and API integration tests for auth guard behavior and token refresh lifecycle.
-5. Add end-to-end tests for login -> dashboard -> add transaction -> budgets/settings critical user journey.
-6. Replace remaining static helper blocks with dynamic insights from backend analytics endpoints.
+## Secondary Improvements
+1. Improve cache/update strategy for transactions and budgets after create/edit/delete actions.
+2. Replace remaining static helper blocks with dynamic backend insights where applicable.
+3. Extend export/reporting options beyond current local CSV export.
+
+## Current Risk Notes
+- Main delivery risk is now quality assurance and hardening, not feature completeness.
+- Without test coverage, regressions in auth/session and finance calculations may be harder to catch early.
+
+## Recommended Next Milestone
+Target: **Release Readiness Milestone**
+- Goal: close backend settings integration + add baseline test coverage for critical user paths.
+- Outcome: move project status from "almost complete" to "release-ready".
