@@ -1,6 +1,8 @@
 import type { AuthUser } from '../api/auth';
 
 export const avatarForName = (_firstName: string, _lastName: string) => (
+	void _firstName,
+	void _lastName,
 	'https://api.dicebear.com/9.x/notionists/svg?seed=fintrack-default-user-avatar'
 );
 

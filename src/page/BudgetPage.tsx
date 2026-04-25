@@ -47,20 +47,12 @@ const CATEGORY_LABELS: Record<BudgetCategory, string> = {
   housing: 'Housing',
 };
 
-const categoryIcon = (category: BudgetCategory) => {
-  switch (category) {
-    case 'food':
-      return Utensils;
-    case 'health':
-      return HeartPulse;
-    case 'leisure':
-      return ShoppingBag;
-    case 'transport':
-      return Car;
-    case 'housing':
-    default:
-      return Home;
-  }
+const CATEGORY_ICONS: Record<BudgetCategory, React.ComponentType<{ className?: string }>> = {
+  food: Utensils,
+  health: HeartPulse,
+  leisure: ShoppingBag,
+  transport: Car,
+  housing: Home,
 };
 
 const defaultSummaryForCategory = (category: BudgetCategory): BudgetSummary => ({
@@ -80,7 +72,7 @@ const MIN_YEAR = 2000;
 const MAX_YEAR = 2100;
 
 function BudgetCard({ title, category, summary, large, onEdit, onDelete }: BudgetCardProps) {
-  const Icon = categoryIcon(category);
+  const Icon = CATEGORY_ICONS[category];
   const percentage = Math.min(Math.max(summary.usage, 0), 100);
   const remaining = summary.remaining;
 

@@ -52,14 +52,8 @@ export function TopBar({ onAddIncomeClick, onAddExpenseClick, onHelpClick, onNot
     let active = true;
 
     if (!keyword) {
-      setSearchResult(null);
-      setSearchError(null);
-      setIsSearchLoading(false);
       return;
     }
-
-    setIsSearchLoading(true);
-    setSearchError(null);
 
     const timeoutId = window.setTimeout(() => {
       void searchTransactions({ keyword, page: 1, limit: 5 })
@@ -136,7 +130,19 @@ export function TopBar({ onAddIncomeClick, onAddExpenseClick, onHelpClick, onNot
             value={searchQuery}
             onFocus={() => setIsSearchFocused(true)}
             onChange={(event) => {
-              setSearchQuery(event.target.value);
+              const nextValue = event.target.value;
+
+              setSearchQuery(nextValue);
+
+              if (!nextValue.trim()) {
+                setSearchResult(null);
+                setSearchError(null);
+                setIsSearchLoading(false);
+              } else {
+                setSearchError(null);
+                setIsSearchLoading(true);
+              }
+
               setIsSearchFocused(true);
             }}
             placeholder="Search analytics..."
@@ -149,6 +155,7 @@ export function TopBar({ onAddIncomeClick, onAddExpenseClick, onHelpClick, onNot
                 setSearchQuery('');
                 setSearchResult(null);
                 setSearchError(null);
+                setIsSearchLoading(false);
                 setIsSearchFocused(true);
               }}
               className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-emerald-zenith-text-muted transition-colors hover:text-emerald-zenith-text"

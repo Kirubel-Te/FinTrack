@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 .env
+
+# QA artifacts
+coverage/
+playwright-report/
+test-results/

@@ -72,7 +72,12 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
-  const [activeSection, setActiveSection] = useState<string>(navItems[0].sectionId);
+  const [activeSection, setActiveSection] = useState<string>(() => {
+    const currentHash = window.location.hash.replace('#', '');
+    return navItems.some((item) => item.sectionId === currentHash)
+      ? currentHash
+      : navItems[0].sectionId;
+  });
 
   useEffect(() => {
     const sectionElements = navItems
@@ -108,13 +113,6 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
         setActiveSection(firstSectionId);
       }
     };
-
-    const currentHash = window.location.hash.replace('#', '');
-    if (navItems.some((item) => item.sectionId === currentHash)) {
-      setActiveSection(currentHash);
-    } else {
-      setActiveSection(firstSectionId);
-    }
 
     window.addEventListener('scroll', handleWindowScroll, { passive: true });
 
