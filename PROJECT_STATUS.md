@@ -1,11 +1,11 @@
 # FinTrack Frontend - Project Status
 
-Last updated: 2026-04-25
+Last updated: 2026-05-04
 
 ## Executive Summary
-FinTrack frontend is in a strong near-complete state. Almost all major user-facing functionality is implemented and working end-to-end with backend integration for authentication, dashboard analytics, transactions, budgets, and transaction creation flows.
+FinTrack frontend is deployed and in a strong near-complete state. Almost all major user-facing functionality is implemented and working end-to-end with backend integration for authentication, dashboard analytics, transactions, budgets, and transaction creation flows.
 
-Overall completion estimate: **90% to 95%**
+Overall completion estimate: **92% to 96%**
 
 ## Delivery Status by Area
 
@@ -62,6 +62,11 @@ Overall completion estimate: **90% to 95%**
 - GitHub Actions CI runs lint, typecheck, tests, build, and e2e smoke checks.
 - Build output has been tuned to reduce bundle warning noise.
 
+### 8) Deployment and Release - Complete
+- Frontend is deployed.
+- Production build health is confirmed after the latest May 3 fixes.
+- Branding and metadata are aligned with the current release assets.
+
 ## Major Functionalities Completion Check
 - [x] Authentication (login/register/session/refresh/logout)
 - [x] Protected dashboard app shell
@@ -73,6 +78,7 @@ Overall completion estimate: **90% to 95%**
 - [x] Notifications and Help Center pages
 - [x] Test suite coverage (unit/integration/e2e baseline)
 - [x] CI quality gate for lint/typecheck/tests/build/e2e
+- [x] Frontend deployment
 - [ ] Full backend wiring for all settings save actions
 - [ ] Server-side pagination/sorting for large transaction datasets
 
@@ -91,7 +97,12 @@ Overall completion estimate: **90% to 95%**
 - Main delivery risk is now product completeness in a few remaining settings/data-scaling areas, not core app stability.
 - The current test baseline helps catch regressions in auth/session and finance calculations, but broader e2e coverage is still needed.
 
+## Recent Updates
+- 2026-05-03: Replaced the default Vite favicon with `public/fintrack.svg` and updated the document title/metadata for the deployed release.
+- 2026-05-03: Fixed the case-sensitive login page import issue that was breaking Vercel builds; `npm run build` passes again.
+- 2026-05-04: Updated this status document to reflect the deployed release state.
+
 ## Recommended Next Milestone
 Target: **Release Readiness Milestone**
 - Goal: close backend settings integration, add broader e2e coverage, and finish transaction scaling work.
-- Outcome: move project status from "almost complete" to "release-ready".
+- Outcome: move project status from "almost complete" to "release-ready" and maintain the deployed frontend.
