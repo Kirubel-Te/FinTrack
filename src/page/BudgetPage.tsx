@@ -805,10 +805,6 @@ export function BudgetsPage() {
             <p className="text-emerald-zenith-text-muted leading-relaxed text-base md:text-lg">
               Total usage is {summaryResponse.totals.usage.toFixed(1)}% with {summaryResponse.totals.status.replace('_', ' ')} status.
             </p>
-            <button type="button" className="text-emerald-zenith-primary font-bold flex items-center gap-2 group text-lg">
-              <span>View detailed forecast</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-            </button>
           </Reveal>
 
           <Reveal className="lg:col-span-2" delay={0.12}>
