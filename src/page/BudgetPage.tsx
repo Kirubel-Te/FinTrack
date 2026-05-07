@@ -7,7 +7,6 @@ import {
   PlusCircle,
   Minus,
   Plus,
-  ArrowRight,
   Edit2,
   Trash2,
   HeartPulse,
