@@ -58,20 +58,7 @@ const useAuthStatus = (): AuthStatus => {
       }
     }
 
-    // Only verify session on app reload, not after every render
-    // Check if we're coming from a fresh page load by checking sessionStorage
-    const sessionKey = 'auth-verified'
-    const alreadyVerified = sessionStorage.getItem(sessionKey)
-
-    if (!alreadyVerified) {
-      void resolveAuth()
-      sessionStorage.setItem(sessionKey, 'true')
-    } else {
-      // Session was already verified on page load, just check if token exists
-      if (getStoredAccessToken()) {
-        setStatus('authenticated')
-      }
-    }
+    void resolveAuth()
 
     return () => {
       active = false
