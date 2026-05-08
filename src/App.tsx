@@ -83,13 +83,7 @@ const RequireAuth = ({ children }: { children: ReactElement }) => {
 }
 
 const RedirectIfAuthenticated = ({ children }: { children: ReactElement }) => {
-  const status = useAuthStatus()
-
-  if (status === 'checking') {
-    return <AuthGateLoader />
-  }
-
-  if (status === 'authenticated') {
+  if (getStoredAccessToken()) {
     return <Navigate to="/app" replace />
   }
 
