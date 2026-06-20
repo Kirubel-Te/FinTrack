@@ -9,6 +9,7 @@ FinTrack is now a multi-page React + TypeScript + Vite app using React Router, w
 The app is deployed on Vercel and available here:
 
 - Live app: https://fin-track-app8.vercel.app/
+- backend deployment: https://fintrack-backend-1-xyn7.onrender.com
 
 ### Foundation and Tooling
 - Vite + React + TypeScript project is configured and running.
