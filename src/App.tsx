@@ -82,14 +82,6 @@ const RequireAuth = ({ children }: { children: ReactElement }) => {
   return children
 }
 
-const RedirectIfAuthenticated = ({ children }: { children: ReactElement }) => {
-  if (getStoredAccessToken()) {
-    return <Navigate to="/app" replace />
-  }
-
-  return children
-}
-
 const App = () => {
   const navigate = useNavigate()
 
@@ -124,19 +116,11 @@ const App = () => {
       </Route>
       <Route
         path="/login"
-        element={(
-          <RedirectIfAuthenticated>
-            <LoginPage />
-          </RedirectIfAuthenticated>
-        )}
+        element={<LoginPage />}
       />
       <Route
         path="/register"
-        element={(
-          <RedirectIfAuthenticated>
-            <RegisterPage />
-          </RedirectIfAuthenticated>
-        )}
+        element={<RegisterPage />}
       />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

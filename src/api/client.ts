@@ -2,7 +2,6 @@ import {
   clearAuthSession,
   getAuthApiBaseUrl,
   getStoredAccessToken,
-  refreshSession,
   sanitizeErrorMessage,
 } from './auth';
 
@@ -75,15 +74,6 @@ const toApiErrorMessage = (payload: unknown, fallback: string): string => {
   return fallback;
 };
 
-const refreshTokensRaw = async (): Promise<boolean> => {
-  try {
-    await refreshSession();
-    return true;
-  } catch {
-    return false;
-  }
-};
-
 const extractPayloadData = <TData>(payload: unknown): TData => {
   if (isObject(payload) && typeof payload.success === 'boolean') {
     const envelope = payload as ApiEnvelope<TData>;
@@ -131,16 +121,8 @@ export const apiRequest = async <TData>(options: RequestOptions): Promise<TData>
   const payload = await parseResponse(response);
 
   if (response.status === 401 && auth && retryOn401) {
-    const refreshed = await refreshTokensRaw();
-
-    if (refreshed) {
-      return apiRequest<TData>({
-        ...options,
-        retryOn401: false,
-      });
-    }
-
     clearAuthSession();
+    throw new ApiError('Your session is invalid. Please log in again.', 401);
   }
 
   if (!response.ok) {

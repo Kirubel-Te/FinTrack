@@ -3,7 +3,6 @@ import {
   clearAuthSession,
   getAuthApiBaseUrl,
   getStoredAccessToken,
-  refreshSession,
   sanitizeErrorMessage,
 } from './auth';
 
@@ -208,12 +207,8 @@ const fetchAuthenticatedPayload = async (path: string, query?: TransactionSearch
   const payload = await parseResponse(response);
 
   if (response.status === 401) {
-    try {
-      await refreshSession();
-      return fetchAuthenticatedPayload(path, query);
-    } catch {
-      clearAuthSession();
-    }
+    clearAuthSession();
+    throw new ApiError('Your session is invalid. Please log in again.', 401);
   }
 
   if (!response.ok) {

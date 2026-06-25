@@ -1,8 +1,7 @@
 export const AUTH_STORAGE_KEY = 'fintrack.auth';
 export const AUTH_TOKEN_STORAGE_KEY = 'fintrack.token';
-export const AUTH_REFRESH_TOKEN_STORAGE_KEY = 'fintrack.refreshToken';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000';
 
 export type AuthUser = {
   id: string;
@@ -14,7 +13,6 @@ export type AuthUser = {
 
 export type AuthTokens = {
   accessToken: string;
-  refreshToken: string;
 };
 
 export type AuthSession = AuthTokens & {
@@ -33,8 +31,6 @@ type AuthErrorResponse = {
 };
 
 type AuthResponse = AuthSession | ApiSuccessResponse<AuthTokens> | AuthErrorResponse;
-
-let refreshSessionInFlight: Promise<AuthTokens> | null = null;
 
 export type LoginPayload = {
   email: string;
@@ -235,7 +231,7 @@ const isAuthSession = (payload: unknown): payload is AuthSession => {
     return false;
   }
 
-  return typeof payload.accessToken === 'string' && typeof payload.refreshToken === 'string';
+  return typeof payload.accessToken === 'string';
 };
 
 const parseResponseBody = async (response: Response): Promise<AuthResponse> => {
@@ -300,42 +296,14 @@ export const getStoredAccessToken = (): string | null => {
   return getStoredAuthSession()?.accessToken ?? null;
 };
 
-export const getStoredRefreshToken = (): string | null => {
-  const explicitToken = safeReadStorage(AUTH_REFRESH_TOKEN_STORAGE_KEY);
-  if (explicitToken) {
-    return explicitToken;
-  }
-
-  return getStoredAuthSession()?.refreshToken ?? null;
-};
-
 export const persistAuthSession = (session: AuthSession) => {
   safeWriteStorage(AUTH_STORAGE_KEY, JSON.stringify(session));
   safeWriteStorage(AUTH_TOKEN_STORAGE_KEY, session.accessToken);
-  safeWriteStorage(AUTH_REFRESH_TOKEN_STORAGE_KEY, session.refreshToken);
-};
-
-export const updateStoredTokens = (tokens: AuthTokens) => {
-  const existingSession = getStoredAuthSession();
-
-  safeWriteStorage(AUTH_TOKEN_STORAGE_KEY, tokens.accessToken);
-  safeWriteStorage(AUTH_REFRESH_TOKEN_STORAGE_KEY, tokens.refreshToken);
-
-  if (existingSession) {
-    safeWriteStorage(
-      AUTH_STORAGE_KEY,
-      JSON.stringify({
-        ...existingSession,
-        ...tokens,
-      }),
-    );
-  }
 };
 
 export const clearAuthSession = () => {
   safeRemoveStorage(AUTH_STORAGE_KEY);
   safeRemoveStorage(AUTH_TOKEN_STORAGE_KEY);
-  safeRemoveStorage(AUTH_REFRESH_TOKEN_STORAGE_KEY);
 };
 
 export const getAuthApiBaseUrl = () => API_BASE_URL;
@@ -394,12 +362,8 @@ const getProtectedAuth = async <TResponse>(path: string, allowRetry = true): Pro
   const payload = await parseResponseBody(response);
 
   if (response.status === 401 && allowRetry) {
-    try {
-      await refreshSession();
-      return getProtectedAuth<TResponse>(path, false);
-    } catch {
-      clearAuthSession();
-    }
+    clearAuthSession();
+    throw new Error('Your session is invalid. Please log in again.');
   }
 
   if (!response.ok) {
@@ -438,13 +402,8 @@ const patchProtectedAuth = async <TResponse, TBody extends Record<string, unknow
   const payload = await parseResponseBody(response);
 
   if (response.status === 401 && allowRetry) {
-    try {
-      await refreshSession();
-      return patchProtectedAuth<TResponse, TBody>(path, body, false);
-    } catch {
-      clearAuthSession();
-      throw new Error('Your session is invalid. Please log in again.');
-    }
+    clearAuthSession();
+    throw new Error('Your session is invalid. Please log in again.');
   }
 
   if (!response.ok) {
@@ -509,26 +468,36 @@ const extractAuthUserFromPayload = (payload: unknown): AuthUser | null => {
 
 const normalizeAuthSession = (payload: AuthResponse): AuthSession => {
   if (!isAuthSession(payload)) {
+    const payloadRecord: Record<string, unknown> | null = isObject(payload) ? payload : null;
+
+    if (payloadRecord && isObject(payloadRecord.data)) {
+      const candidate = payloadRecord.data as Record<string, unknown>;
+      if (
+        isObject(candidate.user)
+        && typeof candidate.accessToken === 'string'
+        && typeof candidate.user.id === 'string'
+        && typeof candidate.user.firstName === 'string'
+        && typeof candidate.user.lastName === 'string'
+        && typeof candidate.user.email === 'string'
+        && typeof candidate.user.createdAt === 'string'
+      ) {
+        return {
+          accessToken: candidate.accessToken,
+          user: {
+            id: candidate.user.id,
+            firstName: candidate.user.firstName,
+            lastName: candidate.user.lastName,
+            email: candidate.user.email,
+            createdAt: candidate.user.createdAt,
+          },
+        };
+      }
+    }
+
     throw new Error('Unexpected authentication response. Please try again.');
   }
 
   return payload;
-};
-
-const unwrapTokenResponse = (payload: AuthResponse): AuthTokens => {
-  const payloadRecord: Record<string, unknown> | null = isObject(payload) ? payload : null;
-
-  if (payloadRecord?.success === true && isObject(payloadRecord.data)) {
-    const maybeData = payloadRecord.data;
-    if (typeof maybeData.accessToken === 'string' && typeof maybeData.refreshToken === 'string') {
-      return {
-        accessToken: maybeData.accessToken,
-        refreshToken: maybeData.refreshToken,
-      };
-    }
-  }
-
-  throw new Error('Unexpected token response. Please log in again.');
 };
 
 export const healthCheck = async (): Promise<unknown> => {
@@ -560,31 +529,6 @@ export const register = async (payload: RegisterPayload): Promise<AuthSession> =
   const session = normalizeAuthSession(response);
   persistAuthSession(session);
   return session;
-};
-
-export const refreshSession = async (refreshToken?: string): Promise<AuthTokens> => {
-  if (refreshSessionInFlight) {
-    return refreshSessionInFlight;
-  }
-
-  const resolvedToken = refreshToken ?? getStoredRefreshToken();
-
-  if (!resolvedToken) {
-    throw new Error('Session refresh token is missing.');
-  }
-
-  refreshSessionInFlight = (async () => {
-    const response = await postAuth('/api/v1/auth/refresh', { refreshToken: resolvedToken });
-    const tokens = unwrapTokenResponse(response);
-    updateStoredTokens(tokens);
-    return tokens;
-  })();
-
-  try {
-    return await refreshSessionInFlight;
-  } finally {
-    refreshSessionInFlight = null;
-  }
 };
 
 export const getMe = () => getProtectedAuth<AuthUser>('/api/v1/auth/me');
@@ -624,15 +568,8 @@ export const updatePassword = async (payload: UpdatePasswordPayload): Promise<vo
 };
 
 export const logout = async () => {
-  const refreshToken = getStoredRefreshToken();
-
-  if (!refreshToken) {
-    clearAuthSession();
-    return;
-  }
-
   try {
-    await postAuth('/api/v1/auth/logout', { refreshToken });
+    await postAuth('/api/v1/auth/logout', {});
   } finally {
     clearAuthSession();
   }
@@ -667,14 +604,8 @@ export const deleteAccount = async (): Promise<string> => {
   payload = await parseResponseBody(response);
 
   if (response.status === 401) {
-    try {
-      const refreshedTokens = await refreshSession();
-      response = await requestDelete(refreshedTokens.accessToken);
-      payload = await parseResponseBody(response);
-    } catch {
-      clearAuthSession();
-      throw new Error('Your session is invalid. Please log in again.');
-    }
+    clearAuthSession();
+    throw new Error('Your session is invalid. Please log in again.');
   }
 
   if (!response.ok) {
